@@ -10,6 +10,8 @@ import store from "./store";
 
 import Navbar from "./components/layout/Navbar";
 import Landing from "./components/layout/Landing";
+import Cashier from "./components/layout/Cashier";
+import Customer from "./components/layout/Customer";
 import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
 import PrivateRoute from "./components/private-route/PrivateRoute";
@@ -48,6 +50,8 @@ class App extends Component {
             <Route exact path="/login" component={Login} />
             <Switch>
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
+              <PrivateRoute exact path="/cashier" component={Cashier} />
+              <PrivateRoute exact path="/customer" component={Customer} />
             </Switch>
           </div>
         </Router>
