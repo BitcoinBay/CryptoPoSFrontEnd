@@ -35,7 +35,7 @@ export default class Customer extends React.Component {
       cryptoType: 'BCH',
       fiatType: 'CAD',
       cryptoAmount: 0,
-      fiatAmount: 0,
+      fiatAmount:0,
       cryptoPrice: 0,
       url: defaultWebURL,
     }
