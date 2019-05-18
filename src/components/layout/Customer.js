@@ -6,6 +6,7 @@ import './styles/customer.css'
 import  QRAddress21 from './../QRAddress21';
 import { Dropdown } from 'semantic-ui-react'
 // var QRCode = require('qrcode.react');
+
 //import * as BITBOXCli from "bitbox-sdk";
 
 // initialize BITBOX
@@ -60,6 +61,8 @@ export default class Customer extends React.Component {
   
   
   
+  
+
   render() {
     return(
       <div className="customer-page">
