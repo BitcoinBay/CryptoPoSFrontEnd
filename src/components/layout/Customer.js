@@ -1,6 +1,5 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import axios from 'axios';
 import openSocket from 'socket.io-client';
 import './styles/customer.css'
 import  QRAddress21 from './../QRAddress21';
@@ -64,8 +63,8 @@ export default class Customer extends React.Component {
   
 
   render() {
-    return(
-      <div className="customer-page">
+    return (
+      <div className="cashier-page">
         <Helmet>
           <title>Customer Page</title>
           <meta
@@ -74,7 +73,7 @@ export default class Customer extends React.Component {
           />
         </Helmet>
         <h4>
-          <b>Login</b> into customer page is {" "}
+          <b>Login</b> into cashier page is {" "}
           <span style={{ fontFamily: "monospace" }}>successful</span>. Made by Bitcoin Bay
         </h4>
         {/* <h1><QRCode value="http://facebook.github.io/react/" /></h1> */}

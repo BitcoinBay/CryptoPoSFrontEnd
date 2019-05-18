@@ -13,6 +13,12 @@ const socket = openSocket('http://localhost:3000');
 export default class Cashier extends React.Component {
   constructor() {
     super();
+    this.sendSocketIO = this.sendSocketIO.bind(this);
+  }
+
+  sendSocketIO(msg) {
+    console.log(msg);
+    socket.emit('event', msg);
   }
 
   render() {
@@ -29,6 +35,9 @@ export default class Cashier extends React.Component {
           <b>Login</b> into cashier page is {" "}
           <span style={{ fontFamily: "monospace" }}>successful</span>. Made by Bitcoin Bay
         </h4>
+        <button type="button" onClick={() => this.sendSocketIO(["BCH", "CAD", 1337, 69, 9001, "bitcoincash:qrdsfshx7yzfjl9sfj2khuja5crcu4vaxqrt2qkz5s?amount=1&label=%23BCHForEveryone"])}>
+          Pay Now
+        </button>
       </div>
     );
   }
