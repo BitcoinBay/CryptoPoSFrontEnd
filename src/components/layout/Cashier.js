@@ -1,12 +1,13 @@
+//const command = require("shebang!../bin/command");
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import axios from 'axios';
 import openSocket from 'socket.io-client';
 
-//import * as BITBOXCli from "bitbox-sdk";
+const BITBOXSDK = require("@chris.troutner/bitbox-js");
 
 // initialize BITBOX
-//const BITBOX = new BITBOXCli.default({ restURL: "https://trest.bitcoin.com/v2/" });
+const BITBOX = new BITBOXSDK({ restURL: "https://trest.bitcoin.com/v2/" });
 
 const socket = openSocket('http://localhost:3000');
 
