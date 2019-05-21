@@ -20,20 +20,6 @@ class CreatePoS extends Component {
 
                         <form novalidate>
                             <div className="input-field col s12">
-                                <select id="pos_payment_currency" 
-                                        ref={ (select) => { this.select = select }}>
-                                    <option value="" disabled selected>
-                                        Choose a payment currency
-                                    </option>
-                                    <option value="BTC">Bitcoin</option>
-                                    <option value="BCH">Bitcoin Cash</option>
-                                </select>
-                                <label htmlFor="pos_payment_currency">
-                                    Payment currency
-                                </label>
-                            </div>
-
-                            <div className="input-field col s12">
                                 <input id="pos_name" type="text"/>
                                 <label htmlFor="pos_name">Point-of-sale name</label>
                             </div>
