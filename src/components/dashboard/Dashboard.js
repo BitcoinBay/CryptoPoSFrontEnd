@@ -27,6 +27,19 @@ class Dashboard extends Component {
             </h4>
 
             <Link
+              to = "/create-pos"
+              style={{
+                width: "180px",
+                borderRadius: "3px",
+                letterSpacing: "1.5px",
+                marginTop: "1rem"
+              }}
+              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
+            >
+              + Create PoS
+            </Link>
+
+            <Link
               to= "/customer"
               style={{
                 width: "150px",
