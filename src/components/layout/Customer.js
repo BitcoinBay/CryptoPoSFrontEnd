@@ -4,6 +4,8 @@ import openSocket from 'socket.io-client';
 import './styles/customer.css'
 import  QRAddress21 from './../QRAddress21';
 import { Dropdown } from 'semantic-ui-react'
+// import Link from 'link-react';
+import PaymentSucess from './PaymentSucess';
 // var QRCode = require('qrcode.react');
 
 //import * as BITBOXCli from "bitbox-sdk";
@@ -38,6 +40,7 @@ export default class Customer extends React.Component {
       fiatAmount:0,
       cryptoPrice: 0,
       url: defaultWebURL,
+      visibility: false
     }
 
   }
@@ -57,12 +60,8 @@ export default class Customer extends React.Component {
       url: data[5],
     }, () => console.log(this.state));
   }
-  
-  
-  
-  
-
   render() {
+
     return (
       <div className="cashier-page">
         <Helmet>
@@ -72,6 +71,10 @@ export default class Customer extends React.Component {
             content="Customer Page for CryptoPoS"
           />
         </Helmet>
+        {/* <button>
+          <Link to ='/PaymentSucess'></Link>
+          </button> */}
+      
         <h4>
           <b>Login</b> into cashier page is {" "}
           <span style={{ fontFamily: "monospace" }}>successful</span>. Made by Bitcoin Bay
@@ -87,6 +90,7 @@ export default class Customer extends React.Component {
       { this.state.url === ''
         ? <QRAddress21 value={defaultWebURL} />
         : (
+
           <div>
             <QRAddress21 value={this.state.url} />
           </div>
@@ -98,7 +102,6 @@ export default class Customer extends React.Component {
       <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
       <p>$ {this.state.fiatAmount} {this.state.fiatType}</p>
     </article>
-
     <Dropdown selection options={options} placeholder='CAD' />
     
     </div>
