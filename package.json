@@ -17,6 +17,7 @@
     "qrcode.react": "^0.9.3",
     "rc-if-else": "^1.1.0",
     "react": "^16.8.6",
+    "react-bootstrap": "^1.0.0-beta.8",
     "react-dom": "^16.8.6",
     "react-helmet": "^5.2.1",
     "react-native-qrcode": "^0.2.7",

@@ -4,7 +4,7 @@ import openSocket from 'socket.io-client';
 import './styles/customer.css'
 import  QRAddress21 from './../QRAddress21';
 import { Dropdown } from 'semantic-ui-react'
-// import Link from 'link-react';
+import { Link } from 'react-router-dom';
 import PaymentSucess from './PaymentSucess';
 // var QRCode = require('qrcode.react');
 
@@ -40,10 +40,12 @@ export default class Customer extends React.Component {
       fiatAmount:0,
       cryptoPrice: 0,
       url: defaultWebURL,
-      visibility: false
+     
     }
-
+    
   }
+
+  
 
   componentDidMount() {
     socket.on('event', msg => this.update(msg));
@@ -71,10 +73,9 @@ export default class Customer extends React.Component {
             content="Customer Page for CryptoPoS"
           />
         </Helmet>
-        {/* <button>
-          <Link to ='/PaymentSucess'></Link>
-          </button> */}
-      
+       
+        <button className="btn"><Link to={"/PaymentSucess"}>Order sucess</Link></button>
+        <button className="btn"><Link to={"/cashier"}>New Order</Link></button>
         <h4>
           <b>Login</b> into cashier page is {" "}
           <span style={{ fontFamily: "monospace" }}>successful</span>. Made by Bitcoin Bay

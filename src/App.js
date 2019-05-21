@@ -18,6 +18,7 @@ import PrivateRoute from "./components/private-route/PrivateRoute";
 import Dashboard from "./components/dashboard/Dashboard";
 
 import "./App.css";
+import PaymentSucess from "./components/layout/PaymentSucess";
 
 // Check for token to keep user logged in
 if (localStorage.jwtToken) {
@@ -52,6 +53,7 @@ class App extends Component {
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
               <PrivateRoute exact path="/cashier" component={Cashier} />
               <PrivateRoute exact path="/customer" component={Customer} />
+              <PrivateRoute exact path="/PaymentSucess" component= {PaymentSucess}/>
             </Switch>
           </div>
         </Router>
