@@ -1,0 +1,24 @@
+
+body{
+     font-family: 'Lato', sans-serif;
+     margin: 0;
+     padding: 0;
+}
+
+.qrcode{
+   padding: 10px;
+   width: 30px;
+   font-weight: 900;
+   font-size: 60px;
+
+}
+
+.heading{
+    font-size: 19px;
+    padding: 50px;
+
+}
+
+input{
+    width: 10%;
+}

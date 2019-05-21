@@ -1,6 +1,12 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import openSocket from 'socket.io-client';
+import './styles/customer.css'
+import  QRAddress21 from './../QRAddress21';
+import { Dropdown } from 'semantic-ui-react'
+// import Link from 'link-react';
+import PaymentSucess from './PaymentSucess';
+// var QRCode = require('qrcode.react');
 
 //import * as BITBOXCli from "bitbox-sdk";
 
@@ -10,18 +16,33 @@ import openSocket from 'socket.io-client';
 const socket = openSocket('http://localhost:3000');
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 
+
+
+const options = [
+  { key: 1, text: 'CAD', value: 1 },
+  { key: 2, text: 'BCH', value: 2 },
+  
+]
+const styleLink = document.createElement("link");
+styleLink.rel = "stylesheet";
+styleLink.href = "https://cdn.jsdelivr.net/npm/semantic-ui/dist/semantic.min.css";
+document.head.appendChild(styleLink);
+
 export default class Customer extends React.Component {
-  constructor(props) {
-    super(props);
-    this.update = this.update.bind(this);
+  constructor() {
+    super();
     this.state = {
+      // value: '45.98',
+      // url: defaultWebURL,
       cryptoType: 'BCH',
       fiatType: 'CAD',
       cryptoAmount: 0,
-      fiatAmount: 0,
+      fiatAmount:0,
       cryptoPrice: 0,
       url: defaultWebURL,
-    };
+      visibility: false
+    }
+
   }
 
   componentDidMount() {
@@ -39,8 +60,8 @@ export default class Customer extends React.Component {
       url: data[5],
     }, () => console.log(this.state));
   }
-
   render() {
+
     return (
       <div className="cashier-page">
         <Helmet>
@@ -50,14 +71,40 @@ export default class Customer extends React.Component {
             content="Customer Page for CryptoPoS"
           />
         </Helmet>
+        {/* <button>
+          <Link to ='/PaymentSucess'></Link>
+          </button> */}
+      
         <h4>
           <b>Login</b> into cashier page is {" "}
           <span style={{ fontFamily: "monospace" }}>successful</span>. Made by Bitcoin Bay
         </h4>
-        <p>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</p>
-        <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
-        <p>$ {this.state.fiatAmount} {this.state.fiatType}</p>
-      </div>
+        {/* <h1><QRCode value="http://facebook.github.io/react/" /></h1> */}
+
+        <h3 className="heading">Please Send Your Bitcoin  To This Address</h3>
+      <article>
+      <Helmet>
+        <title>Customer POS Page</title>
+        <meta name="description" content="CashierPOS Page" />
+      </Helmet>
+      { this.state.url === ''
+        ? <QRAddress21 value={defaultWebURL} />
+        : (
+
+          <div>
+            <QRAddress21 value={this.state.url} />
+          </div>
+        )
+      }
+      <label>Equivalet in CAD</label>
+      <p>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</p>
+      <label>Denominated in</label>
+      <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
+      <p>$ {this.state.fiatAmount} {this.state.fiatType}</p>
+    </article>
+    <Dropdown selection options={options} placeholder='CAD' />
+    
+    </div>
     );
   }
 }
