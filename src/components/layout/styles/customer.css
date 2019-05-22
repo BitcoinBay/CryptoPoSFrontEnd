@@ -3,6 +3,7 @@ body{
      font-family: 'Lato', sans-serif;
      margin: 0;
      padding: 0;
+    
 }
 
 .qrcode{
@@ -10,16 +11,71 @@ body{
    width: 30px;
    font-weight: 900;
    font-size: 60px;
+   
 
 }
 
+.gen{
+    height: 232px;
+    width: 261px
+}
+
 .heading{
-    font-size: 19px;
-    padding: 50px;
+    font-size: 37px;
+    font-family: 'Lato', sans-serif;
+    /* padding: 50px; */
 
 }
 
 input{
     width: 10%;
+}
+
+.lin{
+    color: white;
+    text-align: center;
+    margin-left: -10px;
+    
+}
+
+button{
+    /* display: flex;
+    flex-direction: row; */
+    margin-left: 10px;
+}
+
+/* .wrapper{
+    margin: 0 auto;
+    width: 70%;
+    
+   
+} */
+
+
+.main{
+    margin: 0 auto;
+    width: 70%;
+}
+
+
+.bitcoin{
+    text-decoration: underline;
+}
+
+canvas{
+    height: 200px;
+    width: 200px;
+}
+
+.add{
+    font-size: 18px;
+    font-weight: bold;
+}
+
+label{
+    font-size: 15px;
+    font-weight: bold;
+    margin-top: 30px;
+    
 }
 

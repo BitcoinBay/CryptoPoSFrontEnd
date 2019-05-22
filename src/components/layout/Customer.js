@@ -16,19 +16,20 @@ import PaymentSucess from './PaymentSucess';
 const socket = openSocket('http://localhost:3000');
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 
-
-
 const options = [
   { key: 1, text: 'CAD', value: 1 },
   { key: 2, text: 'BCH', value: 2 },
   
 ]
+
 const styleLink = document.createElement("link");
 styleLink.rel = "stylesheet";
 styleLink.href = "https://cdn.jsdelivr.net/npm/semantic-ui/dist/semantic.min.css";
 document.head.appendChild(styleLink);
 
 export default class Customer extends React.Component {
+
+
   constructor() {
     super();
     this.state = {
@@ -41,16 +42,11 @@ export default class Customer extends React.Component {
       cryptoPrice: 0,
       url: defaultWebURL,
      
-    }
-    
+    } 
   }
-
-  
-
   componentDidMount() {
     socket.on('event', msg => this.update(msg));
   }
-
   update(data) {
     console.log(data);
     this.setState({
@@ -63,9 +59,8 @@ export default class Customer extends React.Component {
     }, () => console.log(this.state));
   }
   render() {
-
     return (
-      <div className="cashier-page">
+      <div className="cashier-page wrapper">
         <Helmet>
           <title>Customer Page</title>
           <meta
@@ -74,38 +69,60 @@ export default class Customer extends React.Component {
           />
         </Helmet>
        
-        <button className="btn"><Link to={"/PaymentSucess"}>Order sucess</Link></button>
-        <button className="btn"><Link to={"/cashier"}>New Order</Link></button>
-        <h4>
+        <button  className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                width: "170px",
+                borderRadius: "3px",
+                letterSpacing: "1.5px",
+                marginTop: "5rem" ,
+                textAlign:"center",
+                fontFamily: "font-family: 'Lato', sans-serif;",
+                color:"red"
+                
+              }} ><Link to={"/PaymentSucess"} className="lin">Ordersucess</Link>
+              
+              </button>
+        <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                width: "170px",
+                borderRadius: "3px",
+                letterSpacing: "1.5px",
+                marginTop: "5rem" ,
+                textAlign:"center",
+                fontFamily: "font-family: 'Lato', sans-serif;",
+                color:"red"
+                
+              }} ><Link to={"/cashier"} className="lin">New Order</Link></button>
+        {/* <h4>
           <b>Login</b> into cashier page is {" "}
           <span style={{ fontFamily: "monospace" }}>successful</span>. Made by Bitcoin Bay
-        </h4>
+        </h4> */}
         {/* <h1><QRCode value="http://facebook.github.io/react/" /></h1> */}
-
-        <h3 className="heading">Please Send Your Bitcoin  To This Address</h3>
+        <div className="main">
+        <h3 className="heading">Please Send Your <a className="bitcoin">0.3143hBCH</a> To This Address</h3>
       <article>
       <Helmet>
         <title>Customer POS Page</title>
         <meta name="description" content="CashierPOS Page" />
       </Helmet>
+      
       { this.state.url === ''
-        ? <QRAddress21 value={defaultWebURL} />
+        ? <QRAddress21 value={defaultWebURL}  />
         : (
-
           <div>
             <QRAddress21 value={this.state.url} />
           </div>
         )
       }
+      
       <label>Equivalet in CAD</label>
       <p>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</p>
       <label>Denominated in</label>
       <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
       <p>$ {this.state.fiatAmount} {this.state.fiatType}</p>
     </article>
-    <Dropdown selection options={options} placeholder='CAD' />
-    
+    <Dropdown selection options={options}  placeholder='CAD' />
     </div>
+    </div>
+    
     );
   }
 }

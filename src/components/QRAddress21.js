@@ -12,9 +12,9 @@ export default class QRAddress21 extends React.Component {
     const { value } = this.props;
 
     return(
-      <div>
-        <QRCode value={ value } />
-        <p>{ value }</p>
+      <div  >
+        <QRCode value={ value }  />
+        <p className="add">{ value }</p>
       </div>
     );
   }
