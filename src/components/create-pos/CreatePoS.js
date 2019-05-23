@@ -32,7 +32,7 @@ class CreatePoS extends Component {
             };
 
             axios.post("/api/add-pos", pos_data).then((res) => {
-
+                this.props.history.push('/dashboard');
             });
         });
     }
@@ -48,7 +48,7 @@ class CreatePoS extends Component {
                             </h4>
                         </div>
 
-                        <form novalidate onSubmit={this.onSubmit}>
+                        <form noValidate onSubmit={this.onSubmit}>
                             <div className="input-field col s12">
                                 <input id="pos_name" type="text"
                                         onChange={this.onChange}
