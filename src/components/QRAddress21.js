@@ -8,7 +8,7 @@ export default class QRAddress21 extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      size : "250"
+      size : "280"
     }
   }
   render() {

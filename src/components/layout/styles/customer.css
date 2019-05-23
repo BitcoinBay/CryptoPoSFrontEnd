@@ -39,9 +39,9 @@ input{
 }
 
 button{
-    /* display: flex;
-    flex-direction: row; */
-    margin-left: 10px;
+    display: flex;
+    flex-direction: row;
+    margin-left: 20px;
 }
 
 /* .wrapper{
@@ -57,15 +57,24 @@ button{
     width: 70%;
 }
 
+.wrap {
+    margin: 0 auto;
+    width: 70%;
+}
 
+@media (max-width:500px){
+    .wrap{
+        width: 100%;
+    }
+}
 .bitcoin{
     text-decoration: underline;
 }
 
-canvas{
+/* canvas{
     height: 200px;
     width: 200px;
-}
+} */
 
 .add{
     font-size: 18px;
@@ -83,4 +92,10 @@ label{
 canvas{
     height: 208px;
     width: 308px;
+}
+
+
+.equ{
+    margin-top: 10px;
+    color: rebeccapurple;
 }

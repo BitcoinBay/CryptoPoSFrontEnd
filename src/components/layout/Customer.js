@@ -39,7 +39,7 @@ export default class Customer extends React.Component {
       fiatType: 'CAD',
       cryptoAmount: 0,
       fiatAmount:0,
-      cryptoPrice: 0,
+      cryptoPrice: 40.30,
       url: defaultWebURL,
      
     } 
@@ -68,7 +68,7 @@ export default class Customer extends React.Component {
             content="Customer Page for CryptoPoS"
           />
         </Helmet>
-       
+       <div className= "wrap">
         <button  className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
                 width: "170px",
                 borderRadius: "3px",
@@ -76,7 +76,10 @@ export default class Customer extends React.Component {
                 marginTop: "5rem" ,
                 textAlign:"center",
                 fontFamily: "font-family: 'Lato', sans-serif;",
-                color:"red"
+                color:"red",
+                marginRight:"-15px",
+                marginLeft: "28px"
+                
                 
               }} ><Link to={"/PaymentSucess"} className="lin">Ordersucess</Link>
               
@@ -88,9 +91,13 @@ export default class Customer extends React.Component {
                 marginTop: "5rem" ,
                 textAlign:"center",
                 fontFamily: "font-family: 'Lato', sans-serif;",
-                color:"red"
+                color:"red",
+                marginRight:"-15px",
+                marginLeft: "28px"
                 
               }} ><Link to={"/cashier"} className="lin">New Order</Link></button>
+          </div>  
+
         {/* <h4>
           <b>Login</b> into cashier page is {" "}
           <span style={{ fontFamily: "monospace" }}>successful</span>. Made by Bitcoin Bay
@@ -112,9 +119,9 @@ export default class Customer extends React.Component {
           </div>
         )
       }
-      <label>Equivalet in CAD</label>
-      <p>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</p>
-      <label>Denominated in</label>
+      <label className="equ">Equivalet in CAD</label>
+      <h1>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</h1>
+      <label className="equ">Denominated in</label>
       <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
       <p>$ {this.state.fiatAmount} {this.state.fiatType}</p>
     </article>
