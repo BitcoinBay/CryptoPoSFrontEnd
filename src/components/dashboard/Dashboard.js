@@ -25,31 +25,45 @@ class Dashboard extends Component {
                 <span style={{ fontFamily: "monospace" }}>MERN</span> app 👏
               </p>
             </h4>
-            <div className="col s6">
-              <Link
-                to="/cashier"
-                style={{
-                  width: "140px",
-                  borderRadius: "3px",
-                  letterSpacing: "1.5px"
-                }}
-                className="btn btn-large waves-effect waves-light hoverable blue accent-3"
-              >
-                Cashier
-              </Link>
-            </div><div className="col s6">
-              <Link
-                to="/customer"
-                style={{
-                  width: "140px",
-                  borderRadius: "3px",
-                  letterSpacing: "1.5px"
-                }}
-                className="btn btn-large waves-effect waves-light hoverable blue accent-3"
-              >
-                Customer
-              </Link>
-            </div>
+
+            <Link
+              to = "/create-pos"
+              style={{
+                width: "180px",
+                borderRadius: "3px",
+                letterSpacing: "1.5px",
+                marginTop: "1rem"
+              }}
+              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
+            >
+              + Create PoS
+            </Link>
+
+            <Link
+              to= "/customer"
+              style={{
+                width: "150px",
+                borderRadius: "3px",
+                letterSpacing: "1.5px",
+                marginTop: "1rem"
+              }}
+              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
+            >
+              Cashier
+            </Link>
+
+            <Link
+              to = "/customer"
+              style={{
+                width: "150px",
+                borderRadius: "3px",
+                letterSpacing: "1.5px",
+                marginTop: "1rem"
+              }}
+              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
+            >
+              Customer
+            </Link>
             <button
               style={{
                 width: "150px",
