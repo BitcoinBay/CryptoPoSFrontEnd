@@ -40,7 +40,7 @@ class Dashboard extends Component {
             </Link>
 
             <Link
-              to= "/customer"
+              to= "/cashier"
               style={{
                 width: "150px",
                 borderRadius: "3px",
