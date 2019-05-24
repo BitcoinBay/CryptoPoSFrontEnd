@@ -70,7 +70,7 @@ export default class Customer extends React.Component {
         </Helmet>
        <div className= "wrap">
         <button  className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
-                width: "170px",
+                width: "200px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px",
                 marginTop: "5rem" ,
@@ -81,7 +81,7 @@ export default class Customer extends React.Component {
                 marginLeft: "28px"
                 
                 
-              }} ><Link to={"/PaymentSucess"} className="lin">Ordersucess</Link>
+              }} ><Link to={"/PaymentSucess"} className="lin">Order success</Link>
               
               </button>
         <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
