@@ -3,7 +3,7 @@ import { render } from 'react-dom';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import cashier from './Cashier';
-import './styles/customer.css'
+import './styles/customer.scss'
 export default class PaymentSucess extends React.Component{
     render(){
         return(

@@ -3,17 +3,36 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { logoutUser } from "../../actions/authActions";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
+import './style.scss';
 
 class Dashboard extends Component {
+
+  constructor() {
+    super();
+
+    this.state = {
+      user_pos_systems: []
+    };
+  }
+
+  componentDidMount() {
+    const user_data = {
+      user_id: this.props.auth.user.id
+    };
+
+    axios.post("/api/get-all-user-pos", user_data).then((res) => {
+      this.setState({ user_pos_systems: res.data });
+    });
+  }
+
   onLogoutClick = e => {
     e.preventDefault();
     this.props.logoutUser();
   };
 
   render() {
-    const { user } = this.props.auth;
-
     return (
       <div style={{ height: "75vh" }} className="container valign-wrapper">
         <div className="row">
@@ -63,10 +82,33 @@ class Dashboard extends Component {
               Logout
             </button>
           </div>
+          <div className="s12 center-align">
+            <Link
+              to = "/create-pos"
+              style={{
+                width: "210px",
+                borderRadius: "3px",
+                letterSpacing: "1.5px",
+                marginTop: "1rem"
+              }}
+              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
+            >
+              Create New PoS
+            </Link>
+          </div>
+          
+          <div className="s12 center-align" id="pos_list">
+            {
+              this.state.user_pos_systems.map((pos, i) =>
+                  <button className="btn btn-large waves-effect waves-light hoverable green accent-3" key={i}>{pos.name}</button>
+              )
+            }
+          </div>
         </div>
       </div>
     );
   }
+
 }
 
 Dashboard.propTypes = {
