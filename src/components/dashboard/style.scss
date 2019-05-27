@@ -1,10 +1,13 @@
+.btn {
+    margin: 14px;
+}
+
 #pos_list {
-    margin-top: 50px;
     display: flex;
     flex-direction: column;
     
-    button {
-        margin-bottom: 10px;
+    .btn {
+        margin-bottom: 0px;
     }
 
     .card:hover {
