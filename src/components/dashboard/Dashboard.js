@@ -38,7 +38,7 @@ class Dashboard extends Component {
         <div className="row">
           <div className="landing-copy col s12 center-align">
             <Link
-              to= "/customer"
+              to= "/cashier"
               style={{
                 width: "150px",
                 borderRadius: "3px",
