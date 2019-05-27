@@ -16,11 +16,6 @@ import PaymentSucess from './PaymentSucess';
 const socket = openSocket('http://localhost:3000');
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 
-// const options = [
-//   { key: 1, text: 'CAD', value: 1 },
-//   { key: 2, text: 'BCH', value: 2 },
-
-// ]
 
 const styleLink = document.createElement("link");
 styleLink.rel = "stylesheet";
@@ -33,8 +28,6 @@ export default class Customer extends React.Component {
   constructor() {
     super();
     this.state = {
-      // value: '45.98',
-      // url: defaultWebURL,
       cryptoType: 'BCH',
       fiatType: 'CAD',
       cryptoAmount: 0,
@@ -105,12 +98,6 @@ export default class Customer extends React.Component {
 
               }} ><Link to={"/cashier"} className="lin">New Order</Link></button>
           </div>
-
-        {/* <h4>
-          <b>Login</b> into cashier page is {" "}
-          <span style={{ fontFamily: "monospace" }}>successful</span>. Made by Bitcoin Bay
-        </h4> */}
-        {/* <h1><QRCode value="http://facebook.github.io/react/" /></h1> */}
         <div className="main">
         <h3 className="heading">Please Send Your  <h1>{this.state.fiatAmount} {this.state.cryptoType}</h1> To This Address</h3>
       <article>
@@ -129,13 +116,8 @@ export default class Customer extends React.Component {
       }
       <h3 className="equ">Equivalet in CAD</h3>
       <h1>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</h1>
-      {/* <label className="equ">Denominated in</label> */}
-      {/* <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
-      <p>$ {this.state.fiatAmount} {this.state.fiatType}</p> */}
     </article>
-    {/* <Dropdown selection options={options}  placeholder='CAD' /> */}
     <h3 className="status">Status</h3>
-    
     <button onClick={this.handleClick}>
         {this.state.isToggleuPaid ? 'UNPAID'  : 'PAID'}
       </button>
