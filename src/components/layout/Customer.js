@@ -39,7 +39,7 @@ export default class Customer extends React.Component {
       fiatType: 'CAD',
       cryptoAmount: 0,
       fiatAmount:0,
-      cryptoPrice: 40.30,
+      cryptoPrice: 0,
       url: defaultWebURL,
 
     }
@@ -47,6 +47,7 @@ export default class Customer extends React.Component {
   componentDidMount() {
     socket.on('event', msg => this.update(msg));
   }
+  
   update(data) {
     console.log(data);
     this.setState({
