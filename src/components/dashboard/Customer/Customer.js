@@ -1,7 +1,9 @@
+//const command = require("shebang!../bin/command");
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import axios from 'axios';
 import openSocket from 'socket.io-client';
+import QRAddress21 from '../QRAddress21';
 
 const BITBOXSDK = require("@chris.troutner/bitbox-js");
 
@@ -12,6 +14,8 @@ const socket = openSocket('http://localhost:3000');
 
 const api_key = '897a2b25ccd5730323919dee1201a832e5d2bb9835e6ded08dd4897f7669e8f7'
 const XPubKey = "tpubDCoP9xnjhwkwC8pT7DVSPFDgbYb2uq2UAdY2DQmk2YtBpiEY8XGtT26P6NgYyc38fiuTF9x3MAtKmuUR2HPd7qKQmAYD5NTpfVy5SzZntWN";
+const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
+
 
 export default class Cashier extends React.Component {
   constructor() {
@@ -27,7 +31,8 @@ export default class Cashier extends React.Component {
       fiatType: 'CAD',
       fiatAmount: 0,
       cryptoAmount: 0,
-      cryptoPrice: 0
+      cryptoPrice: 0,
+      url: defaultWebURL,
     }
   }
 
@@ -72,29 +77,28 @@ export default class Cashier extends React.Component {
     console.log(e.target.value);
     const jsonData = this.state.jsonData;
 
-    if (e.target.value === 'BTC' && e.target.value === 'CAD') {
-        this.setState({ cryptoType: 'BTC', cryptoPrice: jsonData.BTC.CAD}, async() => {
-          await this.calculateCryptoAmount();
-        });
-    }
-
-    if (e.target.value === 'BCH' && e.target.value === 'CAD') {
-        this.setState({ cryptoType: 'BCH', cryptoPrice: jsonData.BCH.CAD}, async() => {
-          await this.calculateCryptoAmount();
-        });
-    }
-    if (e.target.value === 'BCH' && e.target.value === 'CAD') {
-        this.setState({ cryptoType: 'ETH', cryptoPrice: jsonData.ETH.CAD}, async() => {
-          await this.calculateCryptoAmount();
-        });
+    if (e.target.value === "BTC" || e.target.value === "BCH" || e.target.value === "ETH") {
+      this.setState({ cryptoType: e.target.value, cryptoPrice: jsonData[e.target.value][this.state.fiatType]}, () => {
+        console.log(this.state);
+      });
+    } else if (e.target.value === "USD" || e.target.value === "CAD" || e.target.value === "EUR") {
+      this.setState({ fiatType: e.target.value, cryptoPrice: jsonData[this.state.cryptoType][e.target.value]}, () => {
+        console.log(this.state);
+      })
     }
   }
 
   updatePrices() {
-    axios.get(`https://min-api.cryptocompare.com/data/pricemulti?fsyms=BCH,BTC,ETH&tsyms=USD,EUR,CAD&api_key={${api_key}}`)
-      .then((res) => {
-        this.setState({ jsonData: res.data });
-      });
+    axios
+      .get('/api/datafeed')
+      .then(res => {
+        this.setState({ jsonData: res.data.status }, () => {
+          console.log(this.state.jsonData)
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      })
   }
 
   render() {
@@ -109,21 +113,114 @@ export default class Cashier extends React.Component {
         </Helmet>
         <div>
           <h3>Choose payment Option</h3>
-          <li value={this.state.cryptoType} onChange={this.toggleCryptoType}>
-            <button class="waves-effect waves-light btn" value="BTC">BTC</button>
-            <button class="waves-effect waves-light btn" value="BCH">BCH</button>
-            <button class="waves-effect waves-light btn" value="ETH">ETH</button>
+          <li value={this.state.cryptoType} onClick={this.toggleCryptoType}>
+            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                    width: "170px",
+                    borderRadius: "3px",
+                    letterSpacing: "1.5px",
+                    marginTop: "5rem" ,
+                    textAlign:"center",
+                    fontFamily: "font-family: 'Lato', sans-serif;",
+                    color:"white",
+                    marginRight:"-15px",
+                    marginLeft: "28px"
+                  }}
+                  value="BTC">BTC</button>
+            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                    width: "170px",
+                    borderRadius: "3px",
+                    letterSpacing: "1.5px",
+                    marginTop: "5rem" ,
+                    textAlign:"center",
+                    fontFamily: "font-family: 'Lato', sans-serif;",
+                    color:"white",
+                    marginRight:"-15px",
+                    marginLeft: "28px"
+                  }}
+                  value="BCH">BCH</button>
+            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                    width: "170px",
+                    borderRadius: "3px",
+                    letterSpacing: "1.5px",
+                    marginTop: "5rem" ,
+                    textAlign:"center",
+                    fontFamily: "font-family: 'Lato', sans-serif;",
+                    color:"white",
+                    marginRight:"-15px",
+                    marginLeft: "28px"
+                  }}
+                  value="ETH">ETH</button>
           </li>
-          <li value={this.state.fiatType} onChange={this.toggleCryptoType}>
-            <button className="btn white " value="BTC"><p color="black">USD</p></button>
-            <button class="waves-effect waves-light btn" value="BCH">CAD</button>
-            <button class="waves-effect waves-light btn" value="ETH">EUR</button>
+          <li value={this.state.fiatType} onClick={this.toggleCryptoType}>
+            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                    width: "170px",
+                    borderRadius: "3px",
+                    letterSpacing: "1.5px",
+                    marginTop: "5rem" ,
+                    textAlign:"center",
+                    fontFamily: "font-family: 'Lato', sans-serif;",
+                    color:"white",
+                    marginRight:"-15px",
+                    marginLeft: "28px"
+                  }}
+                  value="USD">USD</button>
+            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                    width: "170px",
+                    borderRadius: "3px",
+                    letterSpacing: "1.5px",
+                    marginTop: "5rem" ,
+                    textAlign:"center",
+                    fontFamily: "font-family: 'Lato', sans-serif;",
+                    color:"white",
+                    marginRight:"-15px",
+                    marginLeft: "28px"
+                  }}
+                  value="CAD">CAD</button>
+            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                    width: "170px",
+                    borderRadius: "3px",
+                    letterSpacing: "1.5px",
+                    marginTop: "5rem" ,
+                    textAlign:"center",
+                    fontFamily: "font-family: 'Lato', sans-serif;",
+                    color:"white",
+                    marginRight:"-15px",
+                    marginLeft: "28px"
+                  }}
+                  value="EUR">EUR</button>
           </li>
+          { this.state.url === ''
+            ? <QRAddress21 value={defaultWebURL}  />
+            : (
+              <div>
+                <QRAddress21 value={this.state.url} />
+              </div>
+            )
+          }
           <input type="text" onChange={(e) => {this.handleClick(e)}} defaultValue={1} />
-          <button class="waves-effect waves-light btn" onClick={this.updatePrices}>Update Price</button>
-          <button class="waves-effect waves-light btn" type="button" onClick={() => this.sendSocketIO([this.state.cryptoType, this.state.fiatType, this.state.cryptoAmount, this.state.fiatAmount, this.state.cryptoPrice,])}>
-            Pay Now
-          </button>
+          <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                  width: "170px",
+                  borderRadius: "3px",
+                  letterSpacing: "1.5px",
+                  marginTop: "5rem" ,
+                  textAlign:"center",
+                  fontFamily: "font-family: 'Lato', sans-serif;",
+                  color:"white",
+                  marginRight:"-15px",
+                  marginLeft: "28px"
+                }} onClick={this.updatePrices}>Update Price</button>
+          <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                  width: "170px",
+                  borderRadius: "3px",
+                  letterSpacing: "1.5px",
+                  marginTop: "5rem" ,
+                  textAlign:"center",
+                  fontFamily: "font-family: 'Lato', sans-serif;",
+                  color:"white",
+                  marginRight:"-15px",
+                  marginLeft: "28px"
+                }}
+                  type="button" onClick={() => this.sendSocketIO([this.state.cryptoType, this.state.fiatType, this.state.cryptoAmount, this.state.fiatAmount, this.state.cryptoPrice,])}>Pay Now</button>
           <p>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</p>
           <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
           <p>$ {this.state.fiatAmount} {this.state.fiatType}</p>
