@@ -37,6 +37,7 @@ class Dashboard extends Component {
       <div style={{ height: "75vh" }} className="container valign-wrapper">
         <div className="row">
           <div className="landing-copy col s12 center-align">
+<<<<<<< HEAD
             <h4>
               {/* <b>Hey there,</b> {user.name.split(" ")[0]} */}
               <p className="flow-text grey-text text-darken-1">
@@ -69,6 +70,33 @@ class Dashboard extends Component {
                 Customer
               </Link>
             </div>
+=======
+            <Link
+              to= "/cashier"
+              style={{
+                width: "150px",
+                borderRadius: "3px",
+                letterSpacing: "1.5px",
+                marginTop: "1rem"
+              }}
+              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
+            >
+              Cashier
+            </Link>
+
+            <Link
+              to = "/customer"
+              style={{
+                width: "150px",
+                borderRadius: "3px",
+                letterSpacing: "1.5px",
+                marginTop: "1rem"
+              }}
+              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
+            >
+              Customer
+            </Link>
+>>>>>>> 85f57fe7eea587ea04da2fbf84f451616e98fd5a
             <button
               style={{
                 width: "150px",

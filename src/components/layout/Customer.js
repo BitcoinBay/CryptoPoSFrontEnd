@@ -1,8 +1,13 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import openSocket from 'socket.io-client';
+<<<<<<< HEAD
 import './styles/customer.scss'
 import  QRAddress21 from './../QRAddress21';
+=======
+import './styles/customer.css'
+import  QRAddress21 from '../QRAddress21';
+>>>>>>> 85f57fe7eea587ea04da2fbf84f451616e98fd5a
 import { Dropdown } from 'semantic-ui-react'
 import { Link } from 'react-router-dom';
 import PaymentSucess from './PaymentSucess';
@@ -19,7 +24,7 @@ const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 const options = [
   { key: 1, text: 'CAD', value: 1 },
   { key: 2, text: 'BCH', value: 2 },
-  
+
 ]
 
 const styleLink = document.createElement("link");
@@ -41,8 +46,8 @@ export default class Customer extends React.Component {
       fiatAmount:0,
       cryptoPrice: 40.30,
       url: defaultWebURL,
-     
-    } 
+
+    }
   }
   componentDidMount() {
     socket.on('event', msg => this.update(msg));
@@ -79,10 +84,17 @@ export default class Customer extends React.Component {
                 color:"red",
                 marginRight:"-15px",
                 marginLeft: "28px"
+<<<<<<< HEAD
                 
                 
               }} ><Link to={"/PaymentSucess"} className="lin">Order success</Link>
               
+=======
+
+
+              }} ><Link to={"/PaymentSucess"} className="lin">Ordersucess</Link>
+
+>>>>>>> 85f57fe7eea587ea04da2fbf84f451616e98fd5a
               </button>
         <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
                 width: "170px",
@@ -94,9 +106,9 @@ export default class Customer extends React.Component {
                 color:"red",
                 marginRight:"-15px",
                 marginLeft: "28px"
-                
+
               }} ><Link to={"/cashier"} className="lin">New Order</Link></button>
-          </div>  
+          </div>
 
         {/* <h4>
           <b>Login</b> into cashier page is {" "}
@@ -110,7 +122,7 @@ export default class Customer extends React.Component {
         <title>Customer POS Page</title>
         <meta name="description" content="CashierPOS Page" />
       </Helmet>
-      
+
       { this.state.url === ''
         ? <QRAddress21 value={defaultWebURL}  />
         : (
@@ -128,7 +140,7 @@ export default class Customer extends React.Component {
     <Dropdown selection options={options}  placeholder='CAD' />
     </div>
     </div>
-    
+
     );
   }
 }
