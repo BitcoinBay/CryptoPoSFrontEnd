@@ -189,15 +189,7 @@ export default class Cashier extends React.Component {
                   }}
                   value="EUR">EUR</button>
           </li>
-<<<<<<< HEAD
-          Amount:
-          <input type="text" onChange={(e) => {this.handleClick(e)}} defaultValue={1} />
-
-          <button class="waves-effect waves-light btn" onClick={this.updatePrices}>Confirm Amount</button> 
-          <button class="waves-effect waves-light btn" type="button" onClick={() => this.sendSocketIO([this.state.cryptoType, this.state.fiatType, this.state.cryptoAmount, this.state.fiatAmount, this.state.cryptoPrice,])}>
-            Pay Now
-          </button>
-=======
+          
           { this.state.url === ''
             ? <QRAddress21 value={defaultWebURL}  />
             : (
