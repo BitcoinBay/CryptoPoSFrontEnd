@@ -34,34 +34,9 @@ class Dashboard extends Component {
 
   render() {
     return (
-      <div style={{ height: "75vh" }} className="container valign-wrapper">
+      <div style={{ height: "75vh" }} className="container ">
         <div className="row">
           <div className="landing-copy col s12 center-align">
-            <Link
-              to= "/cashier"
-              style={{
-                width: "150px",
-                borderRadius: "3px",
-                letterSpacing: "1.5px",
-                marginTop: "1rem"
-              }}
-              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
-            >
-              Cashier
-            </Link>
-
-            <Link
-              to = "/customer"
-              style={{
-                width: "150px",
-                borderRadius: "3px",
-                letterSpacing: "1.5px",
-                marginTop: "1rem"
-              }}
-              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
-            >
-              Customer
-            </Link>
             <button
               style={{
                 width: "150px",
@@ -74,6 +49,9 @@ class Dashboard extends Component {
             >
               Logout
             </button>
+          </div>
+          <div className="col s12">
+            <hr/>
           </div>
           <div className="s12 center-align">
             <Link
@@ -90,10 +68,13 @@ class Dashboard extends Component {
             </Link>
           </div>
           
-          <div className="s12 center-align" id="pos_list">
+          <div className="col s4 offset-s4 center-align" id="pos_list">
             {
               this.state.user_pos_systems.map((pos, i) =>
-                  <button className="btn btn-large waves-effect waves-light hoverable green accent-3" key={i}>{pos.name}</button>
+                  <Link to={{ pathname: "/pos-dashboard", query: pos._id }}
+                      className="btn btn-large waves-effect waves-light hoverable
+                          green accent-3"
+                      key={i}>{pos.name}</Link>
               )
             }
           </div>
