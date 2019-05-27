@@ -112,7 +112,7 @@ export default class Customer extends React.Component {
         </h4> */}
         {/* <h1><QRCode value="http://facebook.github.io/react/" /></h1> */}
         <div className="main">
-        <h3 className="heading">Please Send Your <a className="bitcoin">0.3143hBCH</a> To This Address</h3>
+        <h3 className="heading">Please Send Your  <h1>{this.state.fiatAmount} {this.state.cryptoType}</h1> To This Address</h3>
       <article>
       <Helmet>
         <title>Customer POS Page</title>
