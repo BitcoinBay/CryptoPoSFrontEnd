@@ -77,22 +77,14 @@ export default class Cashier extends React.Component {
     console.log(e.target.value);
     const jsonData = this.state.jsonData;
 
-    if (e.target.value === 'BTC' && e.target.value === 'CAD') {
-        this.setState({ cryptoType: 'BTC', cryptoPrice: jsonData.BTC.CAD}, async() => {
-          await this.calculateCryptoAmount();
-        });
-    }
-
-    if (e.target.value === 'BCH' && e.target.value === 'CAD') {
-        this.setState({ cryptoType: 'BCH', cryptoPrice: jsonData.BCH.CAD}, async() => {
-          await this.calculateCryptoAmount();
-        });
-    }
-
-    if (e.target.value === 'BCH' && e.target.value === 'CAD') {
-        this.setState({ cryptoType: 'ETH', cryptoPrice: jsonData.ETH.CAD}, async() => {
-          await this.calculateCryptoAmount();
-        });
+    if (e.target.value === "BTC" || e.target.value === "BCH" || e.target.value === "ETH") {
+      this.setState({ cryptoType: e.target.value, cryptoPrice: jsonData[e.target.value][this.state.fiatType]}, () => {
+        console.log(this.state);
+      });
+    } else if (e.target.value === "USD" || e.target.value === "CAD" || e.target.value === "EUR") {
+      this.setState({ fiatType: e.target.value, cryptoPrice: jsonData[this.state.cryptoType][e.target.value]}, () => {
+        console.log(this.state);
+      })
     }
   }
 
@@ -121,7 +113,7 @@ export default class Cashier extends React.Component {
         </Helmet>
         <div>
           <h3>Choose payment Option</h3>
-          <li value={this.state.cryptoType} onChange={this.toggleCryptoType}>
+          <li value={this.state.cryptoType} onClick={this.toggleCryptoType}>
             <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
                     width: "170px",
                     borderRadius: "3px",
@@ -159,7 +151,7 @@ export default class Cashier extends React.Component {
                   }}
                   value="ETH">ETH</button>
           </li>
-          <li value={this.state.fiatType} onChange={this.toggleCryptoType}>
+          <li value={this.state.fiatType} onClick={this.toggleCryptoType}>
             <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
                     width: "170px",
                     borderRadius: "3px",
