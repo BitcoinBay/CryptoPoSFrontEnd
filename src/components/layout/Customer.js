@@ -16,11 +16,11 @@ import PaymentSucess from './PaymentSucess';
 const socket = openSocket('http://localhost:3000');
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 
-const options = [
-  { key: 1, text: 'CAD', value: 1 },
-  { key: 2, text: 'BCH', value: 2 },
+// const options = [
+//   { key: 1, text: 'CAD', value: 1 },
+//   { key: 2, text: 'BCH', value: 2 },
 
-]
+// ]
 
 const styleLink = document.createElement("link");
 styleLink.rel = "stylesheet";
@@ -41,9 +41,19 @@ export default class Customer extends React.Component {
       fiatAmount:0,
       cryptoPrice: 40.30,
       url: defaultWebURL,
+      isTogglePaid: true,
 
     }
+    // This binding is necessary to make `this` work in the callback
+    this.handleClick = this.handleClick.bind(this);
   }
+
+  handleClick() {
+		this.setState(function(prevState) {
+			return {isTogglePaid: !prevState.isTogglePaid};
+		});
+  }
+  
   componentDidMount() {
     socket.on('event', msg => this.update(msg));
   }
@@ -119,13 +129,18 @@ export default class Customer extends React.Component {
           </div>
         )
       }
-      <label className="equ">Equivalet in CAD</label>
+      <h3 className="equ">Equivalet in CAD</h3>
       <h1>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</h1>
-      <label className="equ">Denominated in</label>
-      <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
-      <p>$ {this.state.fiatAmount} {this.state.fiatType}</p>
+      {/* <label className="equ">Denominated in</label> */}
+      {/* <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
+      <p>$ {this.state.fiatAmount} {this.state.fiatType}</p> */}
     </article>
-    <Dropdown selection options={options}  placeholder='CAD' />
+    {/* <Dropdown selection options={options}  placeholder='CAD' /> */}
+    <h3 className="status">Status</h3>
+    
+    <button onClick={this.handleClick}>
+        {this.state.isTogglePaid ? 'PAID' : 'UNPAID'}
+      </button>
     </div>
     </div>
 
