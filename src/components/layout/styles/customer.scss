@@ -53,14 +53,15 @@ button{
 
 
 .main{
-    margin: 0 auto;
-    width: 70%;
+    // margin: 0 auto;
+    // width: 70%;
+    margin-left: 20px;
 }
 
-.wrap {
-    margin: 0 auto;
-    width: 30%;
-}
+// .wrap {
+//     margin: 0 auto;
+//     width: 30%;
+// }
 
 @media (max-width:500px){
     .wrap{
