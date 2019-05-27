@@ -21,12 +21,16 @@ body{
 }
 
 .heading{
-    font-size: 20px;
+    font-size: 30px;
     font-family: 'Lato', sans-serif;
     /* padding: 50px; */
+    margin-bottom: -4px;
 
 }
-
+.sen{
+    margin-top: -10px;
+    font-size: 30px;
+}
 input{
     width: 10%;
 }
@@ -41,7 +45,7 @@ input{
 button{
     display: flex;
     flex-direction: row;
-    margin-left: 20px;
+    // margin-left: 20px;
     color: black;
     background-color: white;
     padding: 10px;
@@ -51,24 +55,28 @@ button{
     // margin-left: 30px;
 }
 
-/* .wrapper{
+ .wrapper{
     margin: 0 auto;
-    width: 70%;
+    width: 40%; 
+} 
+
+.amt{
+    text-decoration: underline;
+    margin-top: 0;
     
-   
-} */
-
-
-.main{
-    // margin: 0 auto;
-    // width: 70%;
-    margin-left: 20px;
 }
 
-// .wrap {
-//     margin: 0 auto;
-//     width: 30%;
-// }
+.main{
+    margin: 0 auto;
+    width: 70%;
+    // margin-left: 20px;
+}
+
+.wrap {
+    margin: 0 auto;
+    width: 75%;
+    margin-bottom: 40px;
+}
 
 @media (max-width:500px){
     .wrap{

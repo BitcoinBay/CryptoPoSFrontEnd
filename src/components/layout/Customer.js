@@ -99,7 +99,9 @@ export default class Customer extends React.Component {
               }} ><Link to={"/cashier"} className="lin">New Order</Link></button>
           </div>
         <div className="main">
-        <h3 className="heading">Please Send Your  <h1>{this.state.fiatAmount} {this.state.cryptoType}</h1> To This Address</h3>
+        <p className="heading">Please Send </p>
+        <h1 className="amt">Your {this.state.fiatAmount} {this.state.cryptoType}</h1> 
+        <p className="sen">To This Address</p>
       <article>
       <Helmet>
         <title>Customer POS Page</title>
