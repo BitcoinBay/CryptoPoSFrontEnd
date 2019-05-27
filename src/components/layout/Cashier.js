@@ -1,22 +1,15 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import axios from 'axios';
-import openSocket from 'socket.io-client';
 
 //import * as BITBOXCli from "bitbox-sdk";
 
 // initialize BITBOX
 //const BITBOX = new BITBOXCli.default({ restURL: "https://trest.bitcoin.com/v2/" });
 
-const socket = openSocket('http://localhost:3000');
 var QRCode = require('qrcode.react');
 
 
 export default class Cashier extends React.Component {
-  constructor() {
-    super();
-  }
-
   render() {
     return(
       <div className="cashier-page">
