@@ -1,13 +1,8 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import openSocket from 'socket.io-client';
-<<<<<<< HEAD
 import './styles/customer.scss'
-import  QRAddress21 from './../QRAddress21';
-=======
-import './styles/customer.css'
 import  QRAddress21 from '../QRAddress21';
->>>>>>> 85f57fe7eea587ea04da2fbf84f451616e98fd5a
 import { Dropdown } from 'semantic-ui-react'
 import { Link } from 'react-router-dom';
 import PaymentSucess from './PaymentSucess';
@@ -84,17 +79,7 @@ export default class Customer extends React.Component {
                 color:"red",
                 marginRight:"-15px",
                 marginLeft: "28px"
-<<<<<<< HEAD
-                
-                
-              }} ><Link to={"/PaymentSucess"} className="lin">Order success</Link>
-              
-=======
-
-
               }} ><Link to={"/PaymentSucess"} className="lin">Ordersucess</Link>
-
->>>>>>> 85f57fe7eea587ea04da2fbf84f451616e98fd5a
               </button>
         <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
                 width: "170px",
