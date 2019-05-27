@@ -120,8 +120,10 @@ export default class Cashier extends React.Component {
             <button class="waves-effect waves-light btn" value="BCH">CAD</button>
             <button class="waves-effect waves-light btn" value="ETH">EUR</button>
           </li>
+          Amount:
           <input type="text" onChange={(e) => {this.handleClick(e)}} defaultValue={1} />
-          <button class="waves-effect waves-light btn" onClick={this.updatePrices}>Update Price</button>
+
+          <button class="waves-effect waves-light btn" onClick={this.updatePrices}>Confirm Amount</button> 
           <button class="waves-effect waves-light btn" type="button" onClick={() => this.sendSocketIO([this.state.cryptoType, this.state.fiatType, this.state.cryptoAmount, this.state.fiatAmount, this.state.cryptoPrice,])}>
             Pay Now
           </button>
