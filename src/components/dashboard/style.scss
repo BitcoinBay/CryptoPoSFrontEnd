@@ -1,0 +1,13 @@
+#pos_list {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    
+    button {
+        margin-bottom: 10px;
+    }
+
+    .card:hover {
+        background: #e0e0e0;
+    }
+}
