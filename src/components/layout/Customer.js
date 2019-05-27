@@ -39,7 +39,7 @@ export default class Customer extends React.Component {
       fiatType: 'CAD',
       cryptoAmount: 0,
       fiatAmount:0,
-      cryptoPrice: 40.30,
+      cryptoPrice: 0,
       url: defaultWebURL,
       isToggleuPaid: true,
 
@@ -57,6 +57,7 @@ export default class Customer extends React.Component {
   componentDidMount() {
     socket.on('event', msg => this.update(msg));
   }
+  
   update(data) {
     console.log(data);
     this.setState({
@@ -89,10 +90,7 @@ export default class Customer extends React.Component {
                 color:"red",
                 marginRight:"-15px",
                 marginLeft: "28px"
-
-
               }} ><Link to={"/PaymentSucess"} className="lin">Ordersucess</Link>
-
               </button>
         <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
                 width: "170px",

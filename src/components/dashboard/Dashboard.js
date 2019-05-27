@@ -89,7 +89,7 @@ class Dashboard extends Component {
               Create New PoS
             </Link>
           </div>
-          
+
           <div className="s12 center-align" id="pos_list">
             {
               this.state.user_pos_systems.map((pos, i) =>
