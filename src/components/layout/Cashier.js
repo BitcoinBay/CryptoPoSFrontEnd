@@ -56,10 +56,14 @@ export default class Cashier extends React.Component {
 
   calculateCryptoAmount() {
     let cryptoAmount = this.state.fiatAmount / this.state.cryptoPrice;
-    if (this.state.cryptoPrice * cryptoAmount === this.state.fiatAmount) {
-      this.setState({ cryptoAmount: cryptoAmount }, () => {
+    if (this.state.cryptoType === "ETH") {
+      this.setState({ cryptoAmount: cryptoAmount.toFixed(18) }, () => {
         this.generateAddress();
       });
+    } else {
+      this.setState({ cryptoAmount: cryptoAmount.toFixed(8) }, () => {
+        this.generateAddress();
+      })
     }
   }
 
@@ -70,10 +74,11 @@ export default class Cashier extends React.Component {
       this.setState({ fiatAmount: 0 }, async() => {
         await this.calculateCryptoAmount();
       });
+    } else {
+      this.setState({ fiatAmount: payAmount }, async() => {
+        await this.calculateCryptoAmount();
+      });
     }
-    this.setState({ fiatAmount: payAmount }, async() => {
-      await this.calculateCryptoAmount();
-    });
   }
 
   sendSocketIO(msg) {
@@ -103,7 +108,8 @@ export default class Cashier extends React.Component {
       .get('/api/datafeed')
       .then(res => {
         this.setState({ jsonData: res.data.status }, () => {
-          console.log(this.state.jsonData)
+          console.log(this.state.jsonData);
+          this.setState({ cryptoPrice: res.data.status[this.state.cryptoType][this.state.fiatType]});
         });
       })
       .catch(err => {
@@ -112,7 +118,6 @@ export default class Cashier extends React.Component {
   }
 
   render() {
-
     return(
         <div className="feature-page">
         <Helmet>

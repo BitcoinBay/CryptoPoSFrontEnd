@@ -47,7 +47,7 @@ export default class Customer extends React.Component {
   componentDidMount() {
     socket.on('event', msg => this.update(msg));
   }
-  
+
   update(data) {
     console.log(data);
     this.setState({
