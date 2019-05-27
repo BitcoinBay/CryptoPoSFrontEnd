@@ -41,7 +41,7 @@ export default class Customer extends React.Component {
       fiatAmount:0,
       cryptoPrice: 40.30,
       url: defaultWebURL,
-      isTogglePaid: true,
+      isToggleuPaid: true,
 
     }
     // This binding is necessary to make `this` work in the callback
@@ -50,7 +50,7 @@ export default class Customer extends React.Component {
 
   handleClick() {
 		this.setState(function(prevState) {
-			return {isTogglePaid: !prevState.isTogglePaid};
+			return {isToggleuPaid: !prevState.isToggleuPaid};
 		});
   }
   
@@ -139,7 +139,7 @@ export default class Customer extends React.Component {
     <h3 className="status">Status</h3>
     
     <button onClick={this.handleClick}>
-        {this.state.isTogglePaid ? 'PAID' : 'UNPAID'}
+        {this.state.isToggleuPaid ? 'UNPAID'  : 'PAID'}
       </button>
     </div>
     </div>
