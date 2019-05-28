@@ -6,7 +6,6 @@ import  QRAddress21 from '../QRAddress21';
 import { Dropdown } from 'semantic-ui-react'
 import { Link } from 'react-router-dom';
 import PaymentSucess from './PaymentSucess';
-// var QRCode = require('qrcode.react');
 
 //import * as BITBOXCli from "bitbox-sdk";
 
@@ -46,7 +45,7 @@ export default class Customer extends React.Component {
 			return {isToggleuPaid: !prevState.isToggleuPaid};
 		});
   }
-  
+
   componentDidMount() {
     socket.on('event', msg => this.update(msg));
   }
