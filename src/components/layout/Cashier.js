@@ -33,6 +33,7 @@ export default class Cashier extends React.Component {
       cryptoAmount: 0,
       cryptoPrice: 0,
       url: defaultWebURL,
+      utxo: null
     }
   }
 
