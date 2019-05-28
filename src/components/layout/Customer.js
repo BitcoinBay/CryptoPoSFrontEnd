@@ -107,7 +107,6 @@ export default class Customer extends React.Component {
         <title>Customer POS Page</title>
         <meta name="description" content="CashierPOS Page" />
       </Helmet>
-
       { this.state.url === ''
         ? <QRAddress21 value={defaultWebURL}  />
         : (
