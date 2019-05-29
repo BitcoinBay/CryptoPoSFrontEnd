@@ -33,6 +33,10 @@ export default class Cashier extends React.Component {
       cryptoAmount: 0,
       cryptoPrice: 0,
       url: defaultWebURL,
+      utxo: null,
+      pos_id: null,
+      pos_xpub_address: null,
+      pos_name: null
     }
   }
 
@@ -41,6 +45,17 @@ export default class Cashier extends React.Component {
     setInterval(() => {
       this.updatePrices();
     }, 600000);
+
+    this.setState({ pos_id: this.props.location.query }, () => {
+      const pos_data = {
+        pos_id: this.state.pos_id
+      };
+
+      axios.post("/api/get-pos-xpub", pos_data).then((res) => {
+        console.log(res.data);
+        this.setState({ pos_xpub_address: res.data.address });
+      });
+    });
   }
 
   generateAddress() {
@@ -56,10 +71,14 @@ export default class Cashier extends React.Component {
 
   calculateCryptoAmount() {
     let cryptoAmount = this.state.fiatAmount / this.state.cryptoPrice;
-    if (this.state.cryptoPrice * cryptoAmount === this.state.fiatAmount) {
-      this.setState({ cryptoAmount: cryptoAmount }, () => {
+    if (this.state.cryptoType === "ETH") {
+      this.setState({ cryptoAmount: cryptoAmount.toFixed(18) }, () => {
         this.generateAddress();
       });
+    } else {
+      this.setState({ cryptoAmount: cryptoAmount.toFixed(8) }, () => {
+        this.generateAddress();
+      })
     }
   }
 
@@ -70,10 +89,11 @@ export default class Cashier extends React.Component {
       this.setState({ fiatAmount: 0 }, async() => {
         await this.calculateCryptoAmount();
       });
+    } else {
+      this.setState({ fiatAmount: payAmount }, async() => {
+        await this.calculateCryptoAmount();
+      });
     }
-    this.setState({ fiatAmount: payAmount }, async() => {
-      await this.calculateCryptoAmount();
-    });
   }
 
   sendSocketIO(msg) {
@@ -103,7 +123,8 @@ export default class Cashier extends React.Component {
       .get('/api/datafeed')
       .then(res => {
         this.setState({ jsonData: res.data.status }, () => {
-          console.log(this.state.jsonData)
+          console.log(this.state.jsonData);
+          this.setState({ cryptoPrice: res.data.status[this.state.cryptoType][this.state.fiatType]});
         });
       })
       .catch(err => {
@@ -112,7 +133,6 @@ export default class Cashier extends React.Component {
   }
 
   render() {
-
     return(
         <div className="feature-page">
         <Helmet>
@@ -124,27 +144,83 @@ export default class Cashier extends React.Component {
         </Helmet>
         <div className="center">
           <h3>Choose payment Option</h3>
-          
-          <h4 class="textAlignCurrency">Crypto Currencies</h4>
-         <div  value={this.state.cryptoType} onClick={this.toggleCryptoType}>
-           <button class="buttonCurrency btn btn-large waves-effect waves-light hoverable blue accent-3"
-                 value="BTC">BTC</button>
-           <button class="buttonCurrency btn btn-large waves-effect waves-light hoverable blue accent-3"
-                 value="BCH">BCH</button>
-           <button class="buttonCurrency btn btn-large waves-effect waves-light hoverable blue accent-3"
-                 value="ETH">ETH</button>
-         </div>
-
-         <h4 class="textAlignCurrency">Fiat Currencies</h4>
-         <div value={this.state.fiatType} onClick={this.toggleCryptoType}>
-           <button class="buttonCurrency btn btn-large waves-effect waves-light hoverable blue accent-3"
-                 value="USD">USD</button>
-           <button class="buttonCurrency btn btn-large waves-effect waves-light hoverable blue accent-3"
-                 value="CAD">CAD</button>
-           <button class="buttonCurrency btn btn-large waves-effect waves-light hoverable blue accent-3"
-                 value="EUR">EUR</button>
-         </div>
-
+          <h4>PoS XPub: {this.state.pos_xpub_address}</h4>
+          <li value={this.state.cryptoType} onClick={this.toggleCryptoType}>
+            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                    width: "170px",
+                    borderRadius: "3px",
+                    letterSpacing: "1.5px",
+                    marginTop: "5rem" ,
+                    textAlign:"center",
+                    fontFamily: "font-family: 'Lato', sans-serif;",
+                    color:"white",
+                    marginRight:"-15px",
+                    marginLeft: "28px"
+                  }}
+                  value="BTC">BTC</button>
+            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                    width: "170px",
+                    borderRadius: "3px",
+                    letterSpacing: "1.5px",
+                    marginTop: "5rem" ,
+                    textAlign:"center",
+                    fontFamily: "font-family: 'Lato', sans-serif;",
+                    color:"white",
+                    marginRight:"-15px",
+                    marginLeft: "28px"
+                  }}
+                  value="BCH">BCH</button>
+            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                    width: "170px",
+                    borderRadius: "3px",
+                    letterSpacing: "1.5px",
+                    marginTop: "5rem" ,
+                    textAlign:"center",
+                    fontFamily: "font-family: 'Lato', sans-serif;",
+                    color:"white",
+                    marginRight:"-15px",
+                    marginLeft: "28px"
+                  }}
+                  value="ETH">ETH</button>
+          </li>
+          <li value={this.state.fiatType} onClick={this.toggleCryptoType}>
+            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                    width: "170px",
+                    borderRadius: "3px",
+                    letterSpacing: "1.5px",
+                    marginTop: "5rem" ,
+                    textAlign:"center",
+                    fontFamily: "font-family: 'Lato', sans-serif;",
+                    color:"white",
+                    marginRight:"-15px",
+                    marginLeft: "28px"
+                  }}
+                  value="USD">USD</button>
+            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                    width: "170px",
+                    borderRadius: "3px",
+                    letterSpacing: "1.5px",
+                    marginTop: "5rem" ,
+                    textAlign:"center",
+                    fontFamily: "font-family: 'Lato', sans-serif;",
+                    color:"white",
+                    marginRight:"-15px",
+                    marginLeft: "28px"
+                  }}
+                  value="CAD">CAD</button>
+            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                    width: "170px",
+                    borderRadius: "3px",
+                    letterSpacing: "1.5px",
+                    marginTop: "5rem" ,
+                    textAlign:"center",
+                    fontFamily: "font-family: 'Lato', sans-serif;",
+                    color:"white",
+                    marginRight:"-15px",
+                    marginLeft: "28px"
+                  }}
+                  value="EUR">EUR</button>
+          </li>
           { this.state.url === ''
             ? <QRAddress21 value={defaultWebURL}  />
             : (
