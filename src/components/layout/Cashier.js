@@ -14,7 +14,10 @@ const BITBOX = new BITBOXSDK({ restURL: "https://trest.bitcoin.com/v2/" });
 
 const socket = openSocket('http://localhost:3000');
 
+<<<<<<< HEAD
 //const api_key = '897a2b25ccd5730323919dee1201a832e5d2bb9835e6ded08dd4897f7669e8f7'
+=======
+>>>>>>> a0736215078d2f739d630827b024472f4228a969
 const XPubKey = "tpubDCoP9xnjhwkwC8pT7DVSPFDgbYb2uq2UAdY2DQmk2YtBpiEY8XGtT26P6NgYyc38fiuTF9x3MAtKmuUR2HPd7qKQmAYD5NTpfVy5SzZntWN";
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 
@@ -36,6 +39,10 @@ export default class Cashier extends React.Component {
       cryptoAmount: 0,
       cryptoPrice: 0,
       url: defaultWebURL,
+      utxo: null,
+      pos_id: null,
+      pos_xpub_address: null,
+      pos_name: null
     }
   }
 
@@ -44,6 +51,28 @@ export default class Cashier extends React.Component {
     setInterval(() => {
       this.updatePrices();
     }, 600000);
+
+    this.setState({ pos_id: this.props.location.query }, () => {
+      const pos_data = {
+        pos_id: this.state.pos_id
+      };
+
+      axios.post("/api/get-pos-xpub", pos_data).then((res) => {
+        console.log(res.data);
+        this.setState({ pos_xpub_address: res.data.address });
+      });
+    });
+  }
+
+  generateAddress() {
+    let options = {
+      amount: this.state.cryptoAmount,
+      label: '#BitcoinBay',
+    };
+    let XPubAddress = BITBOX.Address.fromXPub(XPubKey, "0/0");
+    let payQRAddress21 = BITBOX.BitcoinCash.encodeBIP21(XPubAddress, options);
+    console.log(payQRAddress21)
+    this.setState({ url: payQRAddress21 });
   }
 
   generateAddress() {
@@ -59,10 +88,21 @@ export default class Cashier extends React.Component {
 
   calculateCryptoAmount() {
     let cryptoAmount = this.state.fiatAmount / this.state.cryptoPrice;
+<<<<<<< HEAD
     if (this.state.cryptoPrice * cryptoAmount === this.state.fiatAmount) {
       this.setState({ cryptoAmount: cryptoAmount }, () => {
         this.generateAddress();
       });
+=======
+    if (this.state.cryptoType === "ETH") {
+      this.setState({ cryptoAmount: cryptoAmount.toFixed(18) }, () => {
+        this.generateAddress();
+      });
+    } else {
+      this.setState({ cryptoAmount: cryptoAmount.toFixed(8) }, () => {
+        this.generateAddress();
+      })
+>>>>>>> a0736215078d2f739d630827b024472f4228a969
     }
   }
 
@@ -73,10 +113,11 @@ export default class Cashier extends React.Component {
       this.setState({ fiatAmount: 0 }, async() => {
         await this.calculateCryptoAmount();
       });
+    } else {
+      this.setState({ fiatAmount: payAmount }, async() => {
+        await this.calculateCryptoAmount();
+      });
     }
-    this.setState({ fiatAmount: payAmount }, async() => {
-      await this.calculateCryptoAmount();
-    });
   }
 
   sendSocketIO(msg) {
@@ -92,10 +133,12 @@ export default class Cashier extends React.Component {
     if (e.target.value === "BTC" || e.target.value === "BCH" || e.target.value === "ETH") {
       this.setState({ cryptoType: e.target.value, cryptoPrice: jsonData[e.target.value][this.state.fiatType]}, () => {
         console.log(this.state);
+        this.calculateCryptoAmount();
       });
     } else if (e.target.value === "USD" || e.target.value === "CAD" || e.target.value === "EUR") {
       this.setState({ fiatType: e.target.value, cryptoPrice: jsonData[this.state.cryptoType][e.target.value]}, () => {
         console.log(this.state);
+        this.calculateCryptoAmount();
       })
     }
   }
@@ -105,7 +148,8 @@ export default class Cashier extends React.Component {
       .get('/api/datafeed')
       .then(res => {
         this.setState({ jsonData: res.data.status }, () => {
-          console.log(this.state.jsonData)
+          console.log(this.state.jsonData);
+          this.setState({ cryptoPrice: res.data.status[this.state.cryptoType][this.state.fiatType]});
         });
       })
       .catch(err => {
@@ -123,12 +167,30 @@ export default class Cashier extends React.Component {
             content="Feature page of React.js Boilerplate application"
           />
         </Helmet>
+<<<<<<< HEAD
         <div class="center">
           <h2>Choose payment Option</h2>
 
           <h4 class="textAlignCurrency">Crypto Currencies</h4>
           <div  value={this.state.cryptoType} onClick={this.toggleCryptoType}>
             <button class="buttonCurrency btn btn-large waves-effect waves-light hoverable blue accent-3" 
+=======
+        <div>
+          <h3>Choose payment Option</h3>
+          <h4>PoS XPub: {this.state.pos_xpub_address}</h4>
+          <li value={this.state.cryptoType} onClick={this.toggleCryptoType}>
+            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                    width: "170px",
+                    borderRadius: "3px",
+                    letterSpacing: "1.5px",
+                    marginTop: "5rem" ,
+                    textAlign:"center",
+                    fontFamily: "font-family: 'Lato', sans-serif;",
+                    color:"white",
+                    marginRight:"-15px",
+                    marginLeft: "28px"
+                  }}
+>>>>>>> a0736215078d2f739d630827b024472f4228a969
                   value="BTC">BTC</button>
             <button class="buttonCurrency btn btn-large waves-effect waves-light hoverable blue accent-3" 
                   value="BCH">BCH</button>
@@ -186,7 +248,7 @@ export default class Cashier extends React.Component {
                   marginRight:"-15px",
                   marginLeft: "28px"
                 }}
-                  type="button" onClick={() => this.sendSocketIO([this.state.cryptoType, this.state.fiatType, this.state.cryptoAmount, this.state.fiatAmount, this.state.cryptoPrice,])}>Pay Now</button>
+                  type="button" onClick={() => this.sendSocketIO([this.state.cryptoType, this.state.fiatType, this.state.cryptoAmount, this.state.fiatAmount, this.state.cryptoPrice, this.state.url])}>Pay Now</button>
           <p>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</p>
           <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
           <p>$ {this.state.fiatAmount} {this.state.fiatType}</p>

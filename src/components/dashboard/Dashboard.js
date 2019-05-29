@@ -34,9 +34,10 @@ class Dashboard extends Component {
 
   render() {
     return (
-      <div style={{ height: "75vh" }} className="container valign-wrapper">
+      <div style={{ height: "75vh" }} className="container ">
         <div className="row">
           <div className="landing-copy col s12 center-align">
+<<<<<<< HEAD
             <Link
               to= "/cashier"
               style={{
@@ -63,18 +64,24 @@ class Dashboard extends Component {
               Customer
             </Link>
 >>>>>>> 85f57fe7eea587ea04da2fbf84f451616e98fd5a
+=======
+>>>>>>> a0736215078d2f739d630827b024472f4228a969
             <button
               style={{
                 width: "150px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px",
-                marginTop: "1rem"
+                marginTop: "1rem",
+                margin: '14px'
               }}
               onClick={this.onLogoutClick}
               className="btn btn-large waves-effect waves-light hoverable blue accent-3"
             >
               Logout
             </button>
+          </div>
+          <div className="col s12">
+            <hr/>
           </div>
           <div className="s12 center-align">
             <Link
@@ -83,18 +90,25 @@ class Dashboard extends Component {
                 width: "210px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px",
-                marginTop: "1rem"
+                marginTop: "1rem",
+                margin: '14px'
               }}
               className="btn btn-large waves-effect waves-light hoverable blue accent-3"
             >
               Create New PoS
             </Link>
           </div>
-          
+
           <div className="s12 center-align" id="pos_list">
             {
               this.state.user_pos_systems.map((pos, i) =>
-                  <button className="btn btn-large waves-effect waves-light hoverable green accent-3" key={i}>{pos.name}</button>
+                  <Link to={{ pathname: "/pos-dashboard", query: pos._id }}
+                      className="btn btn-large waves-effect waves-light hoverable
+                        green accent-3"
+                      style={{
+                        margin: '14px'
+                      }}
+                      key={i}>{pos.name}</Link>
               )
             }
           </div>

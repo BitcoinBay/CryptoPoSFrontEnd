@@ -5,7 +5,6 @@ body{
      padding: 0;
     
 }
-
 .qrcode{
    padding: 10px;
    width: 30px;
@@ -14,19 +13,22 @@ body{
    
 
 }
-
 .gen{
     height: 232px;
     width: 261px
 }
 
 .heading{
-    font-size: 37px;
+    font-size: 30px;
     font-family: 'Lato', sans-serif;
     /* padding: 50px; */
+    margin-bottom: -4px;
 
 }
-
+.sen{
+    margin-top: -10px;
+    font-size: 30px;
+}
 input{
     width: 10%;
 }
@@ -41,32 +43,44 @@ input{
 button{
     display: flex;
     flex-direction: row;
-    margin-left: 20px;
+    // margin-left: 20px;
+    color: black;
+    background-color: white;
+    padding: 10px;
+    border: none;
+    letter-spacing: 5px;
+    font-weight: 5px;
+    // margin-left: 30px;
 }
 
-/* .wrapper{
+ .wrapper{
     margin: 0 auto;
-    width: 70%;
-    
-   
-} */
+    width: 40%; 
+} 
 
+.amt{
+    text-decoration: underline;
+    margin-top: 0;
+    
+}
 
 .main{
     margin: 0 auto;
     width: 70%;
+    // margin-left: 20px;
 }
 
 .wrap {
     margin: 0 auto;
-    width: 30%;
+    width: 75%;
+    margin-bottom: 40px;
 }
 
-@media (max-width:500px){
-    .wrap{
-        width: 100%;
-    }
-}
+// @media (max-width:500px){
+//     .wrap{
+//         width: 100%;
+//     }
+// }
 .bitcoin{
     text-decoration: underline;
 }
@@ -96,8 +110,8 @@ canvas{
 
 
 .equ{
-    margin-top: 10px;
-    color: rebeccapurple;
+    margin-top: 30px;
+    color: grey;
 }
 
 
@@ -120,3 +134,78 @@ canvas{
     text-align: center;
     
 }
+
+.status{
+    color: grey;
+    letter-spacing:2px;
+    //  margin-left: 5px;
+}
+
+
+@media(max-width:1330px){
+    .wrap {
+        margin: 0 auto;
+        width: 100%;
+        margin-bottom: 40px;
+    }
+}
+
+
+@media(max-width:992px){
+    .wrap {
+        margin: 0 auto;
+        width: 200%;
+        margin-bottom: 40px;
+    }
+
+    button{
+        display: flex;
+        width: 100%;
+    }
+}
+
+
+@media(max-width:650px){
+    .wrapper{
+        width: 100%;
+    }
+}
+
+@media(max-width:414px){
+    .wrap{
+        width: 100%
+    }
+}
+
+@media(max-width:375px){
+    .wrapper{
+        width: 100%;
+    }
+
+    .wrap{
+        width: 150%
+    }
+
+
+    button{
+        width: 171px;
+        padding: 0;
+
+    }
+
+// .mob
+//     {
+//         width: 158px;
+//     border-radius: 3px;
+//     letter-spacing: 1.5px;
+//     margin-top: 5rem;
+//     text-align: center;
+//     color: red;
+//     margin-right: -20px;
+//     margin-left: 20px;
+//     }
+    
+}
+
+
+
