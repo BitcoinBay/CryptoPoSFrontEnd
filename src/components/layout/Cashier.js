@@ -34,8 +34,9 @@ export default class Cashier extends React.Component {
       cryptoPrice: 0,
       url: defaultWebURL,
       utxo: null,
-      pos_id: "",
-      pos_xpub_address: ""
+      pos_id: null,
+      pos_xpub_address: null,
+      pos_name: null
     }
   }
 
@@ -51,7 +52,8 @@ export default class Cashier extends React.Component {
       };
 
       axios.post("/api/get-pos-xpub", pos_data).then((res) => {
-        this.setState({ pos_xpub_address: res.data });
+        console.log(res.data);
+        this.setState({ pos_xpub_address: res.data.address });
       });
     });
   }
