@@ -22,7 +22,7 @@ export default class Cashier extends React.Component {
     this.handleClick = this.handleClick.bind(this);
     this.updatePrices = this.updatePrices.bind(this);
     this.calculateCryptoAmount = this.calculateCryptoAmount.bind(this);
-    this.generateAddress = this.generateAddress.bind(this);
+    this.generateBitcoinAddress = this.generateBitcoinAddress.bind(this);
     this.sendSocketIO = this.sendSocketIO.bind(this);
     this.toggleCryptoType = this.toggleCryptoType.bind(this);
     this.state = {
@@ -35,8 +35,10 @@ export default class Cashier extends React.Component {
       url: defaultWebURL,
       utxo: null,
       pos_id: null,
+      pos_name: null,
       pos_xpub_address: null,
-      pos_name: null
+      pos_xpub_index: null,
+      pos_address: null,
     }
   }
 
@@ -52,20 +54,24 @@ export default class Cashier extends React.Component {
       };
 
       axios.post("/api/get-pos-xpub", pos_data).then((res) => {
-        console.log(res.data);
-        this.setState({ pos_xpub_address: res.data.address });
+        //console.log(res.data);
+        this.setState({
+          pos_xpub_address: res.data.address,
+          pos_xpub_index: res.data.index
+        });
       });
     });
   }
 
-  generateAddress() {
+  generateBitcoinAddress() {
     let options = {
       amount: this.state.cryptoAmount,
       label: '#BitcoinBay',
     };
-    let XPubAddress = BITBOX.Address.fromXPub(XPubKey, "0/0");
+    let XPubAddress = BITBOX.Address.fromXPub(this.state.pos_xpub_address, `0/${this.state.pos_xpub_index + 1}`);
+    console.log(XPubAddress);
     let payQRAddress21 = BITBOX.BitcoinCash.encodeBIP21(XPubAddress, options);
-    console.log(payQRAddress21)
+    //console.log(payQRAddress21)
     this.setState({ url: payQRAddress21 });
   }
 
@@ -73,11 +79,11 @@ export default class Cashier extends React.Component {
     let cryptoAmount = this.state.fiatAmount / this.state.cryptoPrice;
     if (this.state.cryptoType === "ETH") {
       this.setState({ cryptoAmount: cryptoAmount.toFixed(18) }, () => {
-        this.generateAddress();
+        this.generateBitcoinAddress();
       });
     } else {
       this.setState({ cryptoAmount: cryptoAmount.toFixed(8) }, () => {
-        this.generateAddress();
+        this.generateBitcoinAddress();
       })
     }
   }
@@ -142,7 +148,9 @@ export default class Cashier extends React.Component {
             content="Feature page of React.js Boilerplate application"
           />
         </Helmet>
-        <div>
+        {
+
+        }<div>
           <h3>Choose payment Option</h3>
           <h4>PoS XPub: {this.state.pos_xpub_address}</h4>
           <li value={this.state.cryptoType} onClick={this.toggleCryptoType}>
