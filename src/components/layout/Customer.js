@@ -99,7 +99,7 @@ export default class Customer extends React.Component {
           </div>
         <div className="main">
         <p className="heading">Please Send </p>
-        <h1 className="amt">Your {this.state.fiatAmount} {this.state.cryptoType}</h1> 
+        <h1 className="amt">Your {this.state.fiatAmount} {this.state.cryptoType}</h1>
         <p className="sen">To This Address</p>
       <article>
       <Helmet>
@@ -116,6 +116,14 @@ export default class Customer extends React.Component {
       }
       <h3 className="equ">Equivalet in CAD</h3>
       <h1>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</h1>
+      <label className="equ" style={{
+        fontSize: '15px',
+        fontWeight: 'bold',
+        marginTop: '30px'
+      }}
+        >Denominated in</label>
+      <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
+      <p>$ {this.state.fiatAmount} {this.state.fiatType}</p>
     </article>
     <h3 className="status">Status</h3>
     <button onClick={this.handleClick}>

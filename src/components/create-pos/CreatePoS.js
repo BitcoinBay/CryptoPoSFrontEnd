@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { connect } from "react-redux";
+import M from "materialize-css";
 
 class CreatePoS extends Component {
 
@@ -13,6 +14,10 @@ class CreatePoS extends Component {
         };
     }
 
+    componentDidMount() {
+        M.FormSelect.init(this.select);
+    }
+
     onChange = (event) => {
         this.setState({ [event.target.id]: event.target.value });
     }
@@ -21,7 +26,8 @@ class CreatePoS extends Component {
         event.preventDefault();
 
         const xpub_data = {
-            address: this.state.pos_xpub
+            address: this.state.pos_xpub,
+            type: this.state.pos_xpub_type
         };
 
         axios.post("/api/add-xpub", xpub_data).then((res) => {
@@ -51,21 +57,34 @@ class CreatePoS extends Component {
                         <form noValidate onSubmit={this.onSubmit}>
                             <div className="input-field col s12">
                                 <input id="pos_name" type="text"
-                                        onChange={this.onChange}
-                                        value={this.state.value}/>
+                                        onChange={ this.onChange }
+                                        value={ this.state.value }/>
                                 <label htmlFor="pos_name">Point-of-sale name</label>
                             </div>
 
                             <div className="input-field col s12">
+                                <select id="pos_xpub_type" defaultValue=""
+                                        onChange={ this.onChange }
+                                        value={ this.state.value }
+                                        ref={ (select) => this.select = select }>
+                                    <option value="">Choose a payment currency</option>
+                                    <option value="BTC">Bitcoin</option>
+                                    <option value="BCH">Bitcoin Cash</option>
+                                    <option value="ETH">Ethereum</option>
+                                </select>
+                            </div>
+
+                            <div className="input-field col s12">
                                 <input id="pos_xpub" type="text"
-                                        onChange={this.onChange}
-                                        value={this.state.value}/>
+                                        onChange={ this.onChange }
+                                        value={ this.state.value } />
                                 <label htmlFor="pos_xpub">
                                     Wallet xPub Address
                                 </label>
                             </div>
+
                             <div className="col s12"
-                                    style={{ paddingLeft: "11.250px" }}>
+                                    style={{ paddingLeft: "10px" }}>
                                 <button
                                 style={{
                                     width: "165px",
