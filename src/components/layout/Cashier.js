@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet';
 import axios from 'axios';
 import openSocket from 'socket.io-client';
 import QRAddress21 from '../QRAddress21';
-
+import './styles/cashier.scss'
 const BITBOXSDK = require("@chris.troutner/bitbox-js");
 
 // initialize BITBOX
@@ -122,84 +122,29 @@ export default class Cashier extends React.Component {
             content="Feature page of React.js Boilerplate application"
           />
         </Helmet>
-        <div>
+        <div className="center">
           <h3>Choose payment Option</h3>
-          <li value={this.state.cryptoType} onClick={this.toggleCryptoType}>
-            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
-                    width: "170px",
-                    borderRadius: "3px",
-                    letterSpacing: "1.5px",
-                    marginTop: "5rem" ,
-                    textAlign:"center",
-                    fontFamily: "font-family: 'Lato', sans-serif;",
-                    color:"white",
-                    marginRight:"-15px",
-                    marginLeft: "28px"
-                  }}
-                  value="BTC">BTC</button>
-            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
-                    width: "170px",
-                    borderRadius: "3px",
-                    letterSpacing: "1.5px",
-                    marginTop: "5rem" ,
-                    textAlign:"center",
-                    fontFamily: "font-family: 'Lato', sans-serif;",
-                    color:"white",
-                    marginRight:"-15px",
-                    marginLeft: "28px"
-                  }}
-                  value="BCH">BCH</button>
-            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
-                    width: "170px",
-                    borderRadius: "3px",
-                    letterSpacing: "1.5px",
-                    marginTop: "5rem" ,
-                    textAlign:"center",
-                    fontFamily: "font-family: 'Lato', sans-serif;",
-                    color:"white",
-                    marginRight:"-15px",
-                    marginLeft: "28px"
-                  }}
-                  value="ETH">ETH</button>
-          </li>
-          <li value={this.state.fiatType} onClick={this.toggleCryptoType}>
-            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
-                    width: "170px",
-                    borderRadius: "3px",
-                    letterSpacing: "1.5px",
-                    marginTop: "5rem" ,
-                    textAlign:"center",
-                    fontFamily: "font-family: 'Lato', sans-serif;",
-                    color:"white",
-                    marginRight:"-15px",
-                    marginLeft: "28px"
-                  }}
-                  value="USD">USD</button>
-            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
-                    width: "170px",
-                    borderRadius: "3px",
-                    letterSpacing: "1.5px",
-                    marginTop: "5rem" ,
-                    textAlign:"center",
-                    fontFamily: "font-family: 'Lato', sans-serif;",
-                    color:"white",
-                    marginRight:"-15px",
-                    marginLeft: "28px"
-                  }}
-                  value="CAD">CAD</button>
-            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
-                    width: "170px",
-                    borderRadius: "3px",
-                    letterSpacing: "1.5px",
-                    marginTop: "5rem" ,
-                    textAlign:"center",
-                    fontFamily: "font-family: 'Lato', sans-serif;",
-                    color:"white",
-                    marginRight:"-15px",
-                    marginLeft: "28px"
-                  }}
-                  value="EUR">EUR</button>
-          </li>
+          
+          <h4 class="textAlignCurrency">Crypto Currencies</h4>
+         <div  value={this.state.cryptoType} onClick={this.toggleCryptoType}>
+           <button class="buttonCurrency btn btn-large waves-effect waves-light hoverable blue accent-3"
+                 value="BTC">BTC</button>
+           <button class="buttonCurrency btn btn-large waves-effect waves-light hoverable blue accent-3"
+                 value="BCH">BCH</button>
+           <button class="buttonCurrency btn btn-large waves-effect waves-light hoverable blue accent-3"
+                 value="ETH">ETH</button>
+         </div>
+
+         <h4 class="textAlignCurrency">Fiat Currencies</h4>
+         <div value={this.state.fiatType} onClick={this.toggleCryptoType}>
+           <button class="buttonCurrency btn btn-large waves-effect waves-light hoverable blue accent-3"
+                 value="USD">USD</button>
+           <button class="buttonCurrency btn btn-large waves-effect waves-light hoverable blue accent-3"
+                 value="CAD">CAD</button>
+           <button class="buttonCurrency btn btn-large waves-effect waves-light hoverable blue accent-3"
+                 value="EUR">EUR</button>
+         </div>
+
           { this.state.url === ''
             ? <QRAddress21 value={defaultWebURL}  />
             : (
@@ -209,6 +154,16 @@ export default class Cashier extends React.Component {
             )
           }
           <input type="text" onChange={(e) => {this.handleClick(e)}} defaultValue={1} />
+          <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                width: "170px",
+                borderRadius: "3px",
+                letterSpacing: "1.5px",
+                marginTop: "5rem" ,
+                textAlign:"center",
+                fontFamily: "font-family: 'Lato', sans-serif;",
+                marginRight:"-15px",
+                marginLeft: "28px"
+              }} >New Order</button>
           <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
                   width: "170px",
                   borderRadius: "3px",
@@ -231,6 +186,7 @@ export default class Cashier extends React.Component {
                   marginRight:"-15px",
                   marginLeft: "28px"
                 }}
+                
                   type="button" onClick={() => this.sendSocketIO([this.state.cryptoType, this.state.fiatType, this.state.cryptoAmount, this.state.fiatAmount, this.state.cryptoPrice, this.state.url])}>Pay Now</button>
           <p>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</p>
           <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>

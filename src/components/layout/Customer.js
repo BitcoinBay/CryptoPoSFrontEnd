@@ -84,18 +84,6 @@ export default class Customer extends React.Component {
                 marginLeft: "28px"
               }} ><Link to={"/PaymentSucess"} className="lin">Ordersucess</Link>
               </button>
-        <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
-                width: "170px",
-                borderRadius: "3px",
-                letterSpacing: "1.5px",
-                marginTop: "5rem" ,
-                textAlign:"center",
-                fontFamily: "font-family: 'Lato', sans-serif;",
-                color:"red",
-                marginRight:"-15px",
-                marginLeft: "28px"
-
-              }} ><Link to={"/cashier"} className="lin">New Order</Link></button>
           </div>
         <div className="main">
         <p className="heading">Please Send </p>
