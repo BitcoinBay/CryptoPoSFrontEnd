@@ -42,7 +42,8 @@ class Dashboard extends Component {
                 width: "150px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px",
-                marginTop: "1rem"
+                marginTop: "1rem",
+                margin: '14px'
               }}
               onClick={this.onLogoutClick}
               className="btn btn-large waves-effect waves-light hoverable blue accent-3"
@@ -60,7 +61,8 @@ class Dashboard extends Component {
                 width: "210px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px",
-                marginTop: "1rem"
+                marginTop: "1rem",
+                margin: '14px'
               }}
               className="btn btn-large waves-effect waves-light hoverable blue accent-3"
             >
@@ -73,7 +75,10 @@ class Dashboard extends Component {
               this.state.user_pos_systems.map((pos, i) =>
                   <Link to={{ pathname: "/pos-dashboard", query: pos._id }}
                       className="btn btn-large waves-effect waves-light hoverable
-                          green accent-3"
+                        green accent-3"
+                      style={{
+                        margin: '14px'
+                      }}
                       key={i}>{pos.name}</Link>
               )
             }
