@@ -33,6 +33,8 @@ export default class Cashier extends React.Component {
       cryptoAmount: 0,
       cryptoPrice: 0,
       url: defaultWebURL,
+      pos_id: "",
+      pos_xpub_address: ""
     }
   }
 
@@ -46,6 +48,16 @@ export default class Cashier extends React.Component {
     setInterval(() => {
       this.updatePrices();
     }, 600000);
+
+    this.setState({ pos_id: this.props.location.query }, () => {
+      const pos_data = {
+        pos_id: this.state.pos_id
+      };
+
+      axios.post("/api/get-pos-xpub", pos_data).then((res) => {
+        this.setState({ pos_xpub_address: res.data });
+      });
+    });
   }
 
   calculateCryptoAmount() {
@@ -113,6 +125,7 @@ export default class Cashier extends React.Component {
         </Helmet>
         <div>
           <h3>Choose payment Option</h3>
+          <h4>PoS XPub: {this.state.pos_xpub_address}</h4>
           <li value={this.state.cryptoType} onClick={this.toggleCryptoType}>
             <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
                     width: "170px",
