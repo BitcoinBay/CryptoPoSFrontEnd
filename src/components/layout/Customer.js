@@ -6,7 +6,6 @@ import  QRAddress21 from '../QRAddress21';
 import { Dropdown } from 'semantic-ui-react'
 import { Link } from 'react-router-dom';
 import PaymentSucess from './PaymentSucess';
-// var QRCode = require('qrcode.react');
 
 //import * as BITBOXCli from "bitbox-sdk";
 
@@ -16,11 +15,6 @@ import PaymentSucess from './PaymentSucess';
 const socket = openSocket('http://localhost:3000');
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 
-const options = [
-  { key: 1, text: 'CAD', value: 1 },
-  { key: 2, text: 'BCH', value: 2 },
-
-]
 
 const styleLink = document.createElement("link");
 styleLink.rel = "stylesheet";
@@ -33,17 +27,25 @@ export default class Customer extends React.Component {
   constructor() {
     super();
     this.state = {
-      // value: '45.98',
-      // url: defaultWebURL,
       cryptoType: 'BCH',
       fiatType: 'CAD',
       cryptoAmount: 0,
       fiatAmount:0,
       cryptoPrice: 0,
       url: defaultWebURL,
+      isToggleuPaid: true,
 
     }
+    // This binding is necessary to make `this` work in the callback
+    this.handleClick = this.handleClick.bind(this);
   }
+
+  handleClick() {
+		this.setState(function(prevState) {
+			return {isToggleuPaid: !prevState.isToggleuPaid};
+		});
+  }
+
   componentDidMount() {
     socket.on('event', msg => this.update(msg));
   }
@@ -70,7 +72,7 @@ export default class Customer extends React.Component {
           />
         </Helmet>
        <div className= "wrap">
-        <button  className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+        <button  className="btn btn-large waves-effect waves-light hoverable blue accent-3"  style={{
                 width: "200px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px",
@@ -95,20 +97,15 @@ export default class Customer extends React.Component {
 
               }} ><Link to={"/cashier"} className="lin">New Order</Link></button>
           </div>
-
-        {/* <h4>
-          <b>Login</b> into cashier page is {" "}
-          <span style={{ fontFamily: "monospace" }}>successful</span>. Made by Bitcoin Bay
-        </h4> */}
-        {/* <h1><QRCode value="http://facebook.github.io/react/" /></h1> */}
         <div className="main">
-        <h3 className="heading">Please Send Your <a className="bitcoin">0.3143hBCH</a> To This Address</h3>
+        <p className="heading">Please Send </p>
+        <h1 className="amt">Your {this.state.fiatAmount} {this.state.cryptoType}</h1> 
+        <p className="sen">To This Address</p>
       <article>
       <Helmet>
         <title>Customer POS Page</title>
         <meta name="description" content="CashierPOS Page" />
       </Helmet>
-
       { this.state.url === ''
         ? <QRAddress21 value={defaultWebURL}  />
         : (
@@ -117,13 +114,13 @@ export default class Customer extends React.Component {
           </div>
         )
       }
-      <label className="equ">Equivalet in CAD</label>
+      <h3 className="equ">Equivalet in CAD</h3>
       <h1>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</h1>
-      <label className="equ">Denominated in</label>
-      <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
-      <p>$ {this.state.fiatAmount} {this.state.fiatType}</p>
     </article>
-    <Dropdown selection options={options}  placeholder='CAD' />
+    <h3 className="status">Status</h3>
+    <button onClick={this.handleClick}>
+        {this.state.isToggleuPaid ? 'UNPAID'  : 'PAID'}
+      </button>
     </div>
     </div>
 
