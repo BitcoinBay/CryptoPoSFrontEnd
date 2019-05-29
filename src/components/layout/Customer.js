@@ -121,7 +121,12 @@ export default class Customer extends React.Component {
       }
       <label className="equ">Equivalet in CAD</label>
       <h1>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</h1>
-      <label className="equ">Denominated in</label>
+      <label className="equ" style={{
+        fontSize: '15px',
+        fontWeight: 'bold',
+        marginTop: '30px'
+      }}
+        >Denominated in</label>
       <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
       <p>$ {this.state.fiatAmount} {this.state.fiatType}</p>
     </article>
