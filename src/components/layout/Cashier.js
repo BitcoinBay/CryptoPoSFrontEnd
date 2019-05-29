@@ -12,7 +12,7 @@ const BITBOX = new BITBOXSDK({ restURL: "https://trest.bitcoin.com/v2/" });
 
 const socket = openSocket('http://localhost:3000');
 
-const api_key = '897a2b25ccd5730323919dee1201a832e5d2bb9835e6ded08dd4897f7669e8f7'
+//const api_key = '897a2b25ccd5730323919dee1201a832e5d2bb9835e6ded08dd4897f7669e8f7'
 const XPubKey = "tpubDCoP9xnjhwkwC8pT7DVSPFDgbYb2uq2UAdY2DQmk2YtBpiEY8XGtT26P6NgYyc38fiuTF9x3MAtKmuUR2HPd7qKQmAYD5NTpfVy5SzZntWN";
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 
@@ -23,6 +23,7 @@ export default class Cashier extends React.Component {
     this.handleClick = this.handleClick.bind(this);
     this.updatePrices = this.updatePrices.bind(this);
     this.calculateCryptoAmount = this.calculateCryptoAmount.bind(this);
+    this.generateAddress = this.generateAddress.bind(this);
     this.sendSocketIO = this.sendSocketIO.bind(this);
     this.toggleCryptoType = this.toggleCryptoType.bind(this);
     this.state = {
@@ -36,11 +37,6 @@ export default class Cashier extends React.Component {
     }
   }
 
-  sendSocketIO(msg) {
-    console.log(msg);
-    socket.emit('event', msg);
-  }
-
   componentDidMount() {
     this.updatePrices();
     setInterval(() => {
@@ -48,10 +44,23 @@ export default class Cashier extends React.Component {
     }, 600000);
   }
 
+  generateAddress() {
+    let options = {
+      amount: this.state.cryptoAmount,
+      label: '#BitcoinBay',
+    };
+    let XPubAddress = BITBOX.Address.fromXPub(XPubKey, "0/0");
+    let payQRAddress21 = BITBOX.BitcoinCash.encodeBIP21(XPubAddress, options);
+    console.log(payQRAddress21)
+    this.setState({ url: payQRAddress21 });
+  }
+
   calculateCryptoAmount() {
     let cryptoAmount = this.state.fiatAmount / this.state.cryptoPrice;
     if (this.state.cryptoPrice * cryptoAmount === this.state.fiatAmount) {
-      this.setState({ cryptoAmount: cryptoAmount });
+      this.setState({ cryptoAmount: cryptoAmount }, () => {
+        this.generateAddress();
+      });
     }
   }
 
@@ -73,6 +82,7 @@ export default class Cashier extends React.Component {
     socket.emit('event', msg);
   }
 
+  
   toggleCryptoType(e) {
     console.log(e.target.value);
     const jsonData = this.state.jsonData;
