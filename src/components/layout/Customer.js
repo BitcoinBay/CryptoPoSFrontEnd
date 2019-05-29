@@ -72,7 +72,7 @@ export default class Customer extends React.Component {
           />
         </Helmet>
        <div className= "wrap">
-        <button  className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+        <button  className="btn btn-large waves-effect waves-light hoverable blue accent-3"  style={{
                 width: "200px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px",

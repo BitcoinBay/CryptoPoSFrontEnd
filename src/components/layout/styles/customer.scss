@@ -5,7 +5,6 @@ body{
      padding: 0;
     
 }
-
 .qrcode{
    padding: 10px;
    width: 30px;
@@ -14,7 +13,6 @@ body{
    
 
 }
-
 .gen{
     height: 232px;
     width: 261px
@@ -78,11 +76,11 @@ button{
     margin-bottom: 40px;
 }
 
-@media (max-width:500px){
-    .wrap{
-        width: 100%;
-    }
-}
+// @media (max-width:500px){
+//     .wrap{
+//         width: 100%;
+//     }
+// }
 .bitcoin{
     text-decoration: underline;
 }
@@ -142,3 +140,72 @@ canvas{
     letter-spacing:2px;
     //  margin-left: 5px;
 }
+
+
+@media(max-width:1330px){
+    .wrap {
+        margin: 0 auto;
+        width: 100%;
+        margin-bottom: 40px;
+    }
+}
+
+
+@media(max-width:992px){
+    .wrap {
+        margin: 0 auto;
+        width: 200%;
+        margin-bottom: 40px;
+    }
+
+    button{
+        display: flex;
+        width: 100%;
+    }
+}
+
+
+@media(max-width:650px){
+    .wrapper{
+        width: 100%;
+    }
+}
+
+@media(max-width:414px){
+    .wrap{
+        width: 100%
+    }
+}
+
+@media(max-width:375px){
+    .wrapper{
+        width: 100%;
+    }
+
+    .wrap{
+        width: 150%
+    }
+
+
+    button{
+        width: 171px;
+        padding: 0;
+
+    }
+
+// .mob
+//     {
+//         width: 158px;
+//     border-radius: 3px;
+//     letter-spacing: 1.5px;
+//     margin-top: 5rem;
+//     text-align: center;
+//     color: red;
+//     margin-right: -20px;
+//     margin-left: 20px;
+//     }
+    
+}
+
+
+
