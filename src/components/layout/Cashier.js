@@ -4,7 +4,9 @@ import { Helmet } from 'react-helmet';
 import axios from 'axios';
 import openSocket from 'socket.io-client';
 import QRAddress21 from '../QRAddress21';
+
 import './styles/cashier.css'
+
 const BITBOXSDK = require("@chris.troutner/bitbox-js");
 
 // initialize BITBOX
@@ -152,6 +154,7 @@ export default class Cashier extends React.Component {
               </div>
             )
           }
+
           <h2 class="textAlignCurrency">Amount</h2>
           <input type="text" style={{ width:"570px" }} size="35" maxlength="60" onChange={(e) => {this.handleClick(e)}} defaultValue={1} />
           <br/>
@@ -159,6 +162,30 @@ export default class Cashier extends React.Component {
                   
                 }} onClick={this.updatePrices}>Update Price</button>
           <button class="buttonPrice btn btn-large waves-effect waves-light hoverable blue accent-3" 
+                  type="button" onClick={() => this.sendSocketIO([this.state.cryptoType, this.state.fiatType, this.state.cryptoAmount, this.state.fiatAmount, this.state.cryptoPrice,])}>Pay Now</button>
+          <input type="text" onChange={(e) => {this.handleClick(e)}} defaultValue={1} />
+          <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                  width: "170px",
+                  borderRadius: "3px",
+                  letterSpacing: "1.5px",
+                  marginTop: "5rem" ,
+                  textAlign:"center",
+                  fontFamily: "font-family: 'Lato', sans-serif;",
+                  color:"white",
+                  marginRight:"-15px",
+                  marginLeft: "28px"
+                }} onClick={this.updatePrices}>Update Price</button>
+          <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                  width: "170px",
+                  borderRadius: "3px",
+                  letterSpacing: "1.5px",
+                  marginTop: "5rem" ,
+                  textAlign:"center",
+                  fontFamily: "font-family: 'Lato', sans-serif;",
+                  color:"white",
+                  marginRight:"-15px",
+                  marginLeft: "28px"
+                }}
                   type="button" onClick={() => this.sendSocketIO([this.state.cryptoType, this.state.fiatType, this.state.cryptoAmount, this.state.fiatAmount, this.state.cryptoPrice,])}>Pay Now</button>
           <p>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</p>
           <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>

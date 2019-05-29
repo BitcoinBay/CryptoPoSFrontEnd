@@ -1,7 +1,8 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import openSocket from 'socket.io-client';
-import './styles/customer.css'
+
+import './styles/customer.scss';
 import  QRAddress21 from '../QRAddress21';
 import { Dropdown } from 'semantic-ui-react'
 import { Link } from 'react-router-dom';
@@ -70,7 +71,7 @@ export default class Customer extends React.Component {
         </Helmet>
        <div className= "wrap">
         <button  className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
-                width: "170px",
+                width: "200px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px",
                 marginTop: "5rem" ,
@@ -78,11 +79,9 @@ export default class Customer extends React.Component {
                 fontFamily: "font-family: 'Lato', sans-serif;",
                 color:"red",
                 marginRight:"-15px",
-                marginLeft: "28px"
-
-
-              }} ><Link to={"/PaymentSucess"} className="lin">Ordersucess</Link>
-
+                marginLeft: "28px"           
+              }} ><Link to={"/PaymentSucess"} className="lin">Order success</Link>
+              
               </button>
         <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
                 width: "170px",
