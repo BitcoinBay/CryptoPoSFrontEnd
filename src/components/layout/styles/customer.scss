@@ -124,7 +124,7 @@ canvas{
     justify-content: center;
    
     font-size: 4rem;
-    /* margin-top: 50px; */
+     padding-top: 60px; 
 }
 
 .logo{
@@ -177,7 +177,7 @@ canvas{
     }
 }
 
-@media(max-width:375px){
+@media(max-width:390px){
     .wrapper{
         width: 100%;
     }
@@ -192,18 +192,6 @@ canvas{
         padding: 0;
 
     }
-
-// .mob
-//     {
-//         width: 158px;
-//     border-radius: 3px;
-//     letter-spacing: 1.5px;
-//     margin-top: 5rem;
-//     text-align: center;
-//     color: red;
-//     margin-right: -20px;
-//     margin-left: 20px;
-//     }
     
 }
 
