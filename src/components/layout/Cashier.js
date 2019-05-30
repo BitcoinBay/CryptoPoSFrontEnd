@@ -155,7 +155,7 @@ export default class Cashier extends React.Component {
 
   render() {
     return(
-        <div className="feature-page">
+      <div className="feature-page">
         <Helmet>
           <title>Cashier Page</title>
           <meta
@@ -289,8 +289,7 @@ export default class Cashier extends React.Component {
           <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
           <p>$ {this.state.fiatAmount} {this.state.fiatType}</p>
         </div>
-        </div>
-
+      </div>
     );
   }
 }
