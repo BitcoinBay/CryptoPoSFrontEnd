@@ -5,14 +5,14 @@ import axios from 'axios';
 import openSocket from 'socket.io-client';
 import QRAddress21 from '../QRAddress21';
 import './styles/cashier.scss'
-const BITBOXSDK = require("@chris.troutner/bitbox-js");
 
+const HDKey = require('ethereumjs-wallet/hdkey');
+const BITBOXSDK = require("@chris.troutner/bitbox-js");
 // initialize BITBOX
 const BITBOX = new BITBOXSDK({ restURL: "https://trest.bitcoin.com/v2/" });
 
 const socket = openSocket('http://localhost:3000');
 
-const XPubKey = "tpubDCoP9xnjhwkwC8pT7DVSPFDgbYb2uq2UAdY2DQmk2YtBpiEY8XGtT26P6NgYyc38fiuTF9x3MAtKmuUR2HPd7qKQmAYD5NTpfVy5SzZntWN";
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 
 
@@ -37,7 +37,7 @@ export default class Cashier extends React.Component {
       pos_id: null,
       pos_name: null,
       pos_xpub_address: null,
-      pos_xpub_index: null,
+      pos_xpub_index: 0,
       pos_address: null,
     }
   }
@@ -54,10 +54,11 @@ export default class Cashier extends React.Component {
       };
 
       axios.post("/api/get-pos-xpub", pos_data).then((res) => {
-        //console.log(res.data);
         this.setState({
           pos_xpub_address: res.data.address,
           pos_xpub_index: res.data.index
+        }, () => {
+          console.log(this.state);
         });
       });
     });
@@ -68,18 +69,32 @@ export default class Cashier extends React.Component {
       amount: this.state.cryptoAmount,
       label: '#BitcoinBay',
     };
-    let XPubAddress = BITBOX.Address.fromXPub(this.state.pos_xpub_address, `0/${this.state.pos_xpub_index + 1}`);
-    console.log(XPubAddress);
-    let payQRAddress21 = BITBOX.BitcoinCash.encodeBIP21(XPubAddress, options);
-    //console.log(payQRAddress21)
-    this.setState({ url: payQRAddress21 });
+    let Bip21URL;
+    let XPubAddress = BITBOX.Address.fromXPub(this.state.pos_xpub_address, `0/${this.state.pos_xpub_index}`);
+    console.log("Format: ", BITBOX.Address.detectAddressFormat(XPubAddress))
+    if (this.state.cryptoType === "BTC") {
+      let legacyAddress = BITBOX.Address.toLegacyAddress(XPubAddress);
+      console.log(legacyAddress);
+      Bip21URL = BITBOX.BitcoinCash.encodeBIP21(legacyAddress, options);
+    } else {
+      Bip21URL = BITBOX.BitcoinCash.encodeBIP21(XPubAddress, options);
+      //console.log(Bip21URL)
+    }
+    this.setState({ url: Bip21URL });
+  }
+
+  generateEthereumnAddress() {
+    let fromXPub = HDKey.fromExtendedKey(this.state.pos_xpub_address);
+    //console.log(XPubAddress);
+    let paymentAddress = fromXPub.deriveChild(`0/${this.state.pos_xpub_index}`).getWallet().getAddressString();
+    this.setState({ url: paymentAddress });
   }
 
   calculateCryptoAmount() {
     let cryptoAmount = this.state.fiatAmount / this.state.cryptoPrice;
     if (this.state.cryptoType === "ETH") {
       this.setState({ cryptoAmount: cryptoAmount.toFixed(18) }, () => {
-        this.generateBitcoinAddress();
+        this.generateEthereumnAddress();
       });
     } else {
       this.setState({ cryptoAmount: cryptoAmount.toFixed(8) }, () => {

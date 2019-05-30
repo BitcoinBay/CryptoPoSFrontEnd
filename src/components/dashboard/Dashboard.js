@@ -22,9 +22,16 @@ class Dashboard extends Component {
       user_id: this.props.auth.user.id
     };
 
-    axios.post("/api/get-all-user-pos", user_data).then((res) => {
-      this.setState({ user_pos_systems: res.data });
-    });
+    axios.post("/api/get-all-user-pos", user_data)
+      .then((res) => {
+        console.log("Logging: ", res);
+        if (res.data) {
+          this.setState({ user_pos_systems: res.data });
+        }
+      })
+      .catch((err) => {
+        console.log("Error: ", err);
+      });
   }
 
   onLogoutClick = e => {
@@ -71,15 +78,14 @@ class Dashboard extends Component {
           </div>
 
           <div className="s12 center-align" id="pos_list">
-            {
-              this.state.user_pos_systems.map((pos, i) =>
-                  <Link to={{ pathname: "/pos-dashboard", query: pos._id }}
-                      className="btn btn-large waves-effect waves-light hoverable
-                        green accent-3"
-                      style={{
-                        margin: '14px'
-                      }}
-                      key={i}>{pos.name}</Link>
+            { this.state.user_pos_systems.map((pos, i) =>
+                <Link to={{ pathname: "/pos-dashboard", query: pos._id }}
+                    className="btn btn-large waves-effect waves-light hoverable
+                      green accent-3"
+                    style={{
+                      margin: '14px'
+                    }}
+                    key={i}>{pos.name}</Link>
               )
             }
           </div>
