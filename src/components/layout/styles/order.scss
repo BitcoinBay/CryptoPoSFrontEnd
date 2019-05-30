@@ -1,0 +1,42 @@
+#title {
+    text-align: center;
+    font-family: arial, sans-serif;
+    font-size: 50px;
+    margin-top: 50px;
+  }
+  
+  #txrefs {
+    text-align: center;
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    border: 3px solid #ddd;
+    width: 100%;
+  }
+  
+  #txrefs td, #txrefs th {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  #txrefs tr:nth-child(even){background-color: #f2f2f2;}
+  
+  #txrefs tr:hover {background-color: #ddd;}
+  
+  #txrefs th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: center;
+    background-color:#2A78F6;
+    color: white;
+  }
+
+  .order_wrapper{
+      width: 80%;
+      margin: 0 auto;
+
+  }
+  
+
+  @media(max-width:500px){
+   
+  }
