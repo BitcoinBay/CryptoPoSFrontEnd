@@ -11,12 +11,32 @@ class POSDashboard extends Component {
     super();
 
     this.state = {
-      pos_id: ""
+      pos_id: "",
+      pos_name: ""
     };
   }
 
   componentDidMount() {
-    this.setState({ pos_id: this.props.location.query });
+    this.setState({ pos_id: this.props.location.query }, () => {
+      const pos_data = {
+        pos_id: this.state.pos_id
+      };
+
+      axios.post('/api/get-pos-by-id', pos_data).then((res) => {
+        this.setState({ pos_name: res.data.name });
+      });
+    });
+  }
+
+  deletePOS = () => {
+    const pos_data = {
+      user_id: this.props.auth.user.id,
+      pos_id: this.state.pos_id
+    };
+
+    axios.post('/api/delete-pos', pos_data).then((res) => {
+      this.props.history.push('/dashboard');
+    });
   }
 
   render() {
@@ -38,7 +58,8 @@ class POSDashboard extends Component {
                 marginTop: "1rem",
                 margin: "14px"
               }}
-              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
+              className="btn btn-large waves-effect waves-light hoverable blue
+                  accent-3"
             >
               Cashier
             </Link>
@@ -56,6 +77,19 @@ class POSDashboard extends Component {
             >
               Customer
             </Link>
+          </div>
+
+          <div className="col s12 center-align">
+            <button className="btn btn-large waves-effect waves-light hoverable red
+                accent-3"
+              style={{
+                borderRadius: "3px",
+                letterSpacing: "1.5px",
+                marginTop: "1rem",
+                margin: "14px"
+              }}
+              onClick={this.deletePOS}
+            >Delete '{ this.state.pos_name }'</button>
           </div>
         </div>
       </div>
