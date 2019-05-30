@@ -77,9 +77,11 @@ class Dashboard extends Component {
                       className="btn btn-large waves-effect waves-light hoverable
                         green accent-3"
                       style={{
-                        margin: '14px'
+                        margin: '14px',
                       }}
-                      key={i}>{pos.name}</Link>
+                      key={i}>
+                    {pos.name}
+                  </Link>
               )
             }
           </div>
