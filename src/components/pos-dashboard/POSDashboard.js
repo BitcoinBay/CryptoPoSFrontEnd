@@ -35,7 +35,8 @@ class POSDashboard extends Component {
                 width: "150px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px",
-                marginTop: "1rem"
+                marginTop: "1rem",
+                margin: "14px"
               }}
               className="btn btn-large waves-effect waves-light hoverable blue accent-3"
             >
@@ -48,7 +49,8 @@ class POSDashboard extends Component {
                 width: "150px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px",
-                marginTop: "1rem"
+                marginTop: "1rem",
+                margin: "14px"
               }}
               className="btn btn-large waves-effect waves-light hoverable blue accent-3"
             >
