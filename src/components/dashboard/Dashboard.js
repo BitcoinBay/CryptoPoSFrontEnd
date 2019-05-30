@@ -78,14 +78,17 @@ class Dashboard extends Component {
           </div>
 
           <div className="s12 center-align" id="pos_list">
-            { this.state.user_pos_systems.map((pos, i) =>
-                <Link to={{ pathname: "/pos-dashboard", query: pos._id }}
-                    className="btn btn-large waves-effect waves-light hoverable
-                      green accent-3"
-                    style={{
-                      margin: '14px'
-                    }}
-                    key={i}>{pos.name}</Link>
+            {
+              this.state.user_pos_systems.map((pos, i) =>
+                  <Link to={{ pathname: "/pos-dashboard", query: pos._id }}
+                      className="btn btn-large waves-effect waves-light hoverable
+                        green accent-3"
+                      style={{
+                        margin: '14px',
+                      }}
+                      key={i}>
+                    {pos.name}
+                  </Link>
               )
             }
           </div>

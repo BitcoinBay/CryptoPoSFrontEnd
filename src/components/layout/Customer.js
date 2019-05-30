@@ -82,7 +82,10 @@ export default class Customer extends React.Component {
                 color:"red",
                 marginRight:"-15px",
                 marginLeft: "28px"
-              }} ><Link to={"/PaymentSucess"} className="lin">Ordersucess</Link>
+
+
+              }} ><Link to={"/PaymentSucess"} className="lin">Order success</Link>
+
               </button>
           </div>
         <div className="main">
