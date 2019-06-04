@@ -18,6 +18,7 @@ class POSDashboard extends Component {
 
   componentDidMount() {
     this.setState({ pos_id: this.props.location.query }, () => {
+      console.log("PoS ID: ", this.props.location.query)
       const pos_data = {
         pos_id: this.state.pos_id
       };
@@ -41,7 +42,7 @@ class POSDashboard extends Component {
 
   render() {
     return (
-      <div className="container"> 
+      <div className="container">
         <div style={{ marginTop: "4rem" }} className="row">
           <div className="col s8 offset-s2">
             <Link to="/dashboard" className="btn-flat waves-effect">

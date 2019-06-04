@@ -20,6 +20,7 @@ export default class Cashier extends React.Component {
   constructor() {
     super();
     this.handleClick = this.handleClick.bind(this);
+    this.clearOrder = this.clearOrder.bind(this);
     this.updatePrices = this.updatePrices.bind(this);
     this.calculateCryptoAmount = this.calculateCryptoAmount.bind(this);
     this.generateBitcoinAddress = this.generateBitcoinAddress.bind(this);
@@ -39,6 +40,7 @@ export default class Cashier extends React.Component {
       pos_xpub_address: null,
       pos_xpub_index: 0,
       pos_address: null,
+      paymentListening: 0
     }
   }
 
@@ -64,7 +66,14 @@ export default class Cashier extends React.Component {
     });
   }
 
+  clearOrder() {
+    socket.emit('event', ['BCH', 'CAD', 0, 0, 0, defaultWebURL]);
+    clearInterval(this.state.paymentListening);
+    this.setState({ cryptoType: 'BCH', fiatType: 'CAD', fiatAmount: 0, cryptoAmount: 0, url: defaultWebURL, paymentListening: 0 });
+  }
+
   generateBitcoinAddress() {
+    let cryptoAmount;
     let options = {
       amount: this.state.cryptoAmount,
       label: '#BitcoinBay',
@@ -80,38 +89,49 @@ export default class Cashier extends React.Component {
       Bip21URL = BITBOX.BitcoinCash.encodeBIP21(XPubAddress, options);
       //console.log(Bip21URL)
     }
-    this.setState({ url: Bip21URL });
+    this.setState({ url: Bip21URL, pos_address: XPubAddress });
   }
 
   generateEthereumnAddress() {
     let fromXPub = HDKey.fromExtendedKey(this.state.pos_xpub_address);
     //console.log(XPubAddress);
     let paymentAddress = fromXPub.deriveChild(`0/${this.state.pos_xpub_index}`).getWallet().getAddressString();
-    this.setState({ url: paymentAddress });
+    this.setState({ url: paymentAddress, pos_address: paymentAddress });
   }
 
   calculateCryptoAmount() {
-    let cryptoAmount = this.state.fiatAmount / this.state.cryptoPrice;
-    if (this.state.cryptoType === "ETH") {
-      this.setState({ cryptoAmount: cryptoAmount.toFixed(18) }, () => {
-        this.generateEthereumnAddress();
-      });
+    let cryptoAmount = this.state.fiatAmount/this.state.cryptoPrice;
+    console.log("calculate: ", cryptoAmount)
+    if (cryptoAmount > 0) {
+      if (this.state.cryptoType === "ETH") {
+        this.setState({ cryptoAmount: cryptoAmount.toFixed(18) }, () => {
+          this.generateEthereumnAddress();
+        });
+      } else {
+        this.setState({ cryptoAmount: cryptoAmount.toFixed(8) }, () => {
+          this.generateBitcoinAddress();
+        });
+      }
     } else {
-      this.setState({ cryptoAmount: cryptoAmount.toFixed(8) }, () => {
-        this.generateBitcoinAddress();
-      })
+      this.setState({ cryptoAmount: 0, url: defaultWebURL });
     }
   }
 
   handleClick(event) {
     let payAmount = parseFloat(event.target.value);
-    console.log(payAmount);
-    if (typeof payAmount !== "number" || payAmount === 0) {
+    console.log(typeof payAmount, " ", payAmount);
+    try {
+      if (typeof payAmount !== "number" || payAmount === 0) {
+        this.setState({ fiatAmount: 0 }, async() => {
+          await this.calculateCryptoAmount();
+        });
+      } else {
+        this.setState({ fiatAmount: payAmount }, async() => {
+          await this.calculateCryptoAmount();
+        });
+      }
+    } catch (err) {
       this.setState({ fiatAmount: 0 }, async() => {
-        await this.calculateCryptoAmount();
-      });
-    } else {
-      this.setState({ fiatAmount: payAmount }, async() => {
         await this.calculateCryptoAmount();
       });
     }
@@ -120,6 +140,21 @@ export default class Cashier extends React.Component {
   sendSocketIO(msg) {
     console.log(msg);
     socket.emit('event', msg);
+    let listen = setInterval(() => {
+      axios
+        .get(`/api/balance${this.state.cryptoType}/${this.state.pos_address}`)
+        .then((res) => {
+          if (res.data.utxo.length !== 0) {
+            clearInterval(listen);
+            this.setState({ utxo: res.data.utxo });
+          } else {
+            return;
+          };
+        })}
+      , 5000);
+    this.setState({ paymentListening: listen }, () => {
+      console.log(this.state.paymentListening);
+    })
   }
 
   toggleCryptoType(e) {
@@ -145,7 +180,9 @@ export default class Cashier extends React.Component {
       .then(res => {
         this.setState({ jsonData: res.data.status }, () => {
           console.log(this.state.jsonData);
-          this.setState({ cryptoPrice: res.data.status[this.state.cryptoType][this.state.fiatType]});
+          this.setState({ cryptoPrice: res.data.status[this.state.cryptoType][this.state.fiatType]}, () => {
+            this.calculateCryptoAmount();
+          });
         });
       })
       .catch(err => {
@@ -250,8 +287,8 @@ export default class Cashier extends React.Component {
               </div>
             )
           }
-          <input type="text" onChange={(e) => {this.handleClick(e)}} defaultValue={1} />
-          <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+          <input type="number" placeholder="Enter Payment Amount" min="0" pattern="^\d+(?:\.\d{1,2})?$" onChange={(e) => {this.handleClick(e)}} />
+          <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" onClick={() => {this.clearOrder()}} style={{
                 width: "170px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px",
