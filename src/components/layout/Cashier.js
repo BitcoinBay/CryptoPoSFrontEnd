@@ -28,6 +28,7 @@ export default class Cashier extends React.Component {
     this.toggleCryptoType = this.toggleCryptoType.bind(this);
     this.state = {
       jsonData: null,
+      blockHeight: null,
       cryptoType: 'BCH',
       fiatType: 'CAD',
       fiatAmount: 0,
@@ -59,8 +60,6 @@ export default class Cashier extends React.Component {
         this.setState({
           pos_xpub_address: res.data.address,
           pos_xpub_index: res.data.index
-        }, () => {
-          console.log(this.state);
         });
       });
     });
@@ -83,7 +82,7 @@ export default class Cashier extends React.Component {
     console.log("Format: ", BITBOX.Address.detectAddressFormat(XPubAddress))
     if (this.state.cryptoType === "BTC") {
       let legacyAddress = BITBOX.Address.toLegacyAddress(XPubAddress);
-      console.log(legacyAddress);
+      //console.log(legacyAddress);
       Bip21URL = BITBOX.BitcoinCash.encodeBIP21(legacyAddress, options);
     } else {
       Bip21URL = BITBOX.BitcoinCash.encodeBIP21(XPubAddress, options);
@@ -101,7 +100,7 @@ export default class Cashier extends React.Component {
 
   calculateCryptoAmount() {
     let cryptoAmount = this.state.fiatAmount/this.state.cryptoPrice;
-    console.log("calculate: ", cryptoAmount)
+    //console.log("calculate: ", cryptoAmount)
     if (cryptoAmount > 0) {
       if (this.state.cryptoType === "ETH") {
         this.setState({ cryptoAmount: cryptoAmount.toFixed(18) }, () => {
@@ -144,9 +143,14 @@ export default class Cashier extends React.Component {
       axios
         .get(`/api/balance${this.state.cryptoType}/${this.state.pos_address}`)
         .then((res) => {
-          if (res.data.utxo.length !== 0) {
+          console.log("Socket: ", res.data.utxo[0]);
+          if (res.data.utxo[0].confirmations == 0) {
             clearInterval(listen);
-            this.setState({ utxo: res.data.utxo });
+            if (this.state.cryptoType === 'BCH') {
+              this.setState({ utxo: res.data.utxo[0].txid });
+            } else {
+              this.setState({ utxo: res.data.utxo[0].tx_hash });
+            }
           } else {
             return;
           };
@@ -163,12 +167,12 @@ export default class Cashier extends React.Component {
 
     if (e.target.value === "BTC" || e.target.value === "BCH" || e.target.value === "ETH") {
       this.setState({ cryptoType: e.target.value, cryptoPrice: jsonData[e.target.value][this.state.fiatType]}, () => {
-        console.log(this.state);
+        //console.log(this.state);
         this.calculateCryptoAmount();
       });
     } else if (e.target.value === "USD" || e.target.value === "CAD" || e.target.value === "EUR") {
       this.setState({ fiatType: e.target.value, cryptoPrice: jsonData[this.state.cryptoType][e.target.value]}, () => {
-        console.log(this.state);
+        //console.log(this.state);
         this.calculateCryptoAmount();
       })
     }
@@ -179,7 +183,7 @@ export default class Cashier extends React.Component {
       .get('/api/datafeed')
       .then(res => {
         this.setState({ jsonData: res.data.status }, () => {
-          console.log(this.state.jsonData);
+          //console.log(this.state.jsonData);
           this.setState({ cryptoPrice: res.data.status[this.state.cryptoType][this.state.fiatType]}, () => {
             this.calculateCryptoAmount();
           });
@@ -187,7 +191,15 @@ export default class Cashier extends React.Component {
       })
       .catch(err => {
         console.log(err);
-      })
+      });
+
+    axios
+      .get('/api/blockHeight')
+      .then(res => {
+        this.setState({ blockHeight: res.data }, () => {
+          console.log(`${this.state.cryptoType} Block Height: `, this.state.blockHeight[this.state.cryptoType]);
+        });
+      });
   }
 
   render() {
@@ -202,13 +214,13 @@ export default class Cashier extends React.Component {
         </Helmet>
         <div className="center">
           <h3>Choose payment Option</h3>
-          <h4>PoS XPub: {this.state.pos_xpub_address}</h4>
           <li value={this.state.cryptoType} onClick={this.toggleCryptoType}>
             <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
                     width: "170px",
                     borderRadius: "3px",
                     letterSpacing: "1.5px",
-                    marginTop: "5rem" ,
+                    marginTop: "1rem" ,
+                    marginBottom: "1rem" ,
                     textAlign:"center",
                     fontFamily: "font-family: 'Lato', sans-serif;",
                     color:"white",
@@ -220,7 +232,8 @@ export default class Cashier extends React.Component {
                     width: "170px",
                     borderRadius: "3px",
                     letterSpacing: "1.5px",
-                    marginTop: "5rem" ,
+                    marginTop: "1rem" ,
+                    marginBottom: "1rem" ,
                     textAlign:"center",
                     fontFamily: "font-family: 'Lato', sans-serif;",
                     color:"white",
@@ -232,7 +245,8 @@ export default class Cashier extends React.Component {
                     width: "170px",
                     borderRadius: "3px",
                     letterSpacing: "1.5px",
-                    marginTop: "5rem" ,
+                    marginTop: "1rem" ,
+                    marginBottom: "1rem" ,
                     textAlign:"center",
                     fontFamily: "font-family: 'Lato', sans-serif;",
                     color:"white",
@@ -246,7 +260,8 @@ export default class Cashier extends React.Component {
                     width: "170px",
                     borderRadius: "3px",
                     letterSpacing: "1.5px",
-                    marginTop: "5rem" ,
+                    marginTop: "1rem" ,
+                    marginBottom: "2rem" ,
                     textAlign:"center",
                     fontFamily: "font-family: 'Lato', sans-serif;",
                     color:"white",
@@ -258,7 +273,8 @@ export default class Cashier extends React.Component {
                     width: "170px",
                     borderRadius: "3px",
                     letterSpacing: "1.5px",
-                    marginTop: "5rem" ,
+                    marginTop: "1rem" ,
+                    marginBottom: "2rem" ,
                     textAlign:"center",
                     fontFamily: "font-family: 'Lato', sans-serif;",
                     color:"white",
@@ -270,7 +286,8 @@ export default class Cashier extends React.Component {
                     width: "170px",
                     borderRadius: "3px",
                     letterSpacing: "1.5px",
-                    marginTop: "5rem" ,
+                    marginTop: "1rem" ,
+                    marginBottom: "2rem" ,
                     textAlign:"center",
                     fontFamily: "font-family: 'Lato', sans-serif;",
                     color:"white",
@@ -287,12 +304,24 @@ export default class Cashier extends React.Component {
               </div>
             )
           }
-          <input type="number" placeholder="Enter Payment Amount" min="0" pattern="^\d+(?:\.\d{1,2})?$" onChange={(e) => {this.handleClick(e)}} />
+          <h3>PoS XPub</h3>
+          <p style={{ textAlign:"center" }}>{this.state.pos_xpub_address}</p>
+          <input type="number" placeholder="Enter Payment Amount" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onChange={(e) => {this.handleClick(e)}} />
+          { this.state.blockHeight
+            ? (
+              <p>
+                {this.state.cryptoType} Block Height: {this.state.blockHeight[this.state.cryptoType]}
+              </p>
+            )
+            : <p>Waiting</p>
+          }
+          <p>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</p>
+          <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
+          <p>$ {this.state.fiatAmount} {this.state.fiatType}</p>
           <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" onClick={() => {this.clearOrder()}} style={{
                 width: "170px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px",
-                marginTop: "5rem" ,
                 textAlign:"center",
                 fontFamily: "font-family: 'Lato', sans-serif;",
                 marginRight:"-15px",
@@ -302,7 +331,6 @@ export default class Cashier extends React.Component {
                   width: "170px",
                   borderRadius: "3px",
                   letterSpacing: "1.5px",
-                  marginTop: "5rem" ,
                   textAlign:"center",
                   fontFamily: "font-family: 'Lato', sans-serif;",
                   color:"white",
@@ -313,7 +341,6 @@ export default class Cashier extends React.Component {
                   width: "170px",
                   borderRadius: "3px",
                   letterSpacing: "1.5px",
-                  marginTop: "5rem" ,
                   textAlign:"center",
                   fontFamily: "font-family: 'Lato', sans-serif;",
                   color:"white",
@@ -322,9 +349,6 @@ export default class Cashier extends React.Component {
                 }}
 
                   type="button" onClick={() => this.sendSocketIO([this.state.cryptoType, this.state.fiatType, this.state.cryptoAmount, this.state.fiatAmount, this.state.cryptoPrice, this.state.url])}>Pay Now</button>
-          <p>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</p>
-          <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
-          <p>$ {this.state.fiatAmount} {this.state.fiatType}</p>
         </div>
       </div>
     );

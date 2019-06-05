@@ -22,8 +22,6 @@ styleLink.href = "https://cdn.jsdelivr.net/npm/semantic-ui/dist/semantic.min.css
 document.head.appendChild(styleLink);
 
 export default class Customer extends React.Component {
-
-
   constructor() {
     super();
     this.state = {
@@ -71,27 +69,27 @@ export default class Customer extends React.Component {
             content="Customer Page for CryptoPoS"
           />
         </Helmet>
-       <div className= "wrap">
+       {/*<div className= "wrap">
         <button  className="btn btn-large waves-effect waves-light hoverable blue accent-3"  style={{
-                width: "200px",
-                borderRadius: "3px",
-                letterSpacing: "1.5px",
-                marginTop: "5rem" ,
-                textAlign:"center",
-                fontFamily: "font-family: 'Lato', sans-serif;",
-                color:"red",
-                marginRight:"-15px",
-                marginLeft: "28px"
+            width: "200px",
+            borderRadius: "3px",
+            letterSpacing: "1.5px",
+            marginTop: "5rem" ,
+            textAlign:"center",
+            fontFamily: "font-family: 'Lato', sans-serif;",
+            color:"red",
+            marginRight:"-15px",
+            marginLeft: "28px"
 
 
-              }} ><Link to={"/PaymentSucess"} className="lin">Order success</Link>
-
-              </button>
-          </div>
+            }} ><Link to={"/PaymentSucess"} className="lin">Order success</Link>
+          </button>
+        </div>*/}
         <div className="main">
-        <p className="heading">Please Send </p>
-        <h1 className="amt">Your {this.state.cryptoAmount} {this.state.cryptoType}</h1>
-        <p className="sen">To This Address</p>
+        <br />
+        <h2>
+          Please Send Your {this.state.cryptoAmount} {this.state.cryptoType} To The Following Address
+        </h2>
       <article>
       <Helmet>
         <title>Customer POS Page</title>
@@ -105,11 +103,9 @@ export default class Customer extends React.Component {
           </div>
         )
       }
-      <h3 className="equ">Equivalet in {this.state.fiatType}</h3>
-      <h1>$ {this.state.fiatAmount} {this.state.fiatType}</h1>
-      <h2>@ $ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</h2>
+      <h3>$ {this.state.fiatAmount} {this.state.fiatType}</h3>
+      <h3>@ $ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</h3>
     </article>
-    <h3 className="status">Status</h3>
     <button onClick={this.handleClick}>
         {this.state.isToggleuPaid ? 'UNPAID'  : 'PAID'}
       </button>
