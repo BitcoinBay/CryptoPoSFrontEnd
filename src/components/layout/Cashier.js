@@ -84,11 +84,12 @@ export default class Cashier extends React.Component {
       let legacyAddress = BITBOX.Address.toLegacyAddress(XPubAddress);
       //console.log(legacyAddress);
       Bip21URL = BITBOX.BitcoinCash.encodeBIP21(legacyAddress, options);
+      this.setState({ url: Bip21URL, pos_address: legacyAddress });
     } else {
       Bip21URL = BITBOX.BitcoinCash.encodeBIP21(XPubAddress, options);
+      this.setState({ url: Bip21URL, pos_address: XPubAddress });
       //console.log(Bip21URL)
     }
-    this.setState({ url: Bip21URL, pos_address: XPubAddress });
   }
 
   generateEthereumnAddress() {
@@ -143,7 +144,7 @@ export default class Cashier extends React.Component {
       axios
         .get(`/api/balance${this.state.cryptoType}/${this.state.pos_address}`)
         .then((res) => {
-          console.log("Socket: ", res.data.utxo[0]);
+          console.log("Socket: ", res.data);
           if (res.data.utxo[0].confirmations == 0) {
             clearInterval(listen);
             if (this.state.cryptoType === 'BCH') {
@@ -154,6 +155,9 @@ export default class Cashier extends React.Component {
           } else {
             return;
           };
+        })
+        .catch((err) => {
+          console.log(err);
         })}
       , 5000);
     this.setState({ paymentListening: listen }, () => {
@@ -215,40 +219,40 @@ export default class Cashier extends React.Component {
         <div className="center">
           <h3>Choose payment Option</h3>
           <li value={this.state.cryptoType} onClick={this.toggleCryptoType}>
-            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+            <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
                     width: "170px",
                     borderRadius: "3px",
                     letterSpacing: "1.5px",
                     marginTop: "1rem" ,
                     marginBottom: "1rem" ,
                     textAlign:"center",
-                    fontFamily: "font-family: 'Lato', sans-serif;",
+                    fontFamily: "font-family: 'Lato', sans-serif",
                     color:"white",
                     marginRight:"-15px",
                     marginLeft: "28px"
                   }}
                   value="BTC">BTC</button>
-            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+            <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
                     width: "170px",
                     borderRadius: "3px",
                     letterSpacing: "1.5px",
                     marginTop: "1rem" ,
                     marginBottom: "1rem" ,
                     textAlign:"center",
-                    fontFamily: "font-family: 'Lato', sans-serif;",
+                    fontFamily: "font-family: 'Lato', sans-serif",
                     color:"white",
                     marginRight:"-15px",
                     marginLeft: "28px"
                   }}
                   value="BCH">BCH</button>
-            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+            <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
                     width: "170px",
                     borderRadius: "3px",
                     letterSpacing: "1.5px",
                     marginTop: "1rem" ,
                     marginBottom: "1rem" ,
                     textAlign:"center",
-                    fontFamily: "font-family: 'Lato', sans-serif;",
+                    fontFamily: "font-family: 'Lato', sans-serif",
                     color:"white",
                     marginRight:"-15px",
                     marginLeft: "28px"
@@ -256,40 +260,40 @@ export default class Cashier extends React.Component {
                   value="ETH">ETH</button>
           </li>
           <li value={this.state.fiatType} onClick={this.toggleCryptoType}>
-            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+            <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
                     width: "170px",
                     borderRadius: "3px",
                     letterSpacing: "1.5px",
                     marginTop: "1rem" ,
                     marginBottom: "2rem" ,
                     textAlign:"center",
-                    fontFamily: "font-family: 'Lato', sans-serif;",
+                    fontFamily: "font-family: 'Lato', sans-serif",
                     color:"white",
                     marginRight:"-15px",
                     marginLeft: "28px"
                   }}
                   value="USD">USD</button>
-            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+            <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
                     width: "170px",
                     borderRadius: "3px",
                     letterSpacing: "1.5px",
                     marginTop: "1rem" ,
                     marginBottom: "2rem" ,
                     textAlign:"center",
-                    fontFamily: "font-family: 'Lato', sans-serif;",
+                    fontFamily: "font-family: 'Lato', sans-serif",
                     color:"white",
                     marginRight:"-15px",
                     marginLeft: "28px"
                   }}
                   value="CAD">CAD</button>
-            <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+            <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
                     width: "170px",
                     borderRadius: "3px",
                     letterSpacing: "1.5px",
                     marginTop: "1rem" ,
                     marginBottom: "2rem" ,
                     textAlign:"center",
-                    fontFamily: "font-family: 'Lato', sans-serif;",
+                    fontFamily: "font-family: 'Lato', sans-serif",
                     color:"white",
                     marginRight:"-15px",
                     marginLeft: "28px"
@@ -323,26 +327,26 @@ export default class Cashier extends React.Component {
                 borderRadius: "3px",
                 letterSpacing: "1.5px",
                 textAlign:"center",
-                fontFamily: "font-family: 'Lato', sans-serif;",
+                fontFamily: "font-family: 'Lato', sans-serif",
                 marginRight:"-15px",
                 marginLeft: "28px"
               }} >New Order</button>
-          <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+          <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
                   width: "170px",
                   borderRadius: "3px",
                   letterSpacing: "1.5px",
                   textAlign:"center",
-                  fontFamily: "font-family: 'Lato', sans-serif;",
+                  fontFamily: "font-family: 'Lato', sans-serif",
                   color:"white",
                   marginRight:"-15px",
                   marginLeft: "28px"
                 }} onClick={this.updatePrices}>Update Price</button>
-          <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+          <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
                   width: "170px",
                   borderRadius: "3px",
                   letterSpacing: "1.5px",
                   textAlign:"center",
-                  fontFamily: "font-family: 'Lato', sans-serif;",
+                  fontFamily: "font-family: 'Lato', sans-serif",
                   color:"white",
                   marginRight:"-15px",
                   marginLeft: "28px"
