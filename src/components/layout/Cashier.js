@@ -38,6 +38,7 @@ export default class Cashier extends React.Component {
       utxo: null,
       pos_id: null,
       pos_name: null,
+      pos_xpub_array: [],
       pos_xpub_address: null,
       pos_xpub_index: 0,
       pos_address: null,
@@ -58,8 +59,14 @@ export default class Cashier extends React.Component {
 
       axios.post("/api/get-pos-xpub", pos_data).then((res) => {
         this.setState({
-          pos_xpub_address: res.data.address,
-          pos_xpub_index: res.data.index
+          pos_xpub_array: res.data.xpubs
+        }, () => {
+          let xpub_array = this.state.pos_xpub_array;
+          for (let i = 0; i < xpub_array.length; i++) {
+            if (xpub_array[i].type === this.state.cryptoType) {
+              this.setState({ pos_xpub_address: xpub_array[i].address, pos_xpub_index: xpub_array[i].address_index});
+            }
+          }
         });
       });
     });
@@ -172,6 +179,12 @@ export default class Cashier extends React.Component {
     if (e.target.value === "BTC" || e.target.value === "BCH" || e.target.value === "ETH") {
       this.setState({ cryptoType: e.target.value, cryptoPrice: jsonData[e.target.value][this.state.fiatType]}, () => {
         //console.log(this.state);
+        let xpub_array = this.state.pos_xpub_array;
+        for (let i = 0; i < xpub_array.length; i++) {
+          if (xpub_array[i].type === this.state.cryptoType) {
+            this.setState({ pos_xpub_address: xpub_array[i].address, pos_xpub_index: xpub_array[i].address_index});
+          }
+        }
         this.calculateCryptoAmount();
       });
     } else if (e.target.value === "USD" || e.target.value === "CAD" || e.target.value === "EUR") {
