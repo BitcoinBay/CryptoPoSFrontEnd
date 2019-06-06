@@ -127,6 +127,21 @@ class POSDashboard extends Component {
             >
               Customer Page
             </Link>
+
+            <Link
+              to = "/order"
+              style={{
+                width: "190px",
+                borderRadius: "3px",
+                letterSpacing: "1.5px",
+                marginTop: "1rem",
+                margin: "14px",
+                textAlign:"center"
+              }}
+              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
+            >
+              Transcation
+            </Link>
           </div>
         </div>
 
