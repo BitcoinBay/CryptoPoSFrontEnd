@@ -86,10 +86,9 @@ export default class Cashier extends React.Component {
     };
     let Bip21URL;
     let XPubAddress = BITBOX.Address.fromXPub(this.state.pos_xpub_address, `0/${this.state.pos_xpub_index}`);
-    console.log("Format: ", BITBOX.Address.detectAddressFormat(XPubAddress))
     if (this.state.cryptoType === "BTC") {
       let legacyAddress = BITBOX.Address.toLegacyAddress(XPubAddress);
-      //console.log(legacyAddress);
+      console.log("Format", BITBOX.Address.detectAddressFormat(legacyAddress), ": ", legacyAddress);
       Bip21URL = BITBOX.BitcoinCash.encodeBIP21(legacyAddress, options);
       this.setState({ url: Bip21URL, pos_address: legacyAddress });
     } else {
