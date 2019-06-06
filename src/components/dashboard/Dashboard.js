@@ -5,8 +5,6 @@ import { logoutUser } from "../../actions/authActions";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-import './style.scss';
-
 class Dashboard extends Component {
 
   constructor() {
@@ -39,7 +37,6 @@ class Dashboard extends Component {
           <div className="landing-copy col s12 center-align">
             <button
               style={{
-                width: "150px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px",
                 marginTop: "1rem",
@@ -51,14 +48,19 @@ class Dashboard extends Component {
               Logout
             </button>
           </div>
-          <div className="col s12">
+        </div>
+
+        <div className="row">
+          <div className="col s6 offset-s3">
             <hr/>
           </div>
+        </div>
+
+        <div className="row">
           <div className="s12 center-align">
             <Link
               to = "/create-pos"
               style={{
-                width: "210px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px",
                 marginTop: "1rem",
@@ -69,8 +71,14 @@ class Dashboard extends Component {
               Create New PoS
             </Link>
           </div>
-          
-          <div className="col s4 offset-s4 center-align" id="pos_list">
+        </div>
+        
+        <div className="row">
+          <div className="col s4 offset-s4 center-align"
+              style={{
+                display: 'flex',
+                flexDirection: 'column'
+              }}>
             {
               this.state.user_pos_systems.map((pos, i) =>
                   <Link to={{ pathname: "/pos-dashboard", query: pos._id }}
