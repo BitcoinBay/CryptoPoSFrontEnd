@@ -3,9 +3,9 @@ import { Helmet } from 'react-helmet';
 import openSocket from 'socket.io-client';
 import './styles/customer.scss'
 import  QRAddress21 from '../QRAddress21';
-import { Dropdown } from 'semantic-ui-react'
-import { Link } from 'react-router-dom';
-import PaymentSucess from './PaymentSucess';
+//import { Dropdown } from 'semantic-ui-react'
+//import { Link } from 'react-router-dom';
+//import PaymentSucess from './PaymentSucess';
 
 //import * as BITBOXCli from "bitbox-sdk";
 

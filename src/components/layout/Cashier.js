@@ -10,12 +10,9 @@ import checkmark from '../../images/checkmark.png';
 const HDKey = require('ethereumjs-wallet/hdkey');
 const BITBOXSDK = require("@chris.troutner/bitbox-js");
 // initialize BITBOX
-const BITBOX = new BITBOXSDK({ restURL: "https://trest.bitcoin.com/v2/" });
-
+const BITBOX = new BITBOXSDK({ restURL: "https://rest.bitcoin.com/v2/" });
 const socket = openSocket('http://localhost:3000');
-
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
-
 
 export default class Cashier extends React.Component {
   constructor() {
@@ -80,7 +77,6 @@ export default class Cashier extends React.Component {
   }
 
   generateBitcoinAddress() {
-    let cryptoAmount;
     let options = {
       amount: this.state.cryptoAmount,
       label: '#BitcoinBay',
@@ -152,7 +148,7 @@ export default class Cashier extends React.Component {
         .get(`/api/balance${this.state.cryptoType}/${this.state.pos_address}`)
         .then((res) => {
           console.log("Socket: ", res.data);
-          if (res.data.utxo[0].confirmations == 0) {
+          if (res.data.utxo[0].confirmations === 0) {
             clearInterval(listen);
             if (this.state.cryptoType === 'BCH') {
               this.setState({ utxo: res.data.utxo[0].txid });
@@ -234,7 +230,7 @@ export default class Cashier extends React.Component {
             ? (
               <div>
                 <h3>Choose payment Option</h3>
-                <li value={this.state.cryptoType} onClick={this.toggleCryptoType}>
+                <ul value={this.state.cryptoType} onClick={this.toggleCryptoType}>
                   <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
                           width: "170px",
                           borderRadius: "3px",
@@ -274,8 +270,8 @@ export default class Cashier extends React.Component {
                           marginLeft: "28px"
                         }}
                         value="ETH">ETH</button>
-                </li>
-                <li value={this.state.fiatType} onClick={this.toggleCryptoType}>
+                </ul>
+                <ul value={this.state.fiatType} onClick={this.toggleCryptoType}>
                   <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
                           width: "170px",
                           borderRadius: "3px",
@@ -315,7 +311,7 @@ export default class Cashier extends React.Component {
                           marginLeft: "28px"
                         }}
                         value="EUR">EUR</button>
-                </li>
+                </ul>
                 { this.state.url === ''
                   ? <QRAddress21 value={defaultWebURL}  />
                   : (

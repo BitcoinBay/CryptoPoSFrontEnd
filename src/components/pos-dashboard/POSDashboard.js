@@ -65,7 +65,7 @@ class POSDashboard extends Component {
     axios.post('/api/add-xpub', xpub_data).then((res) => {
       // Use this when redux is set-up
       // this.forceUpdate();
-      
+
       this.props.history.push('/dashboard');
     });
   }
@@ -84,7 +84,7 @@ class POSDashboard extends Component {
                 {this.state.pos_name} is currently accepting payments in
                 {
                   this.state.pos_currencies.map((currency, i) =>
-                    { if (i == 0) {
+                    { if (i === 0) {
                         return (<span key={i}> {currency}</span>);
                       } else {
                         return (<span key={i}>, {currency}</span>);
