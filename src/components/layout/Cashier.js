@@ -5,7 +5,7 @@ import axios from 'axios';
 import openSocket from 'socket.io-client';
 import QRAddress21 from '../QRAddress21';
 import './styles/cashier.scss';
-import checkmark from '../../images/checkmark.png';
+import bitcoinbay from '../../images/bitcoinbay.jpeg';
 
 const HDKey = require('ethereumjs-wallet/hdkey');
 const BITBOXSDK = require("@chris.troutner/bitbox-js");
@@ -18,7 +18,8 @@ export default class Cashier extends React.Component {
   constructor() {
     super();
     this.handleClick = this.handleClick.bind(this);
-    this.clearOrder = this.clearOrder.bind(this);
+    this.newOrder = this.newOrder.bind(this);
+    this.cancelOrder = this.cancelOrder.bind(this);
     this.updatePrices = this.updatePrices.bind(this);
     this.calculateCryptoAmount = this.calculateCryptoAmount.bind(this);
     this.generateBitcoinAddress = this.generateBitcoinAddress.bind(this);
@@ -36,9 +37,15 @@ export default class Cashier extends React.Component {
       utxo: null,
       pos_id: null,
       pos_name: null,
+      pos_xpub_id: null,
       pos_xpub_array: [],
       pos_xpub_address: null,
       pos_xpub_index: 0,
+      index_counter: {
+        BCH: 0,
+        BTC: 0,
+        ETH: 0
+      },
       pos_address: null,
       paymentListening: 0
     }
@@ -62,7 +69,7 @@ export default class Cashier extends React.Component {
           let xpub_array = this.state.pos_xpub_array;
           for (let i = 0; i < xpub_array.length; i++) {
             if (xpub_array[i].type === this.state.cryptoType) {
-              this.setState({ pos_xpub_address: xpub_array[i].address, pos_xpub_index: xpub_array[i].address_index});
+              this.setState({ pos_xpub_id: xpub_array[i]._id, pos_xpub_address: xpub_array[i].address, pos_xpub_index: xpub_array[i].address_index});
             }
           }
         });
@@ -70,10 +77,60 @@ export default class Cashier extends React.Component {
     });
   }
 
-  clearOrder() {
+// updateXPubIndex is currently not in usage
+  updateXPubIndex() {
+    let indexTotal = this.state.pos_xpub_index + this.state.index_counter[this.state.cryptoType];
+
+    const pos_data = {
+      id: this.state.pos_xpub_id,
+      address_index: indexTotal
+    };
+
+    axios.post("/api/update-xpub-index", pos_data)
+      .then((res) => {
+        console.log(res);
+      }).catch((err) => {
+        console.log(err);
+      });
+  }
+
+  toggleAddressIndex(e) {
+    const { index_counter } = { ...this.state };
+//    console.log("index counter: ", index_counter);
+//    console.log("event.target: ", e.target.value);
+    let currentCrypto = index_counter;
+    let value = parseInt(e.target.value);
+    if (isNaN(value)) {
+      value = 0;
+    }
+
+    currentCrypto[this.state.cryptoType] = value;
+//    console.log("Toggle: ", currentCrypto);
+
+    try {
+      this.setState({ index_counter: currentCrypto }, () => {
+        if (this.state.cryptoType === "ETH") {
+          this.generateEthereumnAddress();
+        } else {
+          this.generateBitcoinAddress();
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      return;
+    }
+  }
+
+  newOrder() {
+    //this.updateXPubIndex();
     socket.emit('event', ['BCH', 'CAD', 0, 0, 0, defaultWebURL]);
     clearInterval(this.state.paymentListening);
-    this.setState({ cryptoType: 'BCH', fiatType: 'CAD', fiatAmount: 0, cryptoAmount: 0, url: defaultWebURL, paymentListening: 0 });
+    this.setState({ cryptoType: 'BCH', fiatType: 'CAD', fiatAmount: 0, cryptoAmount: 0, url: defaultWebURL, paymentListening: 0, pos_address: null });
+  }
+
+  cancelOrder() {
+    clearInterval(this.state.paymentListening);
+    this.setState({ paymentListening: 0 });
   }
 
   generateBitcoinAddress() {
@@ -82,7 +139,7 @@ export default class Cashier extends React.Component {
       label: '#BitcoinBay',
     };
     let Bip21URL;
-    let XPubAddress = BITBOX.Address.fromXPub(this.state.pos_xpub_address, `0/${this.state.pos_xpub_index}`);
+    let XPubAddress = BITBOX.Address.fromXPub(this.state.pos_xpub_address, `0/${this.state.pos_xpub_index + this.state.index_counter[this.state.cryptoType]}`);
     if (this.state.cryptoType === "BTC") {
       let legacyAddress = BITBOX.Address.toLegacyAddress(XPubAddress);
       console.log("Format", BITBOX.Address.detectAddressFormat(legacyAddress), ": ", legacyAddress);
@@ -98,7 +155,7 @@ export default class Cashier extends React.Component {
   generateEthereumnAddress() {
     let fromXPub = HDKey.fromExtendedKey(this.state.pos_xpub_address);
     //console.log(XPubAddress);
-    let paymentAddress = fromXPub.deriveChild(`0/${this.state.pos_xpub_index}`).getWallet().getAddressString();
+    let paymentAddress = fromXPub.deriveChild(`${this.state.pos_xpub_index + this.state.index_counter[this.state.cryptoType]}`).getWallet().getAddressString();
     this.setState({ url: paymentAddress, pos_address: paymentAddress });
   }
 
@@ -120,8 +177,8 @@ export default class Cashier extends React.Component {
     }
   }
 
-  handleClick(event) {
-    let payAmount = parseFloat(event.target.value);
+  handleClick(e) {
+    let payAmount = parseFloat(e.target.value);
     console.log(typeof payAmount, " ", payAmount);
     try {
       if (typeof payAmount !== "number" || payAmount === 0) {
@@ -161,6 +218,7 @@ export default class Cashier extends React.Component {
         })
         .catch((err) => {
           console.log(err);
+          return;
         })}
       , 5000);
     this.setState({ paymentListening: listen }, () => {
@@ -204,6 +262,7 @@ export default class Cashier extends React.Component {
       })
       .catch(err => {
         console.log(err);
+        return;
       });
 
     axios
@@ -211,6 +270,7 @@ export default class Cashier extends React.Component {
       .then(res => {
         this.setState({ blockHeight: res.data }, () => {
           console.log(`${this.state.cryptoType} Block Height: `, this.state.blockHeight[this.state.cryptoType]);
+          return;
         });
       });
   }
@@ -229,14 +289,12 @@ export default class Cashier extends React.Component {
           { this.state.paymentListening === 0
             ? (
               <div>
-                <h3>Choose payment Option</h3>
+                <h2>Choose Payment Option</h2>
                 <ul value={this.state.cryptoType} onClick={this.toggleCryptoType}>
                   <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
                           width: "170px",
                           borderRadius: "3px",
                           letterSpacing: "1.5px",
-                          marginTop: "1rem" ,
-                          marginBottom: "1rem" ,
                           textAlign:"center",
                           fontFamily: "font-family: 'Lato', sans-serif",
                           color:"white",
@@ -248,8 +306,6 @@ export default class Cashier extends React.Component {
                           width: "170px",
                           borderRadius: "3px",
                           letterSpacing: "1.5px",
-                          marginTop: "1rem" ,
-                          marginBottom: "1rem" ,
                           textAlign:"center",
                           fontFamily: "font-family: 'Lato', sans-serif",
                           color:"white",
@@ -261,8 +317,6 @@ export default class Cashier extends React.Component {
                           width: "170px",
                           borderRadius: "3px",
                           letterSpacing: "1.5px",
-                          marginTop: "1rem" ,
-                          marginBottom: "1rem" ,
                           textAlign:"center",
                           fontFamily: "font-family: 'Lato', sans-serif",
                           color:"white",
@@ -277,7 +331,6 @@ export default class Cashier extends React.Component {
                           borderRadius: "3px",
                           letterSpacing: "1.5px",
                           marginTop: "1rem" ,
-                          marginBottom: "2rem" ,
                           textAlign:"center",
                           fontFamily: "font-family: 'Lato', sans-serif",
                           color:"white",
@@ -290,7 +343,6 @@ export default class Cashier extends React.Component {
                           borderRadius: "3px",
                           letterSpacing: "1.5px",
                           marginTop: "1rem" ,
-                          marginBottom: "2rem" ,
                           textAlign:"center",
                           fontFamily: "font-family: 'Lato', sans-serif",
                           color:"white",
@@ -303,7 +355,6 @@ export default class Cashier extends React.Component {
                           borderRadius: "3px",
                           letterSpacing: "1.5px",
                           marginTop: "1rem" ,
-                          marginBottom: "2rem" ,
                           textAlign:"center",
                           fontFamily: "font-family: 'Lato', sans-serif",
                           color:"white",
@@ -312,6 +363,12 @@ export default class Cashier extends React.Component {
                         }}
                         value="EUR">EUR</button>
                 </ul>
+                <img src={bitcoinbay} alt="image" width="25%" height="25%"/>
+                <input type="number" placeholder="Enter Payment Amount" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onChange={(e) => {this.handleClick(e)}} />
+                <input type="number" placeholder="Address Index" min="0" step="1" placeholder="0" onChange={(e) => {this.toggleAddressIndex(e)}} />
+              </div>
+            )
+            : <div>
                 { this.state.url === ''
                   ? <QRAddress21 value={defaultWebURL}  />
                   : (
@@ -321,24 +378,24 @@ export default class Cashier extends React.Component {
                   )
                 }
               </div>
-            )
-            : <img src={checkmark} alt="checkmark"/>
           }
-          <h3>PoS XPub</h3>
-          <p style={{ textAlign:"center" }}>{this.state.pos_xpub_address}</p>
-          <input type="number" placeholder="Enter Payment Amount" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onChange={(e) => {this.handleClick(e)}} />
+          { this.state.pos_address
+            ? <strong style={{ textAlign:"center" }}>{this.state.cryptoType} Address (index: {this.state.index_counter[this.state.cryptoType]}): {this.state.pos_address}</strong>
+            : <strong style={{ textAlign:"center" }}>{this.state.cryptoType} Address (index: {this.state.index_counter[this.state.cryptoType]}):</strong>
+          }
+          <br/>
           { this.state.blockHeight
             ? (
-              <p>
+              <b>
                 {this.state.cryptoType} Block Height: {this.state.blockHeight[this.state.cryptoType]}
-              </p>
+              </b>
             )
-            : <p>Waiting</p>
+            : <b>Block Height: </b>
           }
           <p>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</p>
           <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
           <p>$ {this.state.fiatAmount} {this.state.fiatType}</p>
-          <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" onClick={() => {this.clearOrder()}} style={{
+          <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" onClick={() => {this.newOrder()}} style={{
                 width: "170px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px",
@@ -369,6 +426,22 @@ export default class Cashier extends React.Component {
                 }}
 
                   type="button" onClick={() => this.sendSocketIO([this.state.cryptoType, this.state.fiatType, this.state.cryptoAmount, this.state.fiatAmount, this.state.cryptoPrice, this.state.url])}>Pay Now</button>
+          <button className="btn btn-large waves-effect waves-light hoverable red accent-3" onClick={() => {this.cancelOrder()}} style={{
+                width: "170px",
+                borderRadius: "3px",
+                letterSpacing: "1.5px",
+                textAlign:"center",
+                fontFamily: "font-family: 'Lato', sans-serif",
+                marginRight:"-15px",
+                marginLeft: "28px"
+              }} >Cancel Order</button>
+          { this.state.paymentListening === 0
+            ? <div>
+                <h3>PoS XPub</h3>
+                <p style={{ textAlign:"center" }}>{this.state.pos_xpub_address}</p>
+              </div>
+            : <h1 style={{ textAlign:"center" }}>Powered By: Bitcoin Bay</h1>
+          }
         </div>
       </div>
     );
