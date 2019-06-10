@@ -235,7 +235,7 @@ export default class Cashier extends React.Component {
               <div>
                 <h3>Choose payment Option</h3>
                 <li value={this.state.cryptoType} onClick={this.toggleCryptoType}>
-                  <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                  <button className="btn btn-large  waves-light hoverable blue accent-3" style={{
                           width: "170px",
                           borderRadius: "3px",
                           letterSpacing: "1.5px",
@@ -248,7 +248,7 @@ export default class Cashier extends React.Component {
                           marginLeft: "28px"
                         }}
                         value="BTC">BTC</button>
-                  <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                  <button className="btn btn-large  waves-light hoverable blue accent-3" style={{
                           width: "170px",
                           borderRadius: "3px",
                           letterSpacing: "1.5px",
@@ -261,7 +261,7 @@ export default class Cashier extends React.Component {
                           marginLeft: "28px"
                         }}
                         value="BCH">BCH</button>
-                  <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                  <button className="btn btn-large  waves-light hoverable blue accent-3" style={{
                           width: "170px",
                           borderRadius: "3px",
                           letterSpacing: "1.5px",
@@ -276,7 +276,7 @@ export default class Cashier extends React.Component {
                         value="ETH">ETH</button>
                 </li>
                 <li value={this.state.fiatType} onClick={this.toggleCryptoType}>
-                  <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                  <button className="btn btn-large  waves-light hoverable blue accent-3" style={{
                           width: "170px",
                           borderRadius: "3px",
                           letterSpacing: "1.5px",
@@ -289,7 +289,7 @@ export default class Cashier extends React.Component {
                           marginLeft: "28px"
                         }}
                         value="USD">USD</button>
-                  <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                  <button className="btn btn-large  waves-light hoverable blue accent-3" style={{
                           width: "170px",
                           borderRadius: "3px",
                           letterSpacing: "1.5px",
@@ -302,7 +302,7 @@ export default class Cashier extends React.Component {
                           marginLeft: "28px"
                         }}
                         value="CAD">CAD</button>
-                  <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                  <button className="btn btn-large  waves-light hoverable blue accent-3" style={{
                           width: "170px",
                           borderRadius: "3px",
                           letterSpacing: "1.5px",
@@ -342,7 +342,7 @@ export default class Cashier extends React.Component {
           <p>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</p>
           <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
           <p>$ {this.state.fiatAmount} {this.state.fiatType}</p>
-          <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" onClick={() => {this.clearOrder()}} style={{
+          <button className="btn btn-large  waves-light hoverable blue accent-3" onClick={() => {this.clearOrder()}} style={{
                 width: "170px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px",
@@ -351,7 +351,7 @@ export default class Cashier extends React.Component {
                 marginRight:"-15px",
                 marginLeft: "28px"
               }} >New Order</button>
-          <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+          <button className="btn btn-large  waves-light hoverable blue accent-3" style={{
                   width: "170px",
                   borderRadius: "3px",
                   letterSpacing: "1.5px",
@@ -361,7 +361,7 @@ export default class Cashier extends React.Component {
                   marginRight:"-15px",
                   marginLeft: "28px"
                 }} onClick={this.updatePrices}>Update Price</button>
-          <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+          <button className="btn btn-large  waves-light hoverable blue accent-3" style={{
                   width: "170px",
                   borderRadius: "3px",
                   letterSpacing: "1.5px",

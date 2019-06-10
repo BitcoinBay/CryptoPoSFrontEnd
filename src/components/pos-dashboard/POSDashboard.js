@@ -108,7 +108,7 @@ class POSDashboard extends Component {
                 marginTop: "1rem",
                 margin: "14px"
               }}
-              className="btn btn-large waves-effect waves-light hoverable blue
+              className="btn btn-large waves-light hoverable blue
                   accent-3"
             >
               Cashier Page
@@ -123,7 +123,7 @@ class POSDashboard extends Component {
                 marginTop: "1rem",
                 margin: "14px"
               }}
-              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
+              className="btn btn-large  waves-light hoverable blue accent-3"
             >
               Customer Page
             </Link>
@@ -138,7 +138,7 @@ class POSDashboard extends Component {
                 margin: "14px",
                 textAlign:"center"
               }}
-              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
+              className="btn btn-large  waves-light hoverable blue accent-3"
             >
               Transcation
             </Link>
@@ -186,7 +186,7 @@ class POSDashboard extends Component {
                       marginTop: "1rem"
                   }}
                   onClick={this.addNewPaymentMethod}
-                  className="btn btn-large waves-effect waves-light
+                  className="btn btn-large  waves-light
                           hoverable blue accent-3">Add new payment method</button>
               </div>
           </div>
@@ -200,7 +200,7 @@ class POSDashboard extends Component {
 
         <div className="row">
           <div className="col s12 center-align">
-            <button className="btn btn-large waves-effect waves-light hoverable red
+            <button className="btn btn-large  waves-light hoverable red
                 accent-3"
               style={{
                 borderRadius: "3px",
