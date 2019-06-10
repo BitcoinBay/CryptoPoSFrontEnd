@@ -43,9 +43,14 @@ export default class Cashier extends React.Component {
       pos_xpub_address: null,
       pos_xpub_index: 0,
       pos_address: null,
-      paymentListening: 0
+      paymentListening: 0,
+      color : "blue", 
     }
   }
+
+  onChange = () => {
+    this.setState({ color: 'green' });
+ }
 
   componentDidMount() {
     this.updatePrices();
@@ -219,6 +224,8 @@ export default class Cashier extends React.Component {
       });
   }
 
+  
+
   render() {
     return(
       <div className="feature-page">
@@ -235,7 +242,11 @@ export default class Cashier extends React.Component {
               <div>
                 <h3>Choose payment Option</h3>
                 <li value={this.state.cryptoType} onClick={this.toggleCryptoType}>
-                  <button className="btn btn-large  waves-light hoverable blue accent-3" style={{
+               
+                  <button  className="btn btn-large  waves-light hoverable blue accent-3"
+                 
+                  
+                  style={{
                           width: "170px",
                           borderRadius: "3px",
                           letterSpacing: "1.5px",
@@ -245,8 +256,9 @@ export default class Cashier extends React.Component {
                           fontFamily: "font-family: 'Lato', sans-serif",
                           color:"white",
                           marginRight:"-15px",
-                          marginLeft: "28px"
-                        }}
+                          marginLeft: "28px", 
+                          backgroundColor: this.state.bgColor
+                        }} 
                         value="BTC">BTC</button>
                   <button className="btn btn-large  waves-light hoverable blue accent-3" style={{
                           width: "170px",
