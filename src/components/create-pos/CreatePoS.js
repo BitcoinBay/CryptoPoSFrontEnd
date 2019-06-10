@@ -67,7 +67,7 @@ class CreatePoS extends Component {
                                         onChange={ this.onChange }
                                         value={ this.state.value }
                                         ref={ (select) => this.select = select }>
-                                    <option value="">Choose a payment currency</option>
+                                    <option value="">Choose a currency</option>
                                     <option value="BTC">Bitcoin</option>
                                     <option value="BCH">Bitcoin Cash</option>
                                     <option value="ETH">Ethereum</option>
