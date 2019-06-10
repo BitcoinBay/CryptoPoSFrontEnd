@@ -11,6 +11,7 @@
     "axios": "^0.18.0",
     "bitbox-sdk": "^7.3.0",
     "classnames": "^2.2.6",
+    "eslint": "^5.16.0",
     "ethereumjs-wallet": "^0.6.3",
     "is-empty": "^1.2.0",
     "jwt-decode": "^2.2.0",

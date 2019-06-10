@@ -93,8 +93,10 @@ class CreatePoS extends Component {
                                     marginTop: "1rem"
                                 }}
                                 type="submit"
-                                className="btn btn-large waves-effect waves-light
-                                        hoverable blue accent-3">Create PoS</button>
+                                className="btn btn-large waves-light
+                                        hoverable 
+                                        blue accent-3
+                                        ">Create PoS</button>
                             </div>
                         </form>
                     </div>
