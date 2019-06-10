@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@chris.troutner/bitbox-js": "git+https://github.com/christroutner/bitbox-js.git",
+    "@chris.troutner/bitbox-js": "https://github.com/BitcoinBay/bitbox-js",
     "@types/jest": "^24.0.13",
     "@types/node": "^12.0.2",
     "@types/react": "^16.8.17",
@@ -11,6 +11,7 @@
     "axios": "^0.18.0",
     "bitbox-sdk": "^7.3.0",
     "classnames": "^2.2.6",
+    "eslint": "^5.16.0",
     "ethereumjs-wallet": "^0.6.3",
     "is-empty": "^1.2.0",
     "jwt-decode": "^2.2.0",
