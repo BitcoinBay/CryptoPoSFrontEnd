@@ -4,7 +4,8 @@ import { Helmet } from 'react-helmet';
 import axios from 'axios';
 import openSocket from 'socket.io-client';
 import QRAddress21 from '../QRAddress21';
-import './styles/cashier.scss'
+import './styles/cashier.scss';
+import checkmark from '../../images/checkmark.png';
 
 const HDKey = require('ethereumjs-wallet/hdkey');
 const BITBOXSDK = require("@chris.troutner/bitbox-js");
@@ -229,96 +230,103 @@ export default class Cashier extends React.Component {
           />
         </Helmet>
         <div className="center">
-          <h3>Choose payment Option</h3>
-          <li value={this.state.cryptoType} onClick={this.toggleCryptoType}>
-            <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
-                    width: "170px",
-                    borderRadius: "3px",
-                    letterSpacing: "1.5px",
-                    marginTop: "1rem" ,
-                    marginBottom: "1rem" ,
-                    textAlign:"center",
-                    fontFamily: "font-family: 'Lato', sans-serif",
-                    color:"white",
-                    marginRight:"-15px",
-                    marginLeft: "28px"
-                  }}
-                  value="BTC">BTC</button>
-            <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
-                    width: "170px",
-                    borderRadius: "3px",
-                    letterSpacing: "1.5px",
-                    marginTop: "1rem" ,
-                    marginBottom: "1rem" ,
-                    textAlign:"center",
-                    fontFamily: "font-family: 'Lato', sans-serif",
-                    color:"white",
-                    marginRight:"-15px",
-                    marginLeft: "28px"
-                  }}
-                  value="BCH">BCH</button>
-            <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
-                    width: "170px",
-                    borderRadius: "3px",
-                    letterSpacing: "1.5px",
-                    marginTop: "1rem" ,
-                    marginBottom: "1rem" ,
-                    textAlign:"center",
-                    fontFamily: "font-family: 'Lato', sans-serif",
-                    color:"white",
-                    marginRight:"-15px",
-                    marginLeft: "28px"
-                  }}
-                  value="ETH">ETH</button>
-          </li>
-          <li value={this.state.fiatType} onClick={this.toggleCryptoType}>
-            <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
-                    width: "170px",
-                    borderRadius: "3px",
-                    letterSpacing: "1.5px",
-                    marginTop: "1rem" ,
-                    marginBottom: "2rem" ,
-                    textAlign:"center",
-                    fontFamily: "font-family: 'Lato', sans-serif",
-                    color:"white",
-                    marginRight:"-15px",
-                    marginLeft: "28px"
-                  }}
-                  value="USD">USD</button>
-            <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
-                    width: "170px",
-                    borderRadius: "3px",
-                    letterSpacing: "1.5px",
-                    marginTop: "1rem" ,
-                    marginBottom: "2rem" ,
-                    textAlign:"center",
-                    fontFamily: "font-family: 'Lato', sans-serif",
-                    color:"white",
-                    marginRight:"-15px",
-                    marginLeft: "28px"
-                  }}
-                  value="CAD">CAD</button>
-            <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
-                    width: "170px",
-                    borderRadius: "3px",
-                    letterSpacing: "1.5px",
-                    marginTop: "1rem" ,
-                    marginBottom: "2rem" ,
-                    textAlign:"center",
-                    fontFamily: "font-family: 'Lato', sans-serif",
-                    color:"white",
-                    marginRight:"-15px",
-                    marginLeft: "28px"
-                  }}
-                  value="EUR">EUR</button>
-          </li>
-          { this.state.url === ''
-            ? <QRAddress21 value={defaultWebURL}  />
-            : (
+          { this.state.paymentListening === 0
+            ? (
               <div>
-                <QRAddress21 value={this.state.url} />
+                <h3>Choose payment Option</h3>
+                <li value={this.state.cryptoType} onClick={this.toggleCryptoType}>
+                  <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                          width: "170px",
+                          borderRadius: "3px",
+                          letterSpacing: "1.5px",
+                          marginTop: "1rem" ,
+                          marginBottom: "1rem" ,
+                          textAlign:"center",
+                          fontFamily: "font-family: 'Lato', sans-serif",
+                          color:"white",
+                          marginRight:"-15px",
+                          marginLeft: "28px"
+                        }}
+                        value="BTC">BTC</button>
+                  <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                          width: "170px",
+                          borderRadius: "3px",
+                          letterSpacing: "1.5px",
+                          marginTop: "1rem" ,
+                          marginBottom: "1rem" ,
+                          textAlign:"center",
+                          fontFamily: "font-family: 'Lato', sans-serif",
+                          color:"white",
+                          marginRight:"-15px",
+                          marginLeft: "28px"
+                        }}
+                        value="BCH">BCH</button>
+                  <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                          width: "170px",
+                          borderRadius: "3px",
+                          letterSpacing: "1.5px",
+                          marginTop: "1rem" ,
+                          marginBottom: "1rem" ,
+                          textAlign:"center",
+                          fontFamily: "font-family: 'Lato', sans-serif",
+                          color:"white",
+                          marginRight:"-15px",
+                          marginLeft: "28px"
+                        }}
+                        value="ETH">ETH</button>
+                </li>
+                <li value={this.state.fiatType} onClick={this.toggleCryptoType}>
+                  <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                          width: "170px",
+                          borderRadius: "3px",
+                          letterSpacing: "1.5px",
+                          marginTop: "1rem" ,
+                          marginBottom: "2rem" ,
+                          textAlign:"center",
+                          fontFamily: "font-family: 'Lato', sans-serif",
+                          color:"white",
+                          marginRight:"-15px",
+                          marginLeft: "28px"
+                        }}
+                        value="USD">USD</button>
+                  <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                          width: "170px",
+                          borderRadius: "3px",
+                          letterSpacing: "1.5px",
+                          marginTop: "1rem" ,
+                          marginBottom: "2rem" ,
+                          textAlign:"center",
+                          fontFamily: "font-family: 'Lato', sans-serif",
+                          color:"white",
+                          marginRight:"-15px",
+                          marginLeft: "28px"
+                        }}
+                        value="CAD">CAD</button>
+                  <button className="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
+                          width: "170px",
+                          borderRadius: "3px",
+                          letterSpacing: "1.5px",
+                          marginTop: "1rem" ,
+                          marginBottom: "2rem" ,
+                          textAlign:"center",
+                          fontFamily: "font-family: 'Lato', sans-serif",
+                          color:"white",
+                          marginRight:"-15px",
+                          marginLeft: "28px"
+                        }}
+                        value="EUR">EUR</button>
+                </li>
+                { this.state.url === ''
+                  ? <QRAddress21 value={defaultWebURL}  />
+                  : (
+                    <div>
+                      <QRAddress21 value={this.state.url} />
+                    </div>
+                  )
+                }
               </div>
             )
+            : <img src={checkmark} alt="checkmark"/>
           }
           <h3>PoS XPub</h3>
           <p style={{ textAlign:"center" }}>{this.state.pos_xpub_address}</p>
