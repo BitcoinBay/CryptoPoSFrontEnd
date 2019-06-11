@@ -149,10 +149,10 @@ export default class Cashier extends React.Component {
       let legacyAddress = BITBOX.Address.toLegacyAddress(XPubAddress);
       console.log("Format", BITBOX.Address.detectAddressFormat(legacyAddress), ": ", legacyAddress);
       Bip21URL = BITBOX.BitcoinCash.encodeBIP21(legacyAddress, options);
-      this.setState({ url: Bip21URL, pos_address: legacyAddress });
+      this.setState({ url: legacyAddress, pos_address: legacyAddress });
     } else {
       Bip21URL = BITBOX.BitcoinCash.encodeBIP21(XPubAddress, options);
-      this.setState({ url: Bip21URL, pos_address: XPubAddress });
+      this.setState({ url: XPubAddress, pos_address: XPubAddress });
       //console.log(Bip21URL)
     }
   }
