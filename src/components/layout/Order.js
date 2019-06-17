@@ -24,7 +24,8 @@ export default class Order extends React.Component {
 
     render() {
     return (
-        <div className="order_wrapper">
+    
+        <div className="order_wrapper" >
            <h1 id='title'>Orders</h1>
            <table id='txrefs'>
               <tbody>
@@ -35,6 +36,7 @@ export default class Order extends React.Component {
                  {this.renderUsers()}
               </tbody>
            </table>
+       
         </div>
      )
 

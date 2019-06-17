@@ -241,11 +241,9 @@ export default class Cashier extends React.Component {
             ? (
               <div>
                 <h3>Choose payment Option</h3>
-                <li value={this.state.cryptoType} onClick={this.toggleCryptoType}>
-               
+                <h4 className="titles">Crytocurrencies</h4>
+                <li value={this.state.cryptoType} onClick={this.toggleCryptoType} >
                   <button  className="btn btn-large  waves-light hoverable blue accent-3"
-                 
-                  
                   style={{
                           width: "170px",
                           borderRadius: "3px",
@@ -257,7 +255,8 @@ export default class Cashier extends React.Component {
                           color:"white",
                           marginRight:"-15px",
                           marginLeft: "28px", 
-                          backgroundColor: this.state.bgColor
+                          backgroundColor: this.state.bgColor,
+                         
                         }} 
                         value="BTC">BTC</button>
                   <button className="btn btn-large  waves-light hoverable blue accent-3" style={{
@@ -288,6 +287,7 @@ export default class Cashier extends React.Component {
                         value="ETH">ETH</button>
                 </li>
                 <li value={this.state.fiatType} onClick={this.toggleCryptoType}>
+                <h4 className="titles">Flat equivalent</h4>
                   <button className="btn btn-large  waves-light hoverable blue accent-3" style={{
                           width: "170px",
                           borderRadius: "3px",
@@ -342,7 +342,7 @@ export default class Cashier extends React.Component {
           }
           <h3>PoS XPub</h3>
           <p style={{ textAlign:"center" }}>{this.state.pos_xpub_address}</p>
-          <input type="number" placeholder="Enter Payment Amount" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onChange={(e) => {this.handleClick(e)}} />
+          <input type="number" placeholder="Enter Payment Amount " min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onChange={(e) => {this.handleClick(e)}} />
           { this.state.blockHeight
             ? (
               <p>
