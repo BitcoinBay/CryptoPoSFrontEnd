@@ -37,7 +37,6 @@ class Dashboard extends Component {
       <div style={{ height: "75vh" }} className="container ">
         <div className="row">
           <div className="landing-copy col s12 center-align">
-<<<<<<< HEAD
             <Link
               to= "/cashier"
               style={{

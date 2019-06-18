@@ -14,10 +14,6 @@ const BITBOX = new BITBOXSDK({ restURL: "https://trest.bitcoin.com/v2/" });
 
 const socket = openSocket('http://localhost:3000');
 
-<<<<<<< HEAD
-//const api_key = '897a2b25ccd5730323919dee1201a832e5d2bb9835e6ded08dd4897f7669e8f7'
-=======
->>>>>>> a0736215078d2f739d630827b024472f4228a969
 const XPubKey = "tpubDCoP9xnjhwkwC8pT7DVSPFDgbYb2uq2UAdY2DQmk2YtBpiEY8XGtT26P6NgYyc38fiuTF9x3MAtKmuUR2HPd7qKQmAYD5NTpfVy5SzZntWN";
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 
@@ -88,12 +84,6 @@ export default class Cashier extends React.Component {
 
   calculateCryptoAmount() {
     let cryptoAmount = this.state.fiatAmount / this.state.cryptoPrice;
-<<<<<<< HEAD
-    if (this.state.cryptoPrice * cryptoAmount === this.state.fiatAmount) {
-      this.setState({ cryptoAmount: cryptoAmount }, () => {
-        this.generateAddress();
-      });
-=======
     if (this.state.cryptoType === "ETH") {
       this.setState({ cryptoAmount: cryptoAmount.toFixed(18) }, () => {
         this.generateAddress();
@@ -102,7 +92,6 @@ export default class Cashier extends React.Component {
       this.setState({ cryptoAmount: cryptoAmount.toFixed(8) }, () => {
         this.generateAddress();
       })
->>>>>>> a0736215078d2f739d630827b024472f4228a969
     }
   }
 
@@ -167,18 +156,11 @@ export default class Cashier extends React.Component {
             content="Feature page of React.js Boilerplate application"
           />
         </Helmet>
-<<<<<<< HEAD
-        <div class="center">
-          <h2>Choose payment Option</h2>
-
-          <h4 class="textAlignCurrency">Crypto Currencies</h4>
-          <div  value={this.state.cryptoType} onClick={this.toggleCryptoType}>
-            <button class="buttonCurrency btn btn-large waves-effect waves-light hoverable blue accent-3" 
-=======
+          
         <div>
           <h3>Choose payment Option</h3>
           <h4>PoS XPub: {this.state.pos_xpub_address}</h4>
-          <li value={this.state.cryptoType} onClick={this.toggleCryptoType}>
+          <div value={this.state.cryptoType} onClick={this.toggleCryptoType}>
             <button class="btn btn-large waves-effect waves-light hoverable blue accent-3" style={{
                     width: "170px",
                     borderRadius: "3px",
@@ -190,13 +172,12 @@ export default class Cashier extends React.Component {
                     marginRight:"-15px",
                     marginLeft: "28px"
                   }}
->>>>>>> a0736215078d2f739d630827b024472f4228a969
                   value="BTC">BTC</button>
             <button class="buttonCurrency btn btn-large waves-effect waves-light hoverable blue accent-3" 
                   value="BCH">BCH</button>
             <button class="buttonCurrency btn btn-large waves-effect waves-light hoverable blue accent-3" 
                   value="ETH">ETH</button>
-          </div>
+        </div>
 
           <h4 class="textAlignCurrency">Fiat Currencies</h4>
           <div value={this.state.fiatType} onClick={this.toggleCryptoType}>
