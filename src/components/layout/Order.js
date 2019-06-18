@@ -26,7 +26,7 @@ export default class Order extends React.Component {
     return (
     
         <div className="order_wrapper" >
-           <h1 id='title'>Orders</h1>
+           <h1 id='title'>ORDERS</h1>
            <table id='txrefs'>
               <tbody>
                  {/* <tr>{this.renderTableHeader()}</tr> */}

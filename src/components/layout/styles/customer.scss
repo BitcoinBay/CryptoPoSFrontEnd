@@ -164,16 +164,34 @@ canvas{
     }
 }
 
+@media(max-width:768px){
+
+}
+
 
 @media(max-width:650px){
     .wrapper{
         width: 100%;
+    }
+
+    h2{
+        margin-top: 88px;
     }
 }
 
 @media(max-width:414px){
     .wrap{
         width: 100%
+    }
+    
+}
+
+
+@media(max-width:425px){
+    .send {
+        font-size: 1.2rem;
+        margin-top: 118px;
+        margin-bottom: 37px;
     }
 }
 
@@ -191,9 +209,10 @@ canvas{
         width: 171px;
         padding: 0;
 
-    }
-    
+    }  
 }
+
+
 
 
 

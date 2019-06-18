@@ -87,7 +87,7 @@ export default class Customer extends React.Component {
         </div>*/}
         <div className="main">
         <br />
-        <h2>
+        <h2 className="send">
           Please Send Your {this.state.cryptoAmount} {this.state.cryptoType} To The Following Address
         </h2>
       <article>
