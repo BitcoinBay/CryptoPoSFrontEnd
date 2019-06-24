@@ -1,0 +1,39 @@
+.center {
+    margin: auto;
+    width: 75%;
+    border: 3px solid black;
+    padding: 10px;
+  }
+
+  .buttonCurrency {
+    width: 170px;
+    border-Radius:3px;
+    letter-Spacing: 1.5px;
+    margin: 15px;
+    text-Align:center;
+    font-Family: 'Lato', sans-serif;
+    color:white;
+
+  }
+
+  .buttonPrice {
+    width: auto;
+    border-Radius: 3px;
+    letter-Spacing: 1.5px;
+    margin: 15px;
+    text-Align:center;
+    font-Family: 'Lato', sans-serif;
+    color: white;
+
+  }
+
+  .textAlignCurrency {
+    text-align: left;
+    margin-left: 80px;
+  }
+
+
+  button:hover{
+    border:3px solid black;
+
+  }

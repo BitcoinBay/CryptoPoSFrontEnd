@@ -24,3 +24,6 @@ export default class QRAddress21 extends React.Component {
   }
 };
 
+QRAddress21.propTypes = {
+  value: PropTypes.string
+};

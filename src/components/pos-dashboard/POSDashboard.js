@@ -20,7 +20,12 @@ class POSDashboard extends Component {
   componentDidMount() {
     M.FormSelect.init(this.select);
 
+<<<<<<< HEAD
     this.setState({ pos_id: this.props.location.search.substring(3) }, () => {
+=======
+    this.setState({ pos_id: this.props.location.query }, () => {
+      console.log("PoS ID: ", this.props.location.query)
+>>>>>>> origin/develop
       const pos_data = {
         pos_id: this.state.pos_id
       };
@@ -66,12 +71,17 @@ class POSDashboard extends Component {
       this.setState({ pos_currencies: updated_currencies });
 
       // this.forceUpdate();
+<<<<<<< HEAD
+=======
+
+      this.props.history.push('/dashboard');
+>>>>>>> origin/develop
     });
   }
 
   render() {
     return (
-      <div className="container"> 
+      <div className="container">
         <div style={{ marginTop: "4rem" }} className="row">
           <div className="col s8 offset-s2">
             <Link to="/dashboard" className="btn-flat waves-effect">
@@ -83,7 +93,7 @@ class POSDashboard extends Component {
                 {this.state.pos_name} is currently accepting payments in
                 {
                   this.state.pos_currencies.map((currency, i) =>
-                    { if (i == 0) {
+                    { if (i === 0) {
                         return (<span key={i}> {currency}</span>);
                       } else {
                         return (<span key={i}>, {currency}</span>);
@@ -107,7 +117,7 @@ class POSDashboard extends Component {
                 marginTop: "1rem",
                 margin: "14px"
               }}
-              className="btn btn-large waves-effect waves-light hoverable blue
+              className="btn btn-large waves-light hoverable blue
                   accent-3"
             >
               Cashier Page
@@ -122,9 +132,24 @@ class POSDashboard extends Component {
                 marginTop: "1rem",
                 margin: "14px"
               }}
-              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
+              className="btn btn-large  waves-light hoverable blue accent-3"
             >
               Customer Page
+            </Link>
+
+            <Link
+              to = "/order"
+              style={{
+                width: "190px",
+                borderRadius: "3px",
+                letterSpacing: "1.5px",
+                marginTop: "1rem",
+                margin: "14px",
+                textAlign:"center"
+              }}
+              className="btn btn-large  waves-light hoverable blue accent-3"
+            >
+              Transcation
             </Link>
           </div>
         </div>
@@ -170,7 +195,7 @@ class POSDashboard extends Component {
                       marginTop: "1rem"
                   }}
                   onClick={this.addNewPaymentMethod}
-                  className="btn btn-large waves-effect waves-light
+                  className="btn btn-large  waves-light
                           hoverable blue accent-3">Add new payment method</button>
               </div>
           </div>
@@ -184,7 +209,7 @@ class POSDashboard extends Component {
 
         <div className="row">
           <div className="col s12 center-align">
-            <button className="btn btn-large waves-effect waves-light hoverable red
+            <button className="btn btn-large  waves-light hoverable red
                 accent-3"
               style={{
                 borderRadius: "3px",

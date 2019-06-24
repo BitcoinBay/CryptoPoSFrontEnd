@@ -2,7 +2,7 @@
        font-family: 'Lato', sans-serif;
        margin: 0;
        padding: 0;
-      
+
   }
 
   .qrcode{
@@ -10,7 +10,7 @@
      width: 30px;
      font-weight: 900;
      font-size: 60px;
-     
+
 
   }
 
@@ -34,7 +34,7 @@
       color: white;
       text-align: center;
       margin-left: -10px;
-      
+
   }
 
   button{
@@ -46,8 +46,8 @@
   /* .wrapper{
       margin: 0 auto;
       width: 70%;
-      
-     
+
+
   } */
 
 
@@ -79,6 +79,10 @@
       font-size: 18px;
       font-weight: bold;
   }
+
+  label{
+  }
+
 
   canvas{
       height: 208px;

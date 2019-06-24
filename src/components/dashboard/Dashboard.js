@@ -20,9 +20,16 @@ class Dashboard extends Component {
       user_id: this.props.auth.user.id
     };
 
-    axios.post("/api/get-all-user-pos", user_data).then((res) => {
-      this.setState({ user_pos_systems: res.data });
-    });
+    axios.post("/api/get-all-user-pos", user_data)
+      .then((res) => {
+        console.log("Logging: ", res);
+        if (res.data) {
+          this.setState({ user_pos_systems: res.data });
+        }
+      })
+      .catch((err) => {
+        console.log("Error: ", err);
+      });
   }
 
   onLogoutClick = e => {
@@ -72,7 +79,7 @@ class Dashboard extends Component {
             </Link>
           </div>
         </div>
-        
+
         <div className="row">
           <div className="col s4 offset-s4 center-align"
               style={{

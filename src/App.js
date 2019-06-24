@@ -18,6 +18,7 @@ import PrivateRoute from "./components/private-route/PrivateRoute";
 import Dashboard from "./components/dashboard/Dashboard";
 import CreatePoS from "./components/create-pos/CreatePoS";
 import POSDashboard from "./components/pos-dashboard/POSDashboard";
+import Order from "./components/layout/Order";
 
 import "./App.css";
 import PaymentSucess from "./components/layout/PaymentSucess";
@@ -57,6 +58,7 @@ class App extends Component {
               <PrivateRoute exact path="/PaymentSucess" component= {PaymentSucess}/>
               <PrivateRoute exact path="/create-pos" component={CreatePoS} />
               <PrivateRoute exact path="/pos-dashboard" component={POSDashboard} />
+              <PrivateRoute exact path="/order" component={Order}/>
             </Switch>
           </div>
         </Router>
