@@ -44,9 +44,11 @@ export default class Customer extends React.Component {
 
     }
   }
+
   componentDidMount() {
     socket.on('event', msg => this.update(msg));
   }
+
   update(data) {
     console.log(data);
     this.setState({
@@ -58,6 +60,7 @@ export default class Customer extends React.Component {
       url: data[5],
     }, () => console.log(this.state));
   }
+
   render() {
     return (
       <div className="cashier-page wrapper">
