@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { logoutUser } from "../../actions/authActions";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import M from 'materialize-css';
@@ -21,7 +20,7 @@ class POSDashboard extends Component {
   componentDidMount() {
     M.FormSelect.init(this.select);
 
-    this.setState({ pos_id: this.props.location.query }, () => {
+    this.setState({ pos_id: this.props.location.search.substring(3) }, () => {
       const pos_data = {
         pos_id: this.state.pos_id
       };
@@ -62,10 +61,11 @@ class POSDashboard extends Component {
     };
 
     axios.post('/api/add-xpub', xpub_data).then((res) => {
-      // Use this when redux is set-up
+      let updated_currencies = this.state.pos_currencies.slice();
+      updated_currencies.push(xpub_data.type);
+      this.setState({ pos_currencies: updated_currencies });
+
       // this.forceUpdate();
-      
-      this.props.history.push('/dashboard');
     });
   }
 
@@ -99,7 +99,7 @@ class POSDashboard extends Component {
         <div className="row">
           <div className="landing-copy col s12 center-align">
             <Link
-              to = {{ pathname: "/cashier", query: this.state.pos_id }}
+              to = {{ pathname: "/cashier/", search: "?p=" + this.state.pos_id }}
               style={{
                 width: '198.5px',
                 borderRadius: "3px",
@@ -114,7 +114,7 @@ class POSDashboard extends Component {
             </Link>
 
             <Link
-              to = "/customer"
+              to = {{ pathname: "/customer", search: "?p=" + this.state.pos_id }}
               style={{
                 width: '198.5px',
                 borderRadius: "3px",
@@ -203,15 +203,13 @@ class POSDashboard extends Component {
 }
 
 POSDashboard.propTypes = {
-  logoutUser: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired
+  auth: PropTypes.object.isRequired,
+  pos: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.auth,
+  pos: state.pos
 });
 
-export default connect(
-  mapStateToProps,
-  { logoutUser }
-)(POSDashboard);
+export default connect(mapStateToProps)(POSDashboard);
