@@ -81,7 +81,7 @@ class Dashboard extends Component {
               }}>
             {
               this.state.user_pos_systems.map((pos, i) =>
-                  <Link to={{ pathname: "/pos-dashboard", query: pos._id }}
+                  <Link to={{ pathname: "/pos-dashboard/", search: '?p=' + pos._id }}
                       className="btn btn-large waves-effect waves-light hoverable
                         green accent-3"
                       style={{
