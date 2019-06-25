@@ -80,7 +80,8 @@ const styles = {
         fontSize: "14px",
         padding: "15px 30px",
         height: "50px",
-        lineHeight: "16px"
+        lineHeight: "16px",
+        marginLeft: "0"
     }
 };
 
@@ -139,16 +140,9 @@ class Cashier extends React.Component {
         pos_id: this.state.pos_id
       };
 
-      axios.post("/api/get-pos-xpub", pos_data).then((res) => {
+      axios.post("/api/get-all-pos-xpubs", pos_data).then((res) => {
         this.setState({
           pos_xpub_array: res.data.xpubs
-        }, () => {
-          let xpub_array = this.state.pos_xpub_array;
-          for (let i = 0; i < xpub_array.length; i++) {
-            if (xpub_array[i].type === this.state.cryptoType) {
-              this.setState({ pos_xpub_id: xpub_array[i]._id, pos_xpub_address: xpub_array[i].address, pos_xpub_index: xpub_array[i].address_index});
-            }
-          }
         });
       });
     });
@@ -216,6 +210,9 @@ class Cashier extends React.Component {
       label: '#BitcoinBay',
     };
     let Bip21URL;
+
+    console.log(this.state.pos_xpub_address, this.state.index_counter);
+
     let XPubAddress = BITBOX.Address.fromXPub(this.state.pos_xpub_address, `0/${this.state.pos_xpub_index + this.state.index_counter[this.state.cryptoType]}`);
     if (this.state.cryptoType === "BTC") {
       let legacyAddress = BITBOX.Address.toLegacyAddress(XPubAddress);
@@ -310,8 +307,9 @@ class Cashier extends React.Component {
 
     if (e.target.value === "BTC" || e.target.value === "BCH" || e.target.value === "ETH") {
       this.setState({ cryptoType: e.target.value, cryptoPrice: jsonData[e.target.value][this.state.fiatType]}, () => {
-        for (let i = 0; i < this.state.pos_xpubs.length; i++) {
-          if (xpub_array[i].type === this.state.cryptoType) {
+        let xpub_array = this.state.pos_xpub_array;
+        for (let i = 0; i < this.state.pos_xpub_array.length; i++) {
+          if (this.state.pos_xpub_array[i].type === this.state.cryptoType) {
             this.setState({ pos_xpub_address: xpub_array[i].address, pos_xpub_index: xpub_array[i].address_index});
           }
         }
@@ -363,9 +361,9 @@ class Cashier extends React.Component {
       .then(res => {
         this.setState({ jsonData: res.data.status }, () => {
           //console.log(this.state.jsonData);
-          this.setState({ cryptoPrice: res.data.status[this.state.cryptoType][this.state.fiatType]}, () => {
-            this.calculateCryptoAmount();
-          });
+          // this.setState({ cryptoPrice: res.data.status[this.state.cryptoType][this.state.fiatType]}, () => {
+          //   this.calculateCryptoAmount();
+          // });
         });
       })
       .catch(err => {
@@ -416,11 +414,14 @@ class Cashier extends React.Component {
                   { /* TODO: Conditionally render these buttons based on available currencies */ }
                   <div className="col s12 m6 offset-m3 center-align" id="crypto_currency_buttons">
                     <p className={classes.crypto_header}>Cryptocurrency</p>
-                    <button className={"btn " + classes.crypto_currency_button}
+                    <button disabled={this.state.jsonData === null}
+                        className={"btn " + classes.crypto_currency_button}
                         value="BTC" onClick={this.toggleCurrency}>BTC</button>
-                    <button className={"btn " + classes.crypto_currency_button}
+                    <button disabled={this.state.jsonData === null}
+                        className={"btn " + classes.crypto_currency_button}
                         value="BCH" onClick={this.toggleCurrency}>BCH</button>
-                    <button className={"btn " + classes.crypto_currency_button}
+                    <button disabled={this.state.jsonData === null}
+                        className={"btn " + classes.crypto_currency_button}
                         value="ETH" onClick={this.toggleCurrency}>ETH</button>
                   </div>
                 </div>
@@ -445,9 +446,13 @@ class Cashier extends React.Component {
                   </div>
                 </div>
 
-                <img src={bitcoinbay} alt="image" width="25%" height="25%"/>
-                <input type="number" placeholder="Enter Payment Amount" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onChange={(e) => {this.handleClick(e)}} />
-                <input type="number" placeholder="Address Index" min="0" step="1" placeholder="0" onChange={(e) => {this.toggleAddressIndex(e)}} />
+                <div className="row">
+                  <div className="col s8 offset-s2 m4 offset-m4">
+                    <img src={bitcoinbay} alt="image" width="25%" height="25%"/>
+                    {/* <input type="number" placeholder="Enter Payment Amount" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onChange={(e) => {this.handleClick(e)}} /> */}
+                    <input type="number" placeholder="Address Index" min="0" step="1" placeholder="0" onChange={(e) => {this.toggleAddressIndex(e)}} />
+                  </div>
+                </div>
               </div>
             )
             : <div>
@@ -461,19 +466,23 @@ class Cashier extends React.Component {
                 }
               </div>
           }
-          { this.state.pos_address
-            ? <strong style={{ textAlign:"center" }}>{this.state.cryptoType} Address (index: {this.state.index_counter[this.state.cryptoType]}): {this.state.pos_address}</strong>
-            : <strong style={{ textAlign:"center" }}>{this.state.cryptoType} Address (index: {this.state.index_counter[this.state.cryptoType]}):</strong>
-          }
-          <br/>
-          { this.state.blockHeight
-            ? (
-              <b>
-                {this.state.cryptoType} Block Height: {this.state.blockHeight[this.state.cryptoType]}
-              </b>
-            )
-            : <b>Block Height: </b>
-          }
+          <div className="row">
+            <div className="col s8 offset-s2 m4 offset-m4">
+              { this.state.pos_address
+                ? <strong style={{ textAlign:"center" }}>{this.state.cryptoType} Address (index: {this.state.index_counter[this.state.cryptoType]}): {this.state.pos_address}</strong>
+                : <strong style={{ textAlign:"center" }}>{this.state.cryptoType} Address (index: {this.state.index_counter[this.state.cryptoType]}):</strong>
+              }
+              <br/>
+              { this.state.blockHeight
+                ? (
+                  <b>
+                    {this.state.cryptoType} Block Height: {this.state.blockHeight[this.state.cryptoType]}
+                  </b>
+                )
+                : <b>Block Height: </b>
+              }
+            </div>
+          </div>
           {/* <p>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</p>
           <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
           <p>$ {this.state.fiatAmount} {this.state.fiatType}</p>
@@ -526,7 +535,7 @@ class Cashier extends React.Component {
           } */}
 
         <div className="row">
-          <div className="col s12 m6 offset-m3 center-align">
+          <div className="col s12 m4 offset-m4 center-align">
             <button disabled={this.state.payment_amount === ""}
                 onClick={() => {
                   this.calculateCryptoAmount();
