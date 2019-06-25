@@ -20,12 +20,7 @@ class POSDashboard extends Component {
   componentDidMount() {
     M.FormSelect.init(this.select);
 
-<<<<<<< HEAD
     this.setState({ pos_id: this.props.location.search.substring(3) }, () => {
-=======
-    this.setState({ pos_id: this.props.location.query }, () => {
-      console.log("PoS ID: ", this.props.location.query)
->>>>>>> origin/develop
       const pos_data = {
         pos_id: this.state.pos_id
       };
@@ -71,11 +66,6 @@ class POSDashboard extends Component {
       this.setState({ pos_currencies: updated_currencies });
 
       // this.forceUpdate();
-<<<<<<< HEAD
-=======
-
-      this.props.history.push('/dashboard');
->>>>>>> origin/develop
     });
   }
 
