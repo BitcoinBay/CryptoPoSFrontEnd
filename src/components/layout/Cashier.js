@@ -2,7 +2,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import axios from 'axios';
-import openSocket from 'socket.io-client';
+import socketClient from 'socket.io-client';
 import QRAddress21 from '../QRAddress21';
 import './styles/cashier.scss';
 import bitcoinbay from '../../images/bitcoinbay.jpeg';
@@ -11,7 +11,7 @@ const HDKey = require('ethereumjs-wallet/hdkey');
 const BITBOXSDK = require("@chris.troutner/bitbox-js");
 // initialize BITBOX
 const BITBOX = new BITBOXSDK({ restURL: "https://rest.bitcoin.com/v2/" });
-const socket = openSocket('http://localhost:3000');
+const socket = socketClient('http://localhost:3000');
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 
 export default class Cashier extends React.Component {
@@ -66,6 +66,8 @@ export default class Cashier extends React.Component {
       const pos_data = {
         pos_id: this.state.pos_id
       };
+
+      socket.emit('add-user', pos_data);
 
       axios.post("/api/get-pos-xpub", pos_data).then((res) => {
         this.setState({
@@ -127,10 +129,10 @@ export default class Cashier extends React.Component {
   }
 
   newOrder() {
-    //this.updateXPubIndex();
-    socket.emit('event', ['BCH', 'CAD', 0, 0, 0, defaultWebURL]);
     clearInterval(this.state.paymentListening);
-    this.setState({ cryptoType: 'BCH', fiatType: 'CAD', fiatAmount: 0, cryptoAmount: 0, url: defaultWebURL, paymentListening: 0, pos_address: null });
+    this.setState({ cryptoType: 'BCH', fiatType: 'CAD', fiatAmount: 0, cryptoAmount: 0, url: defaultWebURL, paymentListening: 0, pos_address: null }, () => {
+      socket.emit('event', ['BCH', 'CAD', 0, 0, 0, this.state.url, false]);
+    });
   }
 
   cancelOrder() {
@@ -152,7 +154,7 @@ export default class Cashier extends React.Component {
       this.setState({ url: legacyAddress, pos_address: legacyAddress });
     } else {
       Bip21URL = BITBOX.BitcoinCash.encodeBIP21(XPubAddress, options);
-      this.setState({ url: XPubAddress, pos_address: XPubAddress });
+      this.setState({ url: Bip21URL, pos_address: XPubAddress });
       //console.log(Bip21URL)
     }
   }
@@ -437,7 +439,7 @@ export default class Cashier extends React.Component {
                   marginLeft: "28px"
                 }}
 
-                  type="button" onClick={() => this.sendSocketIO([this.state.cryptoType, this.state.fiatType, this.state.cryptoAmount, this.state.fiatAmount, this.state.cryptoPrice, this.state.url])}>Pay Now</button>
+                  type="button" onClick={() => this.sendSocketIO([this.state.cryptoType, this.state.fiatType, this.state.cryptoAmount, this.state.fiatAmount, this.state.cryptoPrice, this.state.url, true])}>Pay Now</button>
           <button className="btn btn-large  waves-light hoverable red accent-3" onClick={() => {this.cancelOrder()}} style={{
                 width: "170px",
                 borderRadius: "3px",

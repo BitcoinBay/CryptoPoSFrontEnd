@@ -1,6 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import openSocket from 'socket.io-client';
+import socketClient from 'socket.io-client';
 import './styles/customer.scss'
 import  QRAddress21 from '../QRAddress21';
 import bitcoinbay from '../../images/bitcoinbay.jpeg';
@@ -14,7 +14,9 @@ import bitcoinbay from '../../images/bitcoinbay.jpeg';
 // initialize BITBOX
 //const BITBOX = new BITBOXCli.default({ restURL: "https://trest.bitcoin.com/v2/" });
 
-const socket = openSocket('http://localhost:3000');
+const socket = socketClient('http://localhost:3000');
+
+const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 
 const styleLink = document.createElement("link");
 styleLink.rel = "stylesheet";
@@ -30,9 +32,10 @@ export default class Customer extends React.Component {
       cryptoAmount: 0,
       fiatAmount:0,
       cryptoPrice: 0,
-      url: null,
+      url: defaultWebURL,
       isToggleuPaid: true,
-
+      isPayment: false,
+      pos_id: null
     }
     // This binding is necessary to make `this` work in the callback
     this.handleClick = this.handleClick.bind(this);
@@ -45,6 +48,16 @@ export default class Customer extends React.Component {
   }
 
   componentDidMount() {
+    this.setState({ pos_id: this.props.location.query }, () => {
+      const pos_data = {
+        pos_id: this.state.pos_id
+      };
+
+      console.log(pos_data);
+
+      socket.emit('add-user', pos_data);
+    });
+
     socket.on('event', msg => this.update(msg));
   }
 
@@ -57,8 +70,10 @@ export default class Customer extends React.Component {
       fiatAmount: data[3],
       cryptoPrice: data[4],
       url: data[5],
+      isPayment: data[6]
     }, () => console.log(this.state));
   }
+
   render() {
     return (
       <div className="cashier-page wrapper">
@@ -69,13 +84,10 @@ export default class Customer extends React.Component {
               <title>Customer POS Page</title>
               <meta name="description" content="CashierPOS Page" />
             </Helmet>
-            { !this.state.url
+            { this.state.isPayment === false
               ? <div>
                   <h1>Bitcoin Bay Point of Sales</h1>
                   <img src={bitcoinbay} alt="image" width="100%" height="100%"/>
-                  <br/>
-                  <br/>
-                  <QRAddress21 value="https://www.meetup.com/The-Bitcoin-Bay"/>
                 </div>
               : (
                 <div>
