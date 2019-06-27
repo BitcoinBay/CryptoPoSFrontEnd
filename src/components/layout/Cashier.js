@@ -1,4 +1,3 @@
-//const command = require("shebang!../bin/command");
 import React from 'react';
 //import { Helmet } from 'react-helmet';
 import axios from 'axios';
@@ -281,7 +280,7 @@ class Cashier extends React.Component {
       axios
         .get(`/api/balance${this.state.cryptoType}/${this.state.pos_address}`)
         .then((res) => {
-          console.log("Socket: ", res.data);
+//          console.log("Socket: ", res.data.utxo[0]);
           if (res.data.utxo[0].confirmations === 0) {
             clearInterval(listen);
             if (this.state.cryptoType === 'BCH') {
