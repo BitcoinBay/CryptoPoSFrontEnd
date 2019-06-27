@@ -1,13 +1,13 @@
 //const command = require("shebang!../bin/command");
 import React from 'react';
-import { Helmet } from 'react-helmet';
+//import { Helmet } from 'react-helmet';
 import axios from 'axios';
 import socketClient from 'socket.io-client';
 import QRAddress21 from '../QRAddress21';
 import './styles/cashier.scss';
 import bitcoinbay from '../../images/bitcoinbay.jpeg';
 
-import injectSheet, { jss } from 'react-jss';
+import injectSheet from 'react-jss';
 
 const HDKey = require('ethereumjs-wallet/hdkey');
 const BITBOXSDK = require("@chris.troutner/bitbox-js");
@@ -79,7 +79,7 @@ const styles = {
         fontWeight: "bold",
         fontSize: "14px",
         padding: "15px 30px",
-        height: "50px",
+//        height: "50px",
         lineHeight: "16px",
         marginLeft: "0"
     }
@@ -100,9 +100,9 @@ class Cashier extends React.Component {
 
     this.state = {
       jsonData: null,
-      cryptoType: '',
-      fiatType: '',
-      blockHeight: null,
+      cryptoType: "BCH",
+      fiatType: "CAD",
+      blockHeight: 0,
       fiatAmount: 0,
       cryptoAmount: 0,
       cryptoPrice: 0,
@@ -127,18 +127,15 @@ class Cashier extends React.Component {
 
   onChange = () => {
     this.setState({ color: 'green' });
- }
+  }
 
   componentDidMount() {
-    this.updatePrices();
-    setInterval(() => {
-      this.updatePrices();
-    }, 600000);
-
-    this.setState({ pos_id: this.props.location.search.substring(3) }, () => {
+    this.setState({ pos_id: this.props.location.search.substring(3) }, async () => {
       const pos_data = {
         pos_id: this.state.pos_id
       };
+
+      await this.updatePrices();
 
       socket.emit('add-user', pos_data);
 
@@ -148,6 +145,10 @@ class Cashier extends React.Component {
         });
       });
     });
+
+    setInterval(async () => {
+      await this.updatePrices();
+    }, 600000);
   }
 
 // updateXPubIndex is currently not in usage
@@ -194,8 +195,9 @@ class Cashier extends React.Component {
     }
   }
 
-  newOrder() {
+  async newOrder() {
     clearInterval(this.state.paymentListening);
+    await this.updatePrices();
     this.setState({ cryptoType: 'BCH', fiatType: 'CAD', fiatAmount: 0, cryptoAmount: 0, url: defaultWebURL, paymentListening: 0, pos_address: null }, () => {
       socket.emit('event', ['BCH', 'CAD', 0, 0, 0, this.state.url, false]);
     });
@@ -254,10 +256,9 @@ class Cashier extends React.Component {
   }
 
   handleClick(e) {
-    let payAmount = parseFloat(e.target.value);
-    console.log(typeof payAmount, " ", payAmount);
     try {
-      if (typeof payAmount !== "number" || payAmount === 0) {
+      let payAmount = parseFloat(e.target.value);
+      if (typeof payAmount !== "number" || payAmount === 0 || isNaN(payAmount)) {
         this.setState({ fiatAmount: 0 }, async() => {
           await this.calculateCryptoAmount();
         });
@@ -342,12 +343,7 @@ class Cashier extends React.Component {
         e.target.style.color = "#FFFFFF";
 
         if (this.state.fiatType === "CAD" || this.state.fiatType === "USD") {
-          this.setState({ payment_amount_input_value: "$" }, () => {
-
-            // let event = document.createEvent('HTMLEvents');
-            // event.initEvent('change', true, false);
-            // this.amount_input.dispatchEvent(event);
-          });
+          this.setState({ payment_amount_input_value: "$" });
         } else if (this.state.fiatType === "EUR") {
           this.setState({ payment_amount_input_value: "€" });
         }
@@ -357,15 +353,15 @@ class Cashier extends React.Component {
     }
   }
 
-  updatePrices() {
+  async updatePrices() {
     axios
       .get('/api/datafeed')
       .then(res => {
         this.setState({ jsonData: res.data.status }, () => {
-          //console.log(this.state.jsonData);
-          // this.setState({ cryptoPrice: res.data.status[this.state.cryptoType][this.state.fiatType]}, () => {
-          //   this.calculateCryptoAmount();
-          // });
+          console.log(this.state.jsonData);
+            this.setState({ cryptoPrice: res.data.status[this.state.cryptoType][this.state.fiatType]}, () => {
+            this.calculateCryptoAmount();
+           });
         });
       })
       .catch(err => {
@@ -413,7 +409,6 @@ class Cashier extends React.Component {
             ? (
               <div>
                 <div className="row">
-                  { /* TODO: Conditionally render these buttons based on available currencies */ }
                   <div className="col s12 m6 offset-m3 center-align" id="crypto_currency_buttons">
                     <p className={classes.crypto_header}>Cryptocurrency</p>
                     <button disabled={this.state.jsonData === null}
@@ -431,37 +426,40 @@ class Cashier extends React.Component {
                 <div className="row">
                   <div className="col s12 m6 offset-m3 center-align" id="fiat_currency_buttons">
                     <p className={classes.fiat_header}>Fiat currency</p>
-                    <button disabled={this.state.cryptoType === ''} className={"btn " + classes.fiat_currency_button}
+                    <button className={"btn " + classes.fiat_currency_button}
                         value="USD" onClick={this.toggleCurrency}>USD</button>
-                    <button disabled={this.state.cryptoType === ''} className={"btn " + classes.fiat_currency_button}
+                    <button className={"btn " + classes.fiat_currency_button}
                         value="CAD" onClick={this.toggleCurrency}>CAD</button>
-                    <button disabled={this.state.cryptoType === ''} className={"btn " + classes.fiat_currency_button}
+                    <button className={"btn " + classes.fiat_currency_button}
                         value="EUR" onClick={this.toggleCurrency}>EUR</button>
                   </div>
                 </div>
 
                 <div className="row">
                   <div className="col s8 offset-s2 m4 offset-m4 xl2 offset-xl5 center-align">
-                    <p hidden={ this.state.fiatType === '' } className={classes.input_header}>Amount {this.state.fiatType != '' ? "(" + this.state.fiatType + ")" : ""} </p>
-                    <input disabled={this.state.fiatType === ''} className={classes.amount_input} onChange={ this.updateAmount }
-                        value={ this.state.payment_amount_input_value } type="text" id="amount_input" ref={(input) => {this.amount_input = input}}/>
+                    <p className={classes.input_header}>Amount {this.state.fiatType !== '' ? "(" + this.state.fiatType + ")" : ""} </p>
+                    <input value={ this.state.fiatAmount } type="number" id="amount_input" min="0" step="0.01" onChange={(e) => { this.handleClick(e) }} />
                   </div>
                 </div>
 
                 <div className="row">
-                  <div className="col s8 offset-s2 m4 offset-m4">
-                    <img src={bitcoinbay} alt="image" width="25%" height="25%"/>
+                  <div className="col s8 offset-s2 m4 offset-m4 xl2 offset-xl5 center-align">
+                    <img src={bitcoinbay} alt="logo" width="100%" height="100%"/>
                     {/* <input type="number" placeholder="Enter Payment Amount" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onChange={(e) => {this.handleClick(e)}} /> */}
-                    <input type="number" placeholder="Address Index" min="0" step="1" placeholder="0" onChange={(e) => {this.toggleAddressIndex(e)}} />
+                    <input type="number" placeholder="Address Index" min="0" step="1" onChange={(e) => {this.toggleAddressIndex(e)}} />
                   </div>
                 </div>
               </div>
             )
-            : <div>
+            : <div className="row">
                 { this.state.url === ''
-                  ? <QRAddress21 value={defaultWebURL}  />
+                  ? (
+                    <div className="col s8 offset-s2 m4 offset-m4 xl2 offset-xl5 center-align">
+                      <QRAddress21 value={defaultWebURL}  />
+                    </div>
+                  )
                   : (
-                    <div>
+                    <div className="col s8 offset-s2 m4 offset-m4 xl2 offset-xl5 center-align">
                       <QRAddress21 value={this.state.url} />
                     </div>
                   )
@@ -470,6 +468,9 @@ class Cashier extends React.Component {
           }
           <div className="row">
             <div className="col s8 offset-s2 m4 offset-m4">
+              <p>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</p>
+              <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
+              <p>$ {this.state.fiatAmount} {this.state.fiatType}</p>
               { this.state.pos_address
                 ? <strong style={{ textAlign:"center" }}>{this.state.cryptoType} Address (index: {this.state.index_counter[this.state.cryptoType]}): {this.state.pos_address}</strong>
                 : <strong style={{ textAlign:"center" }}>{this.state.cryptoType} Address (index: {this.state.index_counter[this.state.cryptoType]}):</strong>
@@ -517,7 +518,6 @@ class Cashier extends React.Component {
                   marginRight:"-15px",
                   marginLeft: "28px"
                 }}
-
                   type="button" onClick={() => this.sendSocketIO([this.state.cryptoType, this.state.fiatType, this.state.cryptoAmount, this.state.fiatAmount, this.state.cryptoPrice, this.state.url, true])}>Pay Now</button>
           <button className="btn btn-large  waves-light hoverable red accent-3" onClick={() => {this.cancelOrder()}} style={{
                 width: "170px",
@@ -538,12 +538,33 @@ class Cashier extends React.Component {
 
         <div className="row">
           <div className="col s12 m4 offset-m4 center-align">
-            <button disabled={this.state.payment_amount === ""}
-                onClick={() => {
-                  this.calculateCryptoAmount();
+            <button onClick={async () => {
+                  await this.newOrder();
+                }}
+                className={"btn " + classes.confirm_payment_button}>
+              NEW ORDER
+            </button>
+          </div>
+          <div className="col s12 m4 offset-m4 center-align">
+            <button onClick={() => {
+                  this.updatePrices();
+                }}
+                className={"btn " + classes.confirm_payment_button}>
+              UPDATE PRICES
+            </button>
+          </div><div className="col s12 m4 offset-m4 center-align">
+            <button onClick={() => {
+                  this.sendSocketIO([this.state.cryptoType, this.state.fiatType, this.state.cryptoAmount, this.state.fiatAmount, this.state.cryptoPrice, this.state.url, true]);
                 }}
                 className={"btn " + classes.confirm_payment_button}>
               CONFIRM PAYMENT
+            </button>
+          </div><div className="col s12 m4 offset-m4 center-align">
+            <button onClick={() => {
+                  this.cancelOrder();
+                }}
+                className={"btn " + classes.confirm_payment_button}>
+              CANCEL ORDER
             </button>
           </div>
         </div>

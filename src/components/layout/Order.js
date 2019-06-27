@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+/*import React, { Component } from 'react';
 import axios from 'axios';
 import './styles/order.scss';
 export default class Order extends React.Component {
@@ -28,7 +28,6 @@ export default class Order extends React.Component {
            <h1 id='title'>Orders</h1>
            <table id='txrefs'>
               <tbody>
-                 {/* <tr>{this.renderTableHeader()}</tr> */}
                  <tr>
                  <th>tx_hash</th><th>block_height</th><th>Value</th><th>confirmed</th>
                  </tr>
@@ -40,3 +39,4 @@ export default class Order extends React.Component {
 
     }
   }
+*/
