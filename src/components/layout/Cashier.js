@@ -152,80 +152,31 @@ class Cashier extends React.Component {
     }, 600000);
   }
 
-// updateXPubIndex is currently not in usage
-  updateXPubIndex() {
-    let indexTotal = this.state.pos_xpub_index + this.state.index_counter[this.state.cryptoType];
-
-    const pos_data = {
-      id: this.state.pos_xpub_id,
-      address_index: indexTotal
-    };
-
-    axios.post("/api/update-xpub-index", pos_data)
-      .then((res) => {
-//        console.log(res);
-      }).catch((err) => {
-//        console.log(err);
-      });
-  }
-
-  toggleBip21() {
-    if (this.state.bip21 === true) {
-      this.setState({ bip21: false });
-    } else {
-      this.setState({ bip21: true });
-    }
-  }
-
-  toggleAddressIndex(e) {
-    const { index_counter } = { ...this.state };
-//    console.log("index counter: ", index_counter);
-//    console.log("event.target: ", e.target.value);
-    let currentCrypto = index_counter;
-    let value = parseInt(e.target.value);
-    if (isNaN(value)) {
-      value = 0;
-    }
-
-    currentCrypto[this.state.cryptoType] = value;
-//    console.log("Toggle: ", currentCrypto);
-
-    try {
-      this.setState({ index_counter: currentCrypto }, () => {
-        if (this.state.cryptoType === "ETH") {
+  calculateCryptoAmount() {
+    let cryptoAmount = this.state.fiatAmount/this.state.cryptoPrice;
+    //console.log("calculate: ", cryptoAmount)
+    if (cryptoAmount > 0) {
+      if (this.state.cryptoType === "ETH") {
+        this.setState({ cryptoAmount: cryptoAmount.toFixed(18) }, () => {
           this.generateEthereumnAddress();
-        } else {
+        });
+      } else if (this.state.cryptoType === "TSN") {
+        this.setState({ cryptoAmount: 0.0001}, () => {
+          this.generateTestnetAddress();
+        })
+      }else {
+        this.setState({ cryptoAmount: cryptoAmount.toFixed(8) }, () => {
           this.generateBitcoinAddress();
-        }
-      });
-    } catch (err) {
-      console.log(err);
-      return;
+        });
+      }
+    } else {
+      this.setState({ cryptoAmount: 0, url: defaultWebURL });
     }
-  }
-
-  async newOrder() {
-    clearInterval(this.state.paymentListening);
-    await this.setState({ cryptoType: 'BCH', fiatType: 'CAD', fiatAmount: 0, cryptoAmount: 0, url: defaultWebURL, paymentListening: 0, pos_address: null }, () => {
-      socket.emit('event', ['BCH', 'CAD', 0, 0, 0, this.state.url, false]);
-    });
   }
 
   cancelOrder() {
     clearInterval(this.state.paymentListening);
     this.setState({ paymentListening: 0 });
-  }
-
-  generateTestnetAddress() {
-    let options = {
-      amount: 0.0001,
-      label: '#BitcoinBay',
-    };
-
-    let XPubAddress = TESTBOX.Address.fromXPub(this.state.pos_xpub_address, `0/0`);
-
-    let Bip21URL = TESTBOX.BitcoinCash.encodeBIP21(XPubAddress, options);
-    this.setState({ url: Bip21URL, pos_address: XPubAddress });
   }
 
   generateBitcoinAddress() {
@@ -254,26 +205,16 @@ class Cashier extends React.Component {
     this.setState({ url: paymentAddress, pos_address: paymentAddress });
   }
 
-  calculateCryptoAmount() {
-    let cryptoAmount = this.state.fiatAmount/this.state.cryptoPrice;
-    //console.log("calculate: ", cryptoAmount)
-    if (cryptoAmount > 0) {
-      if (this.state.cryptoType === "ETH") {
-        this.setState({ cryptoAmount: cryptoAmount.toFixed(18) }, () => {
-          this.generateEthereumnAddress();
-        });
-      } else if (this.state.cryptoType === "TSN") {
-        this.setState({ cryptoAmount: 0.0001}, () => {
-          this.generateTestnetAddress();
-        })
-      }else {
-        this.setState({ cryptoAmount: cryptoAmount.toFixed(8) }, () => {
-          this.generateBitcoinAddress();
-        });
-      }
-    } else {
-      this.setState({ cryptoAmount: 0, url: defaultWebURL });
-    }
+  generateTestnetAddress() {
+    let options = {
+      amount: 0.0001,
+      label: '#BitcoinBay',
+    };
+
+    let XPubAddress = TESTBOX.Address.fromXPub(this.state.pos_xpub_address, `0/0`);
+
+    let Bip21URL = TESTBOX.BitcoinCash.encodeBIP21(XPubAddress, options);
+    this.setState({ url: Bip21URL, pos_address: XPubAddress });
   }
 
   handleClick(e) {
@@ -324,6 +265,43 @@ class Cashier extends React.Component {
     this.setState({ paymentListening: listen }, () => {
 //      console.log(this.state.paymentListening);
     })
+  }
+
+  toggleAddressIndex(e) {
+    const { index_counter } = { ...this.state };
+//    console.log("index counter: ", index_counter);
+//    console.log("event.target: ", e.target.value);
+    let currentCrypto = index_counter;
+    let value = parseInt(e.target.value);
+    if (isNaN(value)) {
+      value = 0;
+    }
+
+    currentCrypto[this.state.cryptoType] = value;
+//    console.log("Toggle: ", currentCrypto);
+
+    try {
+      this.setState({ index_counter: currentCrypto }, () => {
+        if (this.state.cryptoType === "ETH") {
+          this.generateEthereumnAddress();
+        } else if (this.state.cryptoType === "TSN") {
+          this.generateTestnetAddress();
+        } else {
+          this.generateBitcoinAddress();
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      return;
+    }
+  }
+
+  toggleBip21() {
+    if (this.state.bip21 === true) {
+      this.setState({ bip21: false });
+    } else {
+      this.setState({ bip21: true });
+    }
   }
 
   toggleCurrency(e) {
@@ -400,6 +378,51 @@ class Cashier extends React.Component {
     }
   }
 
+  updateAmount(event) {
+    let amount_string;
+
+    if (event.target.value.length === 1 && event.target.value.match("^[0-9]")) {
+      amount_string = event.target.value;
+    } else {
+      amount_string = event.target.value.substring(1);
+    }
+
+    this.setState({ payment_amount: amount_string }, (event) => {
+      let currency_character;
+      if (this.state.fiatType === "CAD" || this.state.fiatType === "USD") {
+        currency_character = "$";
+      } else if (this.state.fiatType === "EUR") {
+        currency_character = "€"
+      }
+
+      this.setState({ payment_amount_input_value: currency_character + this.state.payment_amount });
+    });
+  }
+
+  // updateXPubIndex is currently not in usage
+  updateXPubIndex() {
+    let indexTotal = this.state.pos_xpub_index + this.state.index_counter[this.state.cryptoType];
+
+    const pos_data = {
+      id: this.state.pos_xpub_id,
+      address_index: indexTotal
+    };
+
+    axios.post("/api/update-xpub-index", pos_data)
+    .then((res) => {
+      //        console.log(res);
+    }).catch((err) => {
+      //        console.log(err);
+    });
+  }
+
+  async newOrder() {
+    clearInterval(this.state.paymentListening);
+    await this.setState({ cryptoType: 'BCH', fiatType: 'CAD', fiatAmount: 0, cryptoAmount: 0, url: defaultWebURL, paymentListening: 0, pos_address: null }, () => {
+      socket.emit('event', ['BCH', 'CAD', 0, 0, 0, this.state.url, false]);
+    });
+  }
+
   async updatePrices() {
     await axios
       .get('/api/datafeed')
@@ -427,27 +450,6 @@ class Cashier extends React.Component {
           return;
         });
       });
-  }
-
-  updateAmount(event) {
-    let amount_string;
-
-    if (event.target.value.length === 1 && event.target.value.match("^[0-9]")) {
-      amount_string = event.target.value;
-    } else {
-      amount_string = event.target.value.substring(1);
-    }
-
-    this.setState({ payment_amount: amount_string }, (event) => {
-      let currency_character;
-      if (this.state.fiatType === "CAD" || this.state.fiatType === "USD") {
-        currency_character = "$";
-      } else if (this.state.fiatType === "EUR") {
-        currency_character = "€"
-      }
-
-      this.setState({ payment_amount_input_value: currency_character + this.state.payment_amount });
-    });
   }
 
   render() {
