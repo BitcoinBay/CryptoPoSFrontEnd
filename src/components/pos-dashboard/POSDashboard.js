@@ -164,6 +164,7 @@ class POSDashboard extends Component {
                       <option value="BTC">Bitcoin</option>
                       <option value="BCH">Bitcoin Cash</option>
                       <option value="ETH">Ethereum</option>
+                      <option value="TSN">TestNet</option>
                   </select>
               </div>
 

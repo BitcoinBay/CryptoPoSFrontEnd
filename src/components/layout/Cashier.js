@@ -12,6 +12,7 @@ const HDKey = require('ethereumjs-wallet/hdkey');
 const BITBOXSDK = require("@chris.troutner/bitbox-js");
 // initialize BITBOX
 const BITBOX = new BITBOXSDK({ restURL: "https://rest.bitcoin.com/v2/" });
+const TESTBOX = new BITBOXSDK({ restURL: "https://trest.bitcoin.com/v2/" });
 const socket = socketClient('http://localhost:3000');
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 
@@ -87,17 +88,18 @@ const styles = {
 class Cashier extends React.Component {
   constructor() {
     super();
+    this.toggleBip21 = this.toggleBip21.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.newOrder = this.newOrder.bind(this);
     this.cancelOrder = this.cancelOrder.bind(this);
     this.updatePrices = this.updatePrices.bind(this);
     this.calculateCryptoAmount = this.calculateCryptoAmount.bind(this);
-    this.generateBitcoinAddress = this.generateBitcoinAddress.bind(this);
     this.sendSocketIO = this.sendSocketIO.bind(this);
     this.toggleCurrency = this.toggleCurrency.bind(this);
     this.updateAmount = this.updateAmount.bind(this);
 
     this.state = {
+      bip21: false,
       jsonData: null,
       cryptoType: "BCH",
       fiatType: "CAD",
@@ -134,9 +136,9 @@ class Cashier extends React.Component {
         pos_id: this.state.pos_id
       };
 
-      await this.updatePrices();
-
       socket.emit('add-user', pos_data);
+
+      await this.updatePrices();
 
       axios.post("/api/get-all-pos-xpubs", pos_data).then((res) => {
         this.setState({
@@ -161,10 +163,18 @@ class Cashier extends React.Component {
 
     axios.post("/api/update-xpub-index", pos_data)
       .then((res) => {
-        console.log(res);
+//        console.log(res);
       }).catch((err) => {
-        console.log(err);
+//        console.log(err);
       });
+  }
+
+  toggleBip21() {
+    if (this.state.bip21 === true) {
+      this.setState({ bip21: false });
+    } else {
+      this.setState({ bip21: true });
+    }
   }
 
   toggleAddressIndex(e) {
@@ -196,8 +206,7 @@ class Cashier extends React.Component {
 
   async newOrder() {
     clearInterval(this.state.paymentListening);
-    await this.updatePrices();
-    this.setState({ cryptoType: 'BCH', fiatType: 'CAD', fiatAmount: 0, cryptoAmount: 0, url: defaultWebURL, paymentListening: 0, pos_address: null }, () => {
+    await this.setState({ cryptoType: 'BCH', fiatType: 'CAD', fiatAmount: 0, cryptoAmount: 0, url: defaultWebURL, paymentListening: 0, pos_address: null }, () => {
       socket.emit('event', ['BCH', 'CAD', 0, 0, 0, this.state.url, false]);
     });
   }
@@ -207,25 +216,34 @@ class Cashier extends React.Component {
     this.setState({ paymentListening: 0 });
   }
 
+  generateTestnetAddress() {
+    let options = {
+      amount: 0.0001,
+      label: '#BitcoinBay',
+    };
+
+    let XPubAddress = TESTBOX.Address.fromXPub(this.state.pos_xpub_address, `0/0`);
+
+    let Bip21URL = TESTBOX.BitcoinCash.encodeBIP21(XPubAddress, options);
+    this.setState({ url: Bip21URL, pos_address: XPubAddress });
+  }
+
   generateBitcoinAddress() {
     let options = {
       amount: this.state.cryptoAmount,
       label: '#BitcoinBay',
     };
     let Bip21URL;
-
-    console.log(this.state.pos_xpub_address, this.state.index_counter);
-
+    console.log(this.state.pos_xpub_address, "\n", this.state.pos_xpub_index)
     let XPubAddress = BITBOX.Address.fromXPub(this.state.pos_xpub_address, `0/${this.state.pos_xpub_index + this.state.index_counter[this.state.cryptoType]}`);
     if (this.state.cryptoType === "BTC") {
-      let legacyAddress = BITBOX.Address.toLegacyAddress(XPubAddress);
-      console.log("Format", BITBOX.Address.detectAddressFormat(legacyAddress), ": ", legacyAddress);
-      Bip21URL = BITBOX.BitcoinCash.encodeBIP21(legacyAddress, options);
-      this.setState({ url: legacyAddress, pos_address: legacyAddress });
-    } else {
+      XPubAddress = BITBOX.Address.toLegacyAddress(XPubAddress);
+    }
+    if (this.state.bip21 === true) {
       Bip21URL = BITBOX.BitcoinCash.encodeBIP21(XPubAddress, options);
       this.setState({ url: Bip21URL, pos_address: XPubAddress });
-      //console.log(Bip21URL)
+    } else {
+      this.setState({ url: XPubAddress, pos_address: XPubAddress });
     }
   }
 
@@ -244,7 +262,11 @@ class Cashier extends React.Component {
         this.setState({ cryptoAmount: cryptoAmount.toFixed(18) }, () => {
           this.generateEthereumnAddress();
         });
-      } else {
+      } else if (this.state.cryptoType === "TSN") {
+        this.setState({ cryptoAmount: 0.0001}, () => {
+          this.generateTestnetAddress();
+        })
+      }else {
         this.setState({ cryptoAmount: cryptoAmount.toFixed(8) }, () => {
           this.generateBitcoinAddress();
         });
@@ -274,19 +296,21 @@ class Cashier extends React.Component {
   }
 
   sendSocketIO(msg) {
-    console.log(msg);
+    console.log("Socket: ", msg);
     socket.emit('event', msg);
     let listen = setInterval(() => {
       axios
         .get(`/api/balance${this.state.cryptoType}/${this.state.pos_address}`)
         .then((res) => {
-//          console.log("Socket: ", res.data.utxo[0]);
-          if (res.data.utxo[0].confirmations === 0) {
-            clearInterval(listen);
-            if (this.state.cryptoType === 'BCH') {
-              this.setState({ utxo: res.data.utxo[0].txid });
-            } else {
-              this.setState({ utxo: res.data.utxo[0].tx_hash });
+          console.log(res.data.utxo[0]);
+          if (res.data.utxo) {
+            if (res.data.utxo[0].confirmations === 0) {
+              if (this.state.cryptoType === 'BCH') {
+                this.setState({ utxo: res.data.utxo[0].txid });
+              } else {
+                this.setState({ utxo: res.data.utxo[0].tx_hash });
+              }
+              clearInterval(listen);
             }
           } else {
             return;
@@ -298,7 +322,7 @@ class Cashier extends React.Component {
         })}
       , 5000);
     this.setState({ paymentListening: listen }, () => {
-      console.log(this.state.paymentListening);
+//      console.log(this.state.paymentListening);
     })
   }
 
@@ -331,6 +355,30 @@ class Cashier extends React.Component {
 
         this.calculateCryptoAmount();
       });
+    } else if (e.target.value === "TSN") {
+      this.setState({ cryptoType: e.target.value, cryptoPrice: 1}, () => {
+        let xpub_array = this.state.pos_xpub_array;
+        for (let i = 0; i < this.state.pos_xpub_array.length; i++) {
+          if (this.state.pos_xpub_array[i].type === this.state.cryptoType) {
+            this.setState({ pos_xpub_address: xpub_array[i].address, pos_xpub_index: xpub_array[i].address_index});
+          }
+        }
+
+        let crypto_currency_buttons = document.getElementById("crypto_currency_buttons");
+        for (let i = 1; i < crypto_currency_buttons.children.length; i++) {
+          crypto_currency_buttons.children[i].style.background = "#FFFFFF";
+          crypto_currency_buttons.children[i].style.color = "#000000";
+        }
+        e.target.style.background = "#00A3FF";
+        e.target.style.color = "#FFFFFF";
+
+        let fiat_currency_buttons = document.getElementById("fiat_currency_buttons");
+        for (let i = 1; i < fiat_currency_buttons.children.length; i++) {
+          fiat_currency_buttons.children[i].disabled = false;
+        }
+
+        this.calculateCryptoAmount();
+      })
     } else if (e.target.value === "USD" || e.target.value === "CAD" || e.target.value === "EUR") {
       this.setState({ fiatType: e.target.value, cryptoPrice: jsonData[this.state.cryptoType][e.target.value]}, () => {
         let fiat_currency_buttons = document.getElementById("fiat_currency_buttons");
@@ -353,14 +401,17 @@ class Cashier extends React.Component {
   }
 
   async updatePrices() {
-    axios
+    await axios
       .get('/api/datafeed')
       .then(res => {
         this.setState({ jsonData: res.data.status }, () => {
-          console.log(this.state.jsonData);
-            this.setState({ cryptoPrice: res.data.status[this.state.cryptoType][this.state.fiatType]}, () => {
+//        console.log(this.state.jsonData);
+          if (this.state.cryptoType === "TSN") {
+            this.setState({ cryptoPrice: 0.0001});
+          } else if (this.state.cryptoType === "BTC" || this.state.cryptoType === "BCH" || this.state.cryptoType === "ETH") {
+            this.setState({ cryptoPrice: res.data.status[this.state.cryptoType][this.state.fiatType]});
             this.calculateCryptoAmount();
-           });
+          }
         });
       })
       .catch(err => {
@@ -368,11 +419,11 @@ class Cashier extends React.Component {
         return;
       });
 
-    axios
+    await axios
       .get('/api/blockHeight')
       .then(res => {
         this.setState({ blockHeight: res.data }, () => {
-          console.log(`${this.state.cryptoType} Block Height: `, this.state.blockHeight[this.state.cryptoType]);
+//          console.log(`${this.state.cryptoType} Block Height: `, this.state.blockHeight[this.state.cryptoType]);
           return;
         });
       });
@@ -419,17 +470,23 @@ class Cashier extends React.Component {
                     <button disabled={this.state.jsonData === null}
                         className={"btn " + classes.crypto_currency_button}
                         value="ETH" onClick={this.toggleCurrency}>ETH</button>
+                    <button disabled={this.state.jsonData === null}
+                        className={"btn " + classes.crypto_currency_button}
+                        value="TSN" onClick={this.toggleCurrency}>TSN</button>
                   </div>
                 </div>
 
                 <div className="row">
                   <div className="col s12 m6 offset-m3 center-align" id="fiat_currency_buttons">
                     <p className={classes.fiat_header}>Fiat currency</p>
-                    <button className={"btn " + classes.fiat_currency_button}
+                    <button disabled={this.state.jsonData === null}
+                        className={"btn " + classes.fiat_currency_button}
                         value="USD" onClick={this.toggleCurrency}>USD</button>
-                    <button className={"btn " + classes.fiat_currency_button}
+                    <button disabled={this.state.jsonData === null}
+                        className={"btn " + classes.fiat_currency_button}
                         value="CAD" onClick={this.toggleCurrency}>CAD</button>
-                    <button className={"btn " + classes.fiat_currency_button}
+                    <button disabled={this.state.jsonData === null}
+                        className={"btn " + classes.fiat_currency_button}
                         value="EUR" onClick={this.toggleCurrency}>EUR</button>
                   </div>
                 </div>
@@ -437,7 +494,7 @@ class Cashier extends React.Component {
                 <div className="row">
                   <div className="col s8 offset-s2 m4 offset-m4 xl2 offset-xl5 center-align">
                     <p className={classes.input_header}>Amount {this.state.fiatType !== '' ? "(" + this.state.fiatType + ")" : ""} </p>
-                    <input value={ this.state.fiatAmount } type="number" id="amount_input" min="0" step="0.01" onChange={(e) => { this.handleClick(e) }} />
+                    <input disabled={this.state.jsonData === null} value={ this.state.fiatAmount } type="number" id="amount_input" min="0" step="0.01" onChange={(e) => { this.handleClick(e) }} />
                   </div>
                 </div>
 
@@ -445,13 +502,13 @@ class Cashier extends React.Component {
                   <div className="col s8 offset-s2 m4 offset-m4 xl2 offset-xl5 center-align">
                     <img src={bitcoinbay} alt="logo" width="100%" height="100%"/>
                     {/* <input type="number" placeholder="Enter Payment Amount" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onChange={(e) => {this.handleClick(e)}} /> */}
-                    <input type="number" placeholder="Address Index" min="0" step="1" onChange={(e) => {this.toggleAddressIndex(e)}} />
+                    <input disabled={!this.state.pos_address} type="number" placeholder="Address Index" min="0" step="1" onChange={(e) => {this.toggleAddressIndex(e)}} />
                   </div>
                 </div>
               </div>
             )
             : <div className="row">
-                { this.state.url === ''
+                { this.state.url === defaultWebURL
                   ? (
                     <div className="col s8 offset-s2 m4 offset-m4 xl2 offset-xl5 center-align">
                       <QRAddress21 value={defaultWebURL}  />
@@ -466,7 +523,10 @@ class Cashier extends React.Component {
               </div>
           }
           <div className="row">
-            <div className="col s8 offset-s2 m4 offset-m4">
+            <div className="col s12 m6 offset-m3 center-align" id="crypto_currency_buttons">
+              <button value="ETH" onClick={this.toggleBip21}>
+                Bip21
+              </button>
               <p>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</p>
               <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
               <p>$ {this.state.fiatAmount} {this.state.fiatType}</p>
