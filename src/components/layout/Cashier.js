@@ -100,8 +100,8 @@ class Cashier extends React.Component {
 
     this.state = {
       jsonData: null,
-      cryptoType: '',
-      fiatType: '',
+      cryptoType: 'BCH',
+      fiatType: 'CAD',
       blockHeight: null,
       fiatAmount: 0,
       cryptoAmount: 0,
@@ -360,10 +360,9 @@ class Cashier extends React.Component {
       .get('/api/datafeed')
       .then(res => {
         this.setState({ jsonData: res.data.status }, () => {
-          //console.log(this.state.jsonData);
-          // this.setState({ cryptoPrice: res.data.status[this.state.cryptoType][this.state.fiatType]}, () => {
-          //   this.calculateCryptoAmount();
-          // });
+          this.setState({ cryptoPrice: res.data.status[this.state.cryptoType][this.state.fiatType]}, () => {
+            this.calculateCryptoAmount();
+          });
         });
       })
       .catch(err => {

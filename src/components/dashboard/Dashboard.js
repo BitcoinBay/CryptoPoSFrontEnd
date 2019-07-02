@@ -5,13 +5,98 @@ import { logoutUser } from "../../actions/authActions";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
+import Drawer from '@material-ui/core/Drawer';
+import List from '@material-ui/core/List';
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import Divider from "@material-ui/core/Divider";
+
+import injectSheet, { jss } from 'react-jss';
+
+const styles = {
+  marginless_row: {
+    marginBottom: "0"
+  },
+  page_header: {
+    margin: "0",
+    fontFamily: "Poppins",
+    fontSize: "32px",
+    fontWeight: "900"
+  },
+  unfocusable_button: {
+    '&:focus': {
+      background: "#ffffff"
+    }
+  },
+  settings_menu_button: {
+    fontFamily: "Poppins, sans-serif",
+    fontSize: "18px",
+    textTransform: "none",
+    textAlign: "left",
+    margin: "54px 0 0 0",
+    padding: "0",
+    '&:hover': {
+      background: "#ffffff",
+      border: "none"
+    }
+  },
+  settings_menu_icon: {
+    verticalAlign: "middle",
+    marginRight: "10px"
+  },
+  add_pos_button: {
+    fontSize: "18px",
+    fontFamily: "Poppins, sans-serif",
+    color: "#0082cc",
+  },
+  add_pos_icon: {
+    fontSize: "20px",
+    verticalAlign: "middle",
+    marginRight: "5px",
+    color: "#909090",
+    fontWeight: "bold"
+  },
+  pos_card: {
+    borderBottom: "1px solid #e0e0e0",
+    padding: "15px",
+  },
+  first_pos: {
+    borderTop: "1px solid #e0e0e0",
+    marginTop: "10px"
+  },
+  pos_id_heading: {
+    color: "#808080",
+    margin: "0",
+    width: "125px"
+  },
+  pos_link: {
+    padding: "0",
+    fontSize: "20px",
+    color: "#1499F9",
+    fontFamily: "Poppins, sans-serif",
+    fontWeight: "bold",
+    lineHeight: "1.5",
+    textTransform: "none",
+    height: "30px",
+    '&:hover': {
+      background: "#ffffff"
+    }
+  },
+  delete_pos_icon: {
+    display: "inline",
+    color: "#A0A0A0"
+  }
+};
+
 class Dashboard extends Component {
 
   constructor() {
     super();
 
     this.state = {
-      user_pos_systems: []
+      user_pos_systems: [],
+      left: false
     };
   }
 
@@ -37,10 +122,20 @@ class Dashboard extends Component {
     this.props.logoutUser();
   };
 
+  toggleDrawer = () => {
+    if (this.state.left) {
+      this.setState({ left: false });
+    } else {
+      this.setState({ left: true });
+    }
+  }
+
   render() {
+    const { classes } = this.props;
+
     return (
-      <div style={{ height: "75vh" }} className="container ">
-        <div className="row">
+      <div className="container">
+        {/* <div className="row">
           <div className="landing-copy col s12 center-align">
             <button
               style={{
@@ -61,42 +156,75 @@ class Dashboard extends Component {
           <div className="col s6 offset-s3">
             <hr/>
           </div>
+        </div> */}
+
+        <Drawer open={this.state.left} onClose={this.toggleDrawer}>
+          <List>
+            <ListItem button>
+              <ListItemIcon><i className="material-icons">dashboard</i></ListItemIcon>
+              <ListItemText>Master Dashboard</ListItemText>
+            </ListItem>
+            <ListItem button>
+              <ListItemIcon><i className="material-icons">shopping_cart</i></ListItemIcon>
+              <ListItemText>Global Transaction History</ListItemText>
+            </ListItem>
+          </List>
+          <Divider></Divider>
+          <List>
+            <ListItem button>
+              <ListItemIcon><i className="material-icons">settings_power</i></ListItemIcon>
+              <ListItemText>Logout</ListItemText>
+            </ListItem>
+          </List>
+        </Drawer>
+
+        <div className={ "row " + classes.marginless_row }>
+          <div className="col s8 offset-s2">
+            <button className={ "btn btn-flat " + classes.settings_menu_button + " " + classes.unfocusable_button } onClick={this.toggleDrawer}>
+              <i className= { "material-icons " + classes.settings_menu_icon }>
+                menu
+              </i>
+              settings
+            </button>
+          </div>
         </div>
 
         <div className="row">
-          <div className="s12 center-align">
+          <div className="col s8 offset-s2">
+            <h2 className={ classes.page_header }>Master</h2>
+            <h2 className={ classes.page_header }>Dashboard</h2>
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col s8 offset-s2">
             <Link
               to = "/create-pos"
-              style={{
-                borderRadius: "3px",
-                letterSpacing: "1.5px",
-                marginTop: "1rem",
-                margin: '14px'
-              }}
-              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
+              className={ classes.add_pos_button }
             >
-              Create New PoS
+              <i className={ "material-icons " + classes.add_pos_icon }>
+                add
+              </i>
+              add new PoS
             </Link>
           </div>
         </div>
 
         <div className="row">
-          <div className="col s4 offset-s4 center-align"
-              style={{
-                display: 'flex',
-                flexDirection: 'column'
-              }}>
+          <div className="col s8 offset-s2">
             {
               this.state.user_pos_systems.map((pos, i) =>
-                  <Link to={{ pathname: "/pos-dashboard/", search: '?p=' + pos._id }}
-                      className="btn btn-large waves-effect waves-light hoverable
-                        green accent-3"
-                      style={{
-                        margin: '14px',
-                      }}
-                      key={i}>
-                    {pos.name}
-                  </Link>
+                <div className={ classes.pos_card + (i === 0 ? " " + classes.first_pos : "") } key={i}>
+                  <div>
+                    <p className={ classes.pos_id_heading }>ID: ...{pos._id.substring(17)}</p>
+                    <p className={ classes.delete_pos_icon + " right"}><i className="material-icons">delete</i></p>
+                    <Link to={{ pathname: "/pos-dashboard/", search: '?p=' + pos._id }}
+                        className={"btn btn-flat " + classes.pos_link }
+                        >
+                      {pos.name}
+                    </Link>
+                  </div>
+                </div>
               )
             }
           </div>
@@ -119,4 +247,4 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   { logoutUser }
-)(Dashboard);
+)(injectSheet(styles)(Dashboard));
