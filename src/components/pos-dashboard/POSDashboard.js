@@ -125,7 +125,7 @@ class POSDashboard extends Component {
             </Link>
 
             <Link
-              to = "/order"
+              to = {{ pathname: "/order", query: this.state.pos_id }}
               style={{
                 width: "190px",
                 borderRadius: "3px",
@@ -161,6 +161,7 @@ class POSDashboard extends Component {
                       <option value="BTC">Bitcoin</option>
                       <option value="BCH">Bitcoin Cash</option>
                       <option value="ETH">Ethereum</option>
+                      <option value="TSN">TestNet</option>
                   </select>
               </div>
 
