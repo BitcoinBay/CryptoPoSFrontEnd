@@ -11,6 +11,9 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Divider from "@material-ui/core/Divider";
+import Avatar from "@material-ui/core/Avatar";
+import { grey, deepPurple } from "@material-ui/core/colors";
+import Chip from "@material-ui/core/Chip";
 
 import injectSheet, { jss } from 'react-jss';
 
@@ -86,6 +89,36 @@ const styles = {
   delete_pos_icon: {
     display: "inline",
     color: "#A0A0A0"
+  },
+  user_info: {
+    background: "#00A3FF",
+    display: "grid"
+  },
+  user_avatar: {
+    margin: "25px 20px 30px 20px",
+    background: "#ffffff !important",
+    color: grey[900] + "!important",
+    padding: "30px",
+    fontSize: "1.7em !important",
+    boxShadow: "0 1px 2px 0 #303030"
+  },
+  user_name_chip: {
+    background: "#ffffff !important",
+    margin: "0 15px 25px 15px",
+    fontSize: "1.1em !important",
+    border: "none !important",
+    borderRadius: "16px",
+    boxShadow: "0 1px 2px 0 #303030",
+    display: "flex",
+    padding: "5px 10px",
+  },
+  user_name: {
+    marginBottom: "0",
+    flexGrow: "1",
+    textAlign: "center"
+  },
+  drop_down_icon: {
+    flexGrow: "0"
   }
 };
 
@@ -159,6 +192,18 @@ class Dashboard extends Component {
         </div> */}
 
         <Drawer open={this.state.left} onClose={this.toggleDrawer}>
+          <div className={classes.user_info}>
+            <Avatar className={classes.user_avatar}>
+              {this.props.auth.user.name.substring(0,1)}
+            </Avatar>
+            <div className={classes.user_name_chip}>
+              <p className={classes.user_name}>{this.props.auth.user.name}</p>
+                <i className={"material-icons " + classes.drop_down_icon}>
+                  expand_more
+                </i>
+            </div>
+          </div>
+
           <List>
             <ListItem button>
               <ListItemIcon><i className="material-icons">dashboard</i></ListItemIcon>
@@ -173,7 +218,7 @@ class Dashboard extends Component {
           <List>
             <ListItem button>
               <ListItemIcon><i className="material-icons">settings_power</i></ListItemIcon>
-              <ListItemText>Logout</ListItemText>
+              <ListItemText onClick={this.onLogoutClick}>Logout</ListItemText>
             </ListItem>
           </List>
         </Drawer>
