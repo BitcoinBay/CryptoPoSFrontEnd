@@ -128,7 +128,7 @@ class POSDashboard extends Component {
             </Link>
 
             <Link
-              to = {{ pathname: "/order", query: this.state.pos_id }}
+              to = {{ pathname: "/order", search: "?p=" + this.state.pos_id }}
               style={{
                 width: "190px",
                 borderRadius: "3px",

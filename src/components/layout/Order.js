@@ -6,45 +6,40 @@ export default class Order extends React.Component {
     super(props)
 
     this.state = {
-      users: null
+      pos_id: null,
+      transactions: []
     }
   }
 
   componentDidMount() {
-    // Temporary populating table
-    axios.get('/api/balanceBCH/bitcoincash:qrk8wdymmmm8ep590kdupz5643llvywlwcm3d7mq8a')
+    this.setState({ pos_id: this.props.location.search.substring(3) }, async () => {
+      const pos_data = {
+        pos_id: this.state.pos_id
+      };
+
+      axios.post("/api/get-all-pos-txs", pos_data)
       .then((res) => {
-        console.log(res.data);
-        this.setState({ users: res.data });
-      });
-  }
-
-  renderUsers() {
-    const { users } = this.state;
-    console.log(typeof users);
-
-    let txMap = users.map( user => (
-      <tr key={user.id}> <td>{user.tx_hash}</td> <td>{user.block_height}</td> <td>{user.value}</td> <td>{user.confirmed}</td></tr>
-    ));
-    return txMap;
+        console.log(res);
+        console.log(this.state);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+    });
   }
 
   render() {
     return (
-        <div className="order_wrapper">
+      <div className="order_wrapper">
            <h1 id='title'>Orders</h1>
-           <table id='txrefs'>
-              <tbody>
-                <tr>
-                <th>tx_hash</th><th>block_height</th><th>Value</th><th>confirmed</th>
-                </tr>
-                { this.state.users
-                  ? this.renderUsers()
-                  : <p>waiting</p>
-                }
-              </tbody>
-           </table>
-        </div>
-     );
+              <table id='txrefs'>
+                <tbody>
+                  <tr>
+                    <th>coin_type</th><th>fiat_type</th><th>tx_hash</th><th>block_height</th><th>send_amount</th><th>confirmations</th>
+                  </tr>
+                </tbody>
+              </table>
+      </div>
+    );
   }
 }
