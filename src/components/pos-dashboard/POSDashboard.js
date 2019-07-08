@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import M from 'materialize-css';
 
 class POSDashboard extends Component {
 
@@ -18,8 +17,6 @@ class POSDashboard extends Component {
   }
 
   componentDidMount() {
-    M.FormSelect.init(this.select);
-
     this.setState({ pos_id: this.props.location.search.substring(3) }, () => {
       const pos_data = {
         pos_id: this.state.pos_id
@@ -114,7 +111,7 @@ class POSDashboard extends Component {
             </Link>
 
             <Link
-              to = {{ pathname: "/customer", search: "?p=" + this.state.pos_id }}
+              to = {{ pathname: "/customer/", search: "?p=" + this.state.pos_id }}
               style={{
                 width: '198.5px',
                 borderRadius: "3px",
@@ -128,7 +125,7 @@ class POSDashboard extends Component {
             </Link>
 
             <Link
-              to = {{ pathname: "/order", search: "?p=" + this.state.pos_id }}
+              to = {{ pathname: "/order/", search: "?p=" + this.state.pos_id }}
               style={{
                 width: "190px",
                 borderRadius: "3px",

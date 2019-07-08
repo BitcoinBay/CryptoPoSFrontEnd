@@ -5,7 +5,7 @@ import './styles/customer.scss'
 import  QRAddress21 from '../QRAddress21';
 import bitcoinbay from '../../images/bitcoinbay.jpeg';
 
-const socket = socketClient('http://localhost:3000');
+const socket = socketClient('http://192.168.1.10:3000');
 //const socket = socketClient('http://localhost:5000');
 
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
@@ -38,29 +38,29 @@ export default class Customer extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({ pos_id: this.props.location.query }, () => {
+    this.setState({ pos_id: this.props.location.search.substring(3) }, async () => {
       const pos_data = {
         pos_id: this.state.pos_id
       };
 
-      console.log(pos_data);
-
-      socket.emit('add-user', pos_data);
+      socket.on('connect', () => {
+        console.log(socket.id);
+        socket.emit('add-user', pos_data);
+        socket.on('paymentRequest', msg => this.update(msg));
+      })
     });
-
-    socket.on('event', msg => this.update(msg));
   }
 
   update(data) {
     console.log(data);
     this.setState({
-      cryptoType: data[0],
-      fiatType: data[1],
-      cryptoAmount: data[2],
-      fiatAmount: data[3],
-      cryptoPrice: data[4],
-      url: data[5],
-      isPayment: data[6]
+      cryptoType: data.paymentData[0],
+      fiatType: data.paymentData[1],
+      cryptoAmount: data.paymentData[2],
+      fiatAmount: data.paymentData[3],
+      cryptoPrice: data.paymentData[4],
+      url: data.paymentData[5],
+      isPayment: data.paymentData[6]
     }, () => console.log(this.state));
   }
 

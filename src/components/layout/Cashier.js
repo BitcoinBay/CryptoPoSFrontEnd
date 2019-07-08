@@ -15,7 +15,7 @@ const BITBOX = new BITBOXSDK({ restURL: "https://rest.bitcoin.com/v2/" });
 const TESTBOX = new BITBOXSDK({ restURL: "https://trest.bitcoin.com/v2/" });
 
 
-const socket = socketClient('http://localhost:3000');
+const socket = socketClient('http://192.168.1.10:3000');
 //const socket = socketClient('http://localhost:5000');
 
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
@@ -105,9 +105,9 @@ class Cashier extends React.Component {
     this.state = {
       bip21: false,
       jsonData: null,
-      cryptoType: "BCH",
-      fiatType: "CAD",
-      blockHeight: 0,
+      cryptoType: 'BCH',
+      fiatType: 'CAD',
+      blockHeight: null,
       fiatAmount: 0,
       cryptoAmount: 0,
       cryptoPrice: 0,
@@ -141,7 +141,10 @@ class Cashier extends React.Component {
         pos_id: this.state.pos_id
       };
 
-      socket.emit('add-user', pos_data);
+      socket.on('connect', () => {
+        console.log(socket.id);
+        socket.emit('add-user', pos_data);
+      })
 
       await this.updatePrices();
 
@@ -402,9 +405,20 @@ class Cashier extends React.Component {
     });
   }
 
-  async sendSocketIO(msg) {
-    console.log("Socket: ", msg);
-    socket.emit('event', msg);
+  async sendSocketIO() {
+    let data = {
+      pos_id: this.state.pos_id,
+      paymentData: [
+        this.state.cryptoType,
+        this.state.fiatType,
+        this.state.cryptoAmount,
+        this.state.fiatAmount,
+        this.state.cryptoPrice,
+        this.state.url,
+        true
+      ]
+    }
+    socket.emit('private-message', data);
     await this.updateBlockHeight();
     let listen = setInterval(() => {
       axios
@@ -582,7 +596,7 @@ class Cashier extends React.Component {
               </button>
             </div><div className="col s12 m4 offset-m4 center-align">
               <button onClick={() => {
-                    this.sendSocketIO([this.state.cryptoType, this.state.fiatType, this.state.cryptoAmount, this.state.fiatAmount, this.state.cryptoPrice, this.state.url, true]);
+                    this.sendSocketIO();
                   }}
                   className={"btn " + classes.confirm_payment_button}>
                 CONFIRM PAYMENT
