@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { connect } from "react-redux";
+import M from "materialize-css";
 
 class CreatePoS extends Component {
 
@@ -11,6 +12,10 @@ class CreatePoS extends Component {
             pos_name: "",
             pos_xpub: ""
         };
+    }
+
+    componentDidMount() {
+        M.FormSelect.init(this.select);
     }
 
     onChange = (event) => {
