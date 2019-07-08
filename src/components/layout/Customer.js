@@ -6,6 +6,7 @@ import  QRAddress21 from '../QRAddress21';
 import bitcoinbay from '../../images/bitcoinbay.jpeg';
 
 const socket = socketClient('http://localhost:3000');
+//const socket = socketClient('http://localhost:5000');
 
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 const styleLink = document.createElement("link");

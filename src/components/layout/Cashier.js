@@ -13,7 +13,11 @@ const BITBOXSDK = require("@chris.troutner/bitbox-js");
 // initialize BITBOX
 const BITBOX = new BITBOXSDK({ restURL: "https://rest.bitcoin.com/v2/" });
 const TESTBOX = new BITBOXSDK({ restURL: "https://trest.bitcoin.com/v2/" });
+
+
 const socket = socketClient('http://localhost:3000');
+//const socket = socketClient('http://localhost:5000');
+
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 
 const styles = {
