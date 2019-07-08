@@ -125,7 +125,7 @@ class POSDashboard extends Component {
             </Link>
 
             <Link
-              to = {{ pathname: "/order", query: this.state.pos_id }}
+              to = {{ pathname: "/transactions", query: this.state.pos_id }}
               style={{
                 width: "190px",
                 borderRadius: "3px",
@@ -136,7 +136,7 @@ class POSDashboard extends Component {
               }}
               className="btn btn-large  waves-light hoverable blue accent-3"
             >
-              Transcation
+              Transactions List
             </Link>
           </div>
         </div>
