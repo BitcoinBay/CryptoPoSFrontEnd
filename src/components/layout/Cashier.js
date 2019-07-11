@@ -123,6 +123,7 @@ class Cashier extends React.Component {
       pos_address: null,
       paymentListening: 0,
       color : "blue",
+      pos_currencies: []
     }
   }
 
@@ -142,6 +143,13 @@ class Cashier extends React.Component {
 
       axios.post("/api/get-all-pos-xpubs", pos_data).then((res) => {
         this.setState({ pos_xpub_array: res.data.xpubs }, () => {
+          let db_currencies = [];
+          for (let i = 0; i < this.state.pos_xpub_array.length; i++) {
+            db_currencies.push(this.state.pos_xpub_array[i].type);
+          }
+
+          this.setState({ pos_currencies: db_currencies });
+
           this.setPaymentAddress();
         });
       });
@@ -488,16 +496,16 @@ class Cashier extends React.Component {
                 <div className="row">
                   <div className="col s12 m6 offset-m3 center-align" id="crypto_currency_buttons">
                     <p className={classes.crypto_header}>Cryptocurrency</p>
-                    <button disabled={this.state.jsonData === null}
+                    <button disabled={this.state.jsonData === null || !this.state.pos_currencies.includes("BTC")}
                         className={"btn " + classes.crypto_currency_button}
                         value="BTC" onClick={this.toggleCurrency}>BTC</button>
-                    <button disabled={this.state.jsonData === null}
+                    <button disabled={this.state.jsonData === null || !this.state.pos_currencies.includes("BCH")}
                         className={"btn " + classes.crypto_currency_button}
                         value="BCH" onClick={this.toggleCurrency}>BCH</button>
-                    <button disabled={this.state.jsonData === null}
+                    <button disabled={this.state.jsonData === null || !this.state.pos_currencies.includes("ETH")}
                         className={"btn " + classes.crypto_currency_button}
                         value="ETH" onClick={this.toggleCurrency}>ETH</button>
-                    <button disabled={this.state.jsonData === null}
+                    <button disabled={this.state.jsonData === null || !this.state.pos_currencies.includes("TSN")}
                         className={"btn " + classes.crypto_currency_button}
                         value="TSN" onClick={this.toggleCurrency}>TSN</button>
                   </div>
