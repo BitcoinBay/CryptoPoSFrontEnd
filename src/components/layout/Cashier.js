@@ -3,7 +3,6 @@ import React from 'react';
 import axios from 'axios';
 import socketClient from 'socket.io-client';
 import QRAddress21 from '../QRAddress21';
-import './styles/cashier.scss';
 import bitcoinbay from '../../images/bitcoinbay.jpeg';
 
 import injectSheet from 'react-jss';
@@ -16,7 +15,7 @@ const TESTBOX = new BITBOXSDK({ restURL: "https://trest.bitcoin.com/v2/" });
 
 
 const socket = socketClient('http://192.168.1.10:3000');
-//const socket = socketClient('http://localhost:5000');
+//const socket = socketClient('http://192.168.1.10:5000');
 
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 
@@ -185,6 +184,10 @@ class Cashier extends React.Component {
   cancelOrder() {
     clearInterval(this.state.paymentListening);
     this.setState({ paymentListening: 0 });
+    let data = {
+      pos_id: this.state.pos_id
+    }
+    socket.emit('private-message', data);
   }
 
   generateBitcoinAddress() {
@@ -254,9 +257,11 @@ class Cashier extends React.Component {
 
   newOrder() {
     clearInterval(this.state.paymentListening);
-    this.setState({ cryptoType: 'BCH', fiatType: 'CAD', fiatAmount: 0, cryptoAmount: 0, url: defaultWebURL, paymentListening: 0, pos_address: null }, () => {
-      socket.emit('event', ['BCH', 'CAD', 0, 0, 0, this.state.url, false]);
-    });
+    this.setState({ cryptoType: 'BCH', fiatType: 'CAD', fiatAmount: 0, cryptoAmount: 0, url: defaultWebURL, paymentListening: 0, pos_address: null });
+    let data = {
+      pos_id: this.state.pos_id
+    }
+    socket.emit('private-message', data);
   }
 
   setPaymentAddress() {

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import './styles/order.scss';
 export default class Order extends React.Component {
   constructor(props) {
     super(props)

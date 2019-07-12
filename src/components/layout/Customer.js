@@ -1,12 +1,11 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import socketClient from 'socket.io-client';
-import './styles/customer.scss'
 import  QRAddress21 from '../QRAddress21';
 import bitcoinbay from '../../images/bitcoinbay.jpeg';
 
 const socket = socketClient('http://192.168.1.10:3000');
-//const socket = socketClient('http://localhost:5000');
+//const socket = socketClient('http://192.168.1.10:5000');
 
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 const styleLink = document.createElement("link");
@@ -17,7 +16,7 @@ document.head.appendChild(styleLink);
 export default class Customer extends React.Component {
   constructor() {
     super();
-    this.handleClick = this.handleClick.bind(this);
+    this.update = this.update.bind(this);
     this.state = {
       cryptoType: 'BCH',
       fiatType: 'CAD',
@@ -29,12 +28,6 @@ export default class Customer extends React.Component {
       isPayment: false,
       pos_id: null
     }
-  }
-
-  handleClick() {
-		this.setState(function(prevState) {
-			return {isToggleuPaid: !prevState.isToggleuPaid};
-		});
   }
 
   componentDidMount() {
@@ -53,15 +46,22 @@ export default class Customer extends React.Component {
 
   update(data) {
     console.log(data);
-    this.setState({
-      cryptoType: data.paymentData[0],
-      fiatType: data.paymentData[1],
-      cryptoAmount: data.paymentData[2],
-      fiatAmount: data.paymentData[3],
-      cryptoPrice: data.paymentData[4],
-      url: data.paymentData[5],
-      isPayment: data.paymentData[6]
-    }, () => console.log(this.state));
+    if (data.paymentData) {
+      this.setState({
+        cryptoType: data.paymentData[0],
+        fiatType: data.paymentData[1],
+        cryptoAmount: data.paymentData[2],
+        fiatAmount: data.paymentData[3],
+        cryptoPrice: data.paymentData[4],
+        url: data.paymentData[5],
+        isPayment: true
+      }, () => console.log(this.state));
+    } else {
+      this.setState({
+        url: defaultWebURL,
+        isPayment: false
+      })
+    }
   }
 
   render() {
