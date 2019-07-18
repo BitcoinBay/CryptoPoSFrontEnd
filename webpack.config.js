@@ -3,43 +3,29 @@
 */
 
 const path = require('path');
+const webpack = require('webpack');
 const htmlWebpackPlugin = require('html-webpack-plugin');
 const WebappWebpackPlugin = require('webapp-webpack-plugin');
-require("@babel/register");
 
 const config = {
-
-  // Entry
   entry: './src/index.js',
-
-  // Output
   output: {
-    path: path.resolve(__dirname, './dist'),
-    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.js'
   },
-
-  // Loaders
   module: {
-    rules : [
-      // JavaScript/JSX Files
+    rules: [
       {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: [
-          { loader: 'babel-loader',
-            options: {
-              presets: [
-                "@babel/preset-env",
-                "@babel/preset-react"
-              ]
-            }
-          }
-        ]
+        test: /\.(js|jsx)$/,
+        use: 'babel-loader',
+        exclude: /node_modules/
       },
-      // CSS Files
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
+        use: [
+          'style-loader',
+          'css-loader'
+        ]
       },
       // Image Files
       {
@@ -57,11 +43,6 @@ const config = {
       }
     ]
   },
-
-  resolve: {
-    extensions: ['*', '.js', '.jsx']
-  },
-
   // Plugins
   plugins: [
     new htmlWebpackPlugin({
@@ -77,6 +58,15 @@ const config = {
   watch: true,
   // Development Tools
   devtool: "source-map",
-};
+  resolve: {
+    extensions: [
+      '.js',
+      '.jsx'
+    ]
+  },
+  devServer: {
+    contentBase: './dist'
+  }
+}
 
 module.exports = config;

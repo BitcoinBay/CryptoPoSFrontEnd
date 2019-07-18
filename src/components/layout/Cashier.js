@@ -14,8 +14,8 @@ const BITBOX = new BITBOXSDK({ restURL: "https://rest.bitcoin.com/v2/" });
 const TESTBOX = new BITBOXSDK({ restURL: "https://trest.bitcoin.com/v2/" });
 
 
-const socket = socketClient('http://192.168.1.10:3000');
-//const socket = socketClient('http://192.168.1.10:5000');
+const socket = socketClient('http://192.168.1.14:3000');
+//const socket = socketClient('http://192.168.1.14:5000');
 
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 
@@ -102,7 +102,7 @@ class Cashier extends React.Component {
     this.updateAmount = this.updateAmount.bind(this);
 
     this.state = {
-      bip21: false,
+      bip21: "false",
       jsonData: null,
       cryptoType: 'BCH',
       fiatType: 'CAD',
@@ -202,7 +202,7 @@ class Cashier extends React.Component {
       if (this.state.cryptoType === "BTC") {
         XPubAddress = BITBOX.Address.toLegacyAddress(XPubAddress);
       }
-      if (this.state.bip21 === true) {
+      if (this.state.bip21 === "true") {
         Bip21URL = BITBOX.BitcoinCash.encodeBIP21(XPubAddress, options);
         this.setState({ url: Bip21URL, pos_address: XPubAddress });
       } else {
@@ -297,10 +297,14 @@ class Cashier extends React.Component {
   }
 
   toggleBip21() {
-    if (this.state.bip21 === true) {
-      this.setState({ bip21: false });
+    if (this.state.bip21 === "true") {
+      this.setState({ bip21: "false" }, () => {
+        this.calculateCryptoAmount();
+      });
     } else {
-      this.setState({ bip21: true });
+      this.setState({ bip21: "true" }, () => {
+        this.calculateCryptoAmount();
+      });
     }
   }
 
@@ -565,6 +569,7 @@ class Cashier extends React.Component {
               <button value="ETH" onClick={this.toggleBip21}>
                 Bip21
               </button>
+              <p>{this.state.bip21}</p>
               <p>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</p>
               <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
               <p>$ {this.state.fiatAmount} {this.state.fiatType}</p>

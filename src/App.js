@@ -43,7 +43,7 @@ if (localStorage.jwtToken) {
       window.location.href = "./login";
     }
   } catch(e) {
-    console.log(e);
+    console.log("JWT Error: ", e);
   }
 }
 class App extends Component {
