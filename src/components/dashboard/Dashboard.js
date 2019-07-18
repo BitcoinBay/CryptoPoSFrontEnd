@@ -14,7 +14,7 @@ import Divider from "@material-ui/core/Divider";
 import Avatar from "@material-ui/core/Avatar";
 import { grey } from "@material-ui/core/colors";
 
-import injectSheet, { jss } from 'react-jss';
+import injectSheet from 'react-jss';
 
 const styles = {
   marginless_row: {
@@ -87,7 +87,18 @@ const styles = {
   },
   delete_pos_icon: {
     display: "inline",
-    color: "#A0A0A0"
+    color: "#A0A0A0",
+    background: "#FFFFFF",
+    width: "24px",
+    height: "24px",
+    border: "none",
+    '&:hover': {
+      color: "#707070",
+      cursor: "pointer"
+    },
+    '&:focus': {
+      background: "#FFFFFF"
+    }
   },
   user_info: {
     background: "#00A3FF",
@@ -127,17 +138,21 @@ class Dashboard extends Component {
     super();
 
     this.state = {
+      user_data: {
+        id: "",
+        name: ""
+      },
       user_pos_systems: [],
       left: false
     };
   }
 
   componentDidMount() {
-    const user_data = {
-      user_id: this.props.auth.user.id
-    };
+    axios.get("/api/get-user-data").then((res) => {
+      this.setState({"user_data": res.data});
+    });
 
-    axios.post("/api/get-all-user-pos", user_data)
+    axios.post("/api/get-all-user-pos")
       .then((res) => {
         console.log("Logging: ", res);
         if (res.data) {
@@ -151,7 +166,7 @@ class Dashboard extends Component {
 
   onLogoutClick = e => {
     e.preventDefault();
-    this.props.logoutUser();
+    this.props.logoutUser(this.props.history);
   };
 
   toggleDrawer = () => {
@@ -160,6 +175,29 @@ class Dashboard extends Component {
     } else {
       this.setState({ left: true });
     }
+  }
+
+  deletePos = (_posID) => {
+    const pos_data = {
+      pos_id: _posID
+    };
+
+    axios.post('/api/delete-pos', pos_data).then((res) => {
+      const delete_pos_data = {
+        user_id: this.state.user_data.id
+      };
+
+      axios.post("/api/get-all-user-pos", delete_pos_data)
+        .then((res) => {
+          console.log("Logging: ", res);
+          if (res.data) {
+            this.setState({ user_pos_systems: res.data });
+          }
+        })
+        .catch((err) => {
+          console.log("Error: ", err);
+        });
+    });
   }
 
   render() {
@@ -193,10 +231,10 @@ class Dashboard extends Component {
         <Drawer open={this.state.left} onClose={this.toggleDrawer}>
           <div className={classes.user_info}>
             <Avatar className={classes.user_avatar}>
-              {this.props.auth.user.name.substring(0,1)}
+              {this.state.user_data.name.substring(0, 1)}
             </Avatar>
             <div className={classes.user_name_chip}>
-              <p className={classes.user_name}>{this.props.auth.user.name}</p>
+              <p className={classes.user_name}>{this.state.user_data.name}</p>
                 <i className={"material-icons " + classes.drop_down_icon}>
                   expand_more
                 </i>
@@ -261,7 +299,12 @@ class Dashboard extends Component {
                 <div className={ classes.pos_card + (i === 0 ? " " + classes.first_pos : "") } key={i}>
                   <div>
                     <p className={ classes.pos_id_heading }>ID: ...{pos._id.substring(17)}</p>
-                    <p className={ classes.delete_pos_icon + " right"}><i className="material-icons">delete</i></p>
+                    <button className={ classes.delete_pos_icon + " right"}
+                      onClick={() => {
+                        this.deletePos(pos._id)
+                      }}>
+                      <i className="material-icons">delete</i>
+                    </button>
                     <Link to={{ pathname: "/pos-dashboard/", search: '?p=' + pos._id }}
                         className={"btn btn-flat " + classes.pos_link }
                         >
@@ -281,7 +324,6 @@ class Dashboard extends Component {
 
 Dashboard.propTypes = {
   logoutUser: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({

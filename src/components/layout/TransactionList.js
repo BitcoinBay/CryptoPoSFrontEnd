@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import injectSheet, { jss } from 'react-jss';
+import injectSheet from 'react-jss';
 
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -24,16 +24,25 @@ const styles = {
   }
 };
 
-class TransactionList extends React.Component {
+class TransactionList extends Component {
   constructor(props) {
     super(props)
 
-    this.state = { users: [] }
+    this.state = {
+      users: [],
+      transactions: []
+    }
   }
 
   componentDidMount() {
-    axios.get('https://api.blockcypher.com/v1/btc/main/addrs/1DEP8i3QJCsomS4BSMY2RpU1upv62aGvhD')
-      .then(response => this.setState({ users: response.data.txrefs }))
+    this.setState({ pos_id: this.props.location.search.substring(3) }, () => {
+      const pos_data = {
+        pos_id: this.state.pos_id
+      };
+
+      axios.post('/api/get-all-pos-transactions', pos_data)
+        .then(res => this.setState({ transactions: res.data.transactions.reverse() }));
+    });
   }
 
   renderUsers() {
@@ -64,21 +73,31 @@ class TransactionList extends React.Component {
                 <TableHead>
                   <TableRow>
                     <TableCell>Transaction Hash</TableCell>
+                    <TableCell align="right">Block Number</TableCell>
                     <TableCell align="right">Transaction Amount</TableCell>
                     <TableCell align="right">Crypto Currency</TableCell>
-                    <TableCell align="right">Fiat Currency</TableCell>
                     <TableCell align="right">Market Price</TableCell>
+                    <TableCell align="right">Fiat Currency</TableCell>
                   </TableRow>
                 </TableHead>
                 
                 <TableBody>
-                  <TableRow>
-                    <TableCell>43ab5b0e4f...35894fccb1</TableCell>
-                    <TableCell align="right">10.01</TableCell>
-                    <TableCell align="right">BCH</TableCell>
-                    <TableCell align="right">CAD</TableCell>
-                    <TableCell align="right">528.42</TableCell>
-                  </TableRow> 
+                  {
+                    this.state.transactions.map((transaction, i) =>
+                      <TableRow key={i}>
+                        <TableCell>
+                            <a href={"https://ropsten.etherscan.io/tx/" + transaction.hash} target="_blank">
+                              {transaction.hash.substring(0, 10)}...{transaction.hash.substring(57)}
+                            </a>
+                        </TableCell>
+                        <TableCell align="right">{transaction.block_number}</TableCell>
+                        <TableCell align="right">{(transaction.amount / 1000000000000000000)}</TableCell>
+                        <TableCell align="right">{transaction.crypto_currency}</TableCell>
+                        <TableCell align="right">{transaction.market_price}</TableCell>
+                        <TableCell align="right">{transaction.fiat_currency}</TableCell>
+                      </TableRow> 
+                    )
+                  }
                 </TableBody>
               </Table>
             </Paper>

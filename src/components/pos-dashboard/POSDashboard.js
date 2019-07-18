@@ -4,6 +4,8 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
+import M from "materialize-css";
+
 class POSDashboard extends Component {
 
   constructor() {
@@ -17,6 +19,8 @@ class POSDashboard extends Component {
   }
 
   componentDidMount() {
+    M.FormSelect.init(this.select);
+
     this.setState({ pos_id: this.props.location.search.substring(3) }, () => {
       const pos_data = {
         pos_id: this.state.pos_id
@@ -124,8 +128,7 @@ class POSDashboard extends Component {
               Customer Page
             </Link>
 
-            <Link
-              to = {{ pathname: "/transactions", query: this.state.pos_id }}
+            <Link to={{ pathname: "/transactions/", search: '?p=' + this.state.pos_id }}
               style={{
                 width: "190px",
                 borderRadius: "3px",
@@ -136,7 +139,7 @@ class POSDashboard extends Component {
               }}
               className="btn btn-large  waves-light hoverable blue accent-3"
             >
-              Transactions List
+              Transactions
             </Link>
           </div>
         </div>
@@ -189,6 +192,48 @@ class POSDashboard extends Component {
           </div>
         </div>
 
+        <div className="row">
+          <div className="col s8 offset-s2">
+            <hr/>
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col s8 offset-s2">
+
+            <h3>Currency Price Locks</h3>
+
+              <div className="input-field col s11">
+                  <input id="btc_lock_price" type="text"/>
+                  <label htmlFor="btc_lock_price">
+                    BTC Price
+                  </label>
+              </div>
+              <div className="input-field col s1">
+                  <button className="btn btn-small blue">Lock Price</button>
+              </div>
+
+              <div className="input-field col s11">
+                  <input id="bch_lock_price" type="text"/>
+                  <label htmlFor="bch_lock_price">
+                    BCH Price
+                  </label>
+              </div>
+              <div className="input-field col s1">
+                  <button className="btn btn-small blue">Lock Price</button>
+              </div>
+
+              <div className="input-field col s11">
+                  <input id="eth_lock_price" type="text"/>
+                  <label htmlFor="eth_lock_price">
+                    ETH Price
+                  </label>
+              </div>
+              <div className="input-field col s1">
+                  <button className="btn btn-small blue">Lock Price</button>
+              </div>
+          </div>
+        </div>
         <div className="row">
           <div className="col s8 offset-s2">
             <hr/>

@@ -416,13 +416,14 @@ class Cashier extends React.Component {
           console.log(res.data.utxo.length);
           if (res.data.utxo.length !== 0) {
             for (let i = 0; i < res.data.utxo.length; i++) {
-              if (res.data.utxo[i].confirmations === 0) {
+              // if (res.data.utxo[i].confirmations === 0) {
                 if (this.state.cryptoType === 'BCH' || this.state.cryptoType === 'TSN') {
                   this.setState({ utxo: res.data.utxo[0].txid}, () => {
                     console.log(this.state.utxo);
 
                     const transaction_data = {
                       pos_id: this.state.pos_id,
+                      block_number: res.data.utxo[0].blockNumber,
                       hash: res.data.utxo[0].txid,
                       amount: res.data.utxo[0].amount,
                       crypto_currency: this.state.cryptoType,
@@ -430,19 +431,35 @@ class Cashier extends React.Component {
                       market_price: this.state.cryptoPrice
                     };
 
+                    console.log(transaction_data);
+
                     axios.post("/api/add-transaction", transaction_data).then((res) => {
                       this.props.history.push("/transactions");
                     })
                   }) ;
                 } else {
-                  this.setState({ utxo: res.data.utxo[0].tx_hash}, () => {
+                  this.setState({ utxo: res.data.utxo[0].hash}, () => {
                     console.log(this.state.utxo);
+
+                    const transaction_data = {
+                      pos_id: this.state.pos_id,
+                      hash: res.data.utxo[0].hash,
+                      amount: res.data.utxo[0].value,
+                      crypto_currency: this.state.cryptoType,
+                      fiat_currency: this.state.fiatType,
+                      market_price: this.state.cryptoPrice
+                    };
+
+                    axios.post("/api/add-transaction", transaction_data).then((res) => {
+                      this.props.history.push({pathname: "/transactions", search: '?p=' + this.state.pos_id});
+                    })
                   }) ;
                 }
+
                 clearInterval(listen);
-              } else {
-                console.log(`Transaction Confirmations: ${res.data.utxo[i].confirmations}`)
-              }
+              // } else {
+              //   console.log(`Transaction Confirmations: ${res.data.utxo[i].confirmations}`)
+              // }
             }
           } else {
             return;
@@ -452,7 +469,7 @@ class Cashier extends React.Component {
           console.log(err);
           return;
         })}
-      , 5000);
+      , 10000);
     this.setState({ paymentListening: listen });
   }
 
