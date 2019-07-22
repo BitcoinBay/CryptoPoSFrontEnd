@@ -12,11 +12,7 @@ const BITBOXSDK = require("@chris.troutner/bitbox-js");
 // initialize BITBOX
 const BITBOX = new BITBOXSDK({ restURL: "https://rest.bitcoin.com/v2/" });
 const TESTBOX = new BITBOXSDK({ restURL: "https://trest.bitcoin.com/v2/" });
-
-
-const socket = socketClient('http://192.168.1.14:3000');
-//const socket = socketClient('http://192.168.1.14:5000');
-
+const socket = socketClient('http://192.168.1.15:3000');
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 
 const styles = {
@@ -127,6 +123,7 @@ class Cashier extends React.Component {
       pos_address: null,
       paymentListening: 0,
       color : "blue",
+      pos_currencies: []
     }
   }
 
@@ -149,6 +146,13 @@ class Cashier extends React.Component {
 
       axios.post("/api/get-all-pos-xpubs", pos_data).then((res) => {
         this.setState({ pos_xpub_array: res.data.xpubs }, () => {
+          let db_currencies = [];
+          for (let i = 0; i < this.state.pos_xpub_array.length; i++) {
+            db_currencies.push(this.state.pos_xpub_array[i].type);
+          }
+
+          this.setState({ pos_currencies: db_currencies });
+
           this.setPaymentAddress();
         });
       });
@@ -436,20 +440,50 @@ class Cashier extends React.Component {
           console.log(res.data.utxo.length);
           if (res.data.utxo.length !== 0) {
             for (let i = 0; i < res.data.utxo.length; i++) {
-              if (res.data.utxo[i].confirmations === 0) {
+              // if (res.data.utxo[i].confirmations === 0) {
                 if (this.state.cryptoType === 'BCH' || this.state.cryptoType === 'TSN') {
                   this.setState({ utxo: res.data.utxo[0].txid}, () => {
                     console.log(this.state.utxo);
+
+                    const transaction_data = {
+                      pos_id: this.state.pos_id,
+                      block_number: res.data.utxo[0].blockNumber,
+                      hash: res.data.utxo[0].txid,
+                      amount: res.data.utxo[0].amount,
+                      crypto_currency: this.state.cryptoType,
+                      fiat_currency: this.state.fiatType,
+                      market_price: this.state.cryptoPrice
+                    };
+
+                    console.log(transaction_data);
+
+                    axios.post("/api/add-transaction", transaction_data).then((res) => {
+                      this.props.history.push("/transactions");
+                    })
                   }) ;
                 } else {
-                  this.setState({ utxo: res.data.utxo[0].tx_hash}, () => {
+                  this.setState({ utxo: res.data.utxo[0].hash}, () => {
                     console.log(this.state.utxo);
+
+                    const transaction_data = {
+                      pos_id: this.state.pos_id,
+                      hash: res.data.utxo[0].hash,
+                      amount: res.data.utxo[0].value,
+                      crypto_currency: this.state.cryptoType,
+                      fiat_currency: this.state.fiatType,
+                      market_price: this.state.cryptoPrice
+                    };
+
+                    axios.post("/api/add-transaction", transaction_data).then((res) => {
+                      this.props.history.push({pathname: "/transactions", search: '?p=' + this.state.pos_id});
+                    })
                   }) ;
                 }
+
                 clearInterval(listen);
-              } else {
-                console.log(`Transaction Confirmations: ${res.data.utxo[i].confirmations}`)
-              }
+              // } else {
+              //   console.log(`Transaction Confirmations: ${res.data.utxo[i].confirmations}`)
+              // }
             }
           } else {
             return;
@@ -459,7 +493,7 @@ class Cashier extends React.Component {
           console.log(err);
           return;
         })}
-      , 5000);
+      , 10000);
     this.setState({ paymentListening: listen });
   }
 
@@ -503,16 +537,16 @@ class Cashier extends React.Component {
                 <div className="row">
                   <div className="col s12 m6 offset-m3 center-align" id="crypto_currency_buttons">
                     <p className={classes.crypto_header}>Cryptocurrency</p>
-                    <button disabled={this.state.jsonData === null}
+                    <button disabled={this.state.jsonData === null || !this.state.pos_currencies.includes("BTC")}
                         className={"btn " + classes.crypto_currency_button}
                         value="BTC" onClick={this.toggleCurrency}>BTC</button>
-                    <button disabled={this.state.jsonData === null}
+                    <button disabled={this.state.jsonData === null || !this.state.pos_currencies.includes("BCH")}
                         className={"btn " + classes.crypto_currency_button}
                         value="BCH" onClick={this.toggleCurrency}>BCH</button>
-                    <button disabled={this.state.jsonData === null}
+                    <button disabled={this.state.jsonData === null || !this.state.pos_currencies.includes("ETH")}
                         className={"btn " + classes.crypto_currency_button}
                         value="ETH" onClick={this.toggleCurrency}>ETH</button>
-                    <button disabled={this.state.jsonData === null}
+                    <button disabled={this.state.jsonData === null || !this.state.pos_currencies.includes("TSN")}
                         className={"btn " + classes.crypto_currency_button}
                         value="TSN" onClick={this.toggleCurrency}>TSN</button>
                   </div>
