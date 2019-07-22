@@ -4,7 +4,7 @@ import socketClient from 'socket.io-client';
 import  QRAddress21 from '../QRAddress21';
 import bitcoinbay from '../../images/bitcoinbay.jpeg';
 
-const socket = socketClient('http://192.168.1.15:3000');
+const socket = socketClient('http://192.168.1.8:3000');
 // const socket = socketClient('http://localhost:5000');
 
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
