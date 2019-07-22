@@ -168,29 +168,6 @@ class Dashboard extends Component {
 
     return (
       <div className="container">
-        {/* <div className="row">
-          <div className="landing-copy col s12 center-align">
-            <button
-              style={{
-                borderRadius: "3px",
-                letterSpacing: "1.5px",
-                marginTop: "1rem",
-                margin: '14px'
-              }}
-              onClick={this.onLogoutClick}
-              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-
-        <div className="row">
-          <div className="col s6 offset-s3">
-            <hr/>
-          </div>
-        </div> */}
-
         <Drawer open={this.state.left} onClose={this.toggleDrawer}>
           <div className={classes.user_info}>
             <Avatar className={classes.user_avatar}>

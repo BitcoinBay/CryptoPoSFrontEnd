@@ -3,20 +3,24 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import M from "materialize-css";
 
 class POSDashboard extends Component {
-
   constructor() {
     super();
-
     this.state = {
       pos_id: "",
       pos_name: "",
-      pos_currencies: []
+      pos_currencies: [],
+      value: "",
+      xpub_type: "",
+      xpub_address: ""
     };
   }
 
   componentDidMount() {
+    M.FormSelect.init(this.select);
+
     this.setState({ pos_id: this.props.location.search.substring(3) }, () => {
       const pos_data = {
         pos_id: this.state.pos_id
@@ -24,12 +28,10 @@ class POSDashboard extends Component {
 
       axios.post('/api/get-pos-by-id', pos_data).then((res) => {
         this.setState({ pos_name: res.data.name });
-
         let db_currencies = [];
         for (let i = 0; i < res.data.xpubs.length; i++) {
           db_currencies.push(res.data.xpubs[i].type);
         }
-
         this.setState({ pos_currencies: db_currencies });
       });
     });
@@ -61,8 +63,6 @@ class POSDashboard extends Component {
       let updated_currencies = this.state.pos_currencies.slice();
       updated_currencies.push(xpub_data.type);
       this.setState({ pos_currencies: updated_currencies });
-
-      // this.forceUpdate();
     });
   }
 
@@ -149,13 +149,11 @@ class POSDashboard extends Component {
 
         <div className="row">
           <div className="col s8 offset-s2">
-
             <h3>Add a new payment method</h3>
-
               <div className="input-field col s12">
                   <select id="xpub_type" defaultValue=""
                           onChange={ this.onChange }
-                          value={ this.state.value }
+                          value={ this.state.xpub_type }
                           ref={ (select) => this.select = select }>
                       <option value="">Choose a currency</option>
                       <option value="BTC">Bitcoin</option>
@@ -168,7 +166,7 @@ class POSDashboard extends Component {
               <div className="input-field col s12">
                   <input id="xpub_address" type="text"
                           onChange={ this.onChange }
-                          value={ this.state.value } />
+                          value={ this.state.xpub_address } />
                   <label htmlFor="xpub_address">
                       Wallet xPub Address
                   </label>
@@ -212,7 +210,6 @@ class POSDashboard extends Component {
       </div>
     );
   }
-
 }
 
 POSDashboard.propTypes = {
