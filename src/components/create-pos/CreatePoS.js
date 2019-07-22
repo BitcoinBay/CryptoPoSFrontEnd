@@ -1,7 +1,23 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { connect } from "react-redux";
 import M from "materialize-css";
+
+import injectSheet from "react-jss";
+
+const styles = {
+    back_link: {
+        fontFamily: "Poppins",
+        letterSpacing: "0.1em",
+        fontSize: "17px",
+        display: "flex",
+        color: "#000000"
+    },
+    back_link_text: {
+        marginLeft: "5px"
+    }
+};
 
 class CreatePoS extends Component {
 
@@ -9,6 +25,10 @@ class CreatePoS extends Component {
         super();
 
         this.state = {
+            user_data: {
+                id: "",
+                name: ""
+            },
             pos_name: "",
             pos_xpub: ""
         };
@@ -16,6 +36,10 @@ class CreatePoS extends Component {
 
     componentDidMount() {
         M.FormSelect.init(this.select);
+
+        axios.get("/api/get-user-data").then((res) => {
+            this.setState({"user_data": res.data});
+        });
     }
 
     onChange = (event) => {
@@ -24,7 +48,6 @@ class CreatePoS extends Component {
 
     onSubmit = (event) => {
         event.preventDefault();
-
         const xpub_data = {
             address: this.state.pos_xpub,
             type: this.state.pos_xpub_type
@@ -32,7 +55,7 @@ class CreatePoS extends Component {
 
         axios.post("/api/add-xpub", xpub_data).then((res) => {
             const pos_data = {
-                user_id: this.props.auth.user.id,
+                user_id: this.state.user_data.id,
                 name: this.state.pos_name,
                 xpub: res.data._id
             };
@@ -44,11 +67,16 @@ class CreatePoS extends Component {
     }
 
     render() {
+        const { classes } = this.props;
+
         return(
             <div className="container">
                 <div className="row" style={{ marginTop: "4rem" }}>
                     <div className="col s8 offset-s2">
                         <div className="col s12">
+                            <Link to="/dashboard" className={classes.back_link}>
+                                <i className="material-icons">arrow_back</i>back
+                            </Link>
                             <h4 className="page-header">
                                 Create a New Point-of-Sale
                             </h4>
@@ -111,4 +139,4 @@ const mapStateToProps = state => ({
     auth: state.auth
 });
 
-export default connect(mapStateToProps)(CreatePoS);
+export default connect(mapStateToProps)(injectSheet(styles)(CreatePoS));
