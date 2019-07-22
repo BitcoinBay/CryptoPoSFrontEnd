@@ -22,7 +22,7 @@ class Login extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.auth.isAuthenticated) {
+    if (localStorage.getItem("jwtToken")) {
       this.props.history.push("/dashboard");
     }
 
