@@ -61,7 +61,6 @@
     "react-super-responsive-table": "^4.3.12",
     "react-table": "^6.10.0",
     "redux": "^4.0.1",
-    "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
     "semantic-ui-react": "^0.87.1",
     "socket.io-client": "^2.2.0",
