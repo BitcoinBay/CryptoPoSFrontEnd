@@ -457,10 +457,6 @@ class Cashier extends React.Component {
                 if (res.data.utxo[i].block_height === -1) {
                   this.addNewTransaction(res.data.utxo[i], listen);
                 } else if (i === res.data.utxo.length - 1) {
-                  console.log("State Block Height: ", this.state.blockHeight.BTC);
-                  console.log("First Block Height: ", res.data.utxo[0].block_height);
-                  console.log("Last Block Height: ", res.data.utxo[i].block_height);
-
                   if (this.state.blockHeight.BTC < res.data.utxo[i].block_height) {
                     this.addNewTransaction(res.data.utxo[i], listen);
                   } else if (this.state.blockHeight.BTC < res.data.utxo[0].block_height) {
@@ -471,10 +467,6 @@ class Cashier extends React.Component {
                 if (res.data.utxo[i].blockheight === -1) {
                   this.addNewTransaction(res.data.utxo[i], listen);
                 } else if (i === res.data.utxo.length - 1) {
-                  console.log("State Block Height: ", this.state.blockHeight.BCH);
-                  console.log("First Block Height: ", res.data.utxo[0].blockheight);
-                  console.log("Last Block Height: ", res.data.utxo[i].blockheight);
-
                   if (this.state.blockHeight.BCH < res.data.utxo[i].blockheight) {
                     this.addNewTransaction(res.data.utxo[i], listen);
                   } else if (this.state.blockHeight.BCH < res.data.utxo[0].blockheight) {
@@ -485,10 +477,6 @@ class Cashier extends React.Component {
                 if (res.data.utxo[i].blockNumber === "") {
                   this.addNewTransaction(res.data.utxo[i], listen);
                 } else if (i === res.data.utxo.length - 1) {
-                  console.log("State Block Height: ", this.state.blockHeight.ETH);
-                  console.log("First Block Height: ", res.data.utxo[0].blockNumber);
-                  console.log("Last Block Height: ", res.data.utxo[i].blockNumber);
-
                   if (this.state.blockHeight.ETH < res.data.utxo[i].blockNumber) {
                     this.addNewTransaction(res.data.utxo[i], listen);
                   } else if (this.state.blockHeight.ETH < res.data.utxo[0].blockNumber) {
