@@ -6,7 +6,7 @@ import bitcoinbay from '../../images/bitcoinbay.jpeg';
 
 import injectSheet from 'react-jss';
 
-const socket = socketClient('http://192.168.1.8:3000');
+const socket = socketClient('http://192.168.1.25:3000');
 // const socket = socketClient('http://localhost:5000');
 
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
