@@ -456,10 +456,22 @@ class Cashier extends React.Component {
     clearInterval(intervalID);
   }
 
-  async sendSocketIO(msg) {
-    console.log("Socket: ", msg);
-    socket.emit('event', msg);
+  async sendSocketIO() {
+    let data = {
+      pos_id: this.state.pos_id,
+      paymentData: [
+        this.state.cryptoType,
+        this.state.fiatType,
+        this.state.cryptoAmount,
+        this.state.fiatAmount,
+        this.state.cryptoPrice,
+        this.state.url,
+        true
+      ]
+    }
+    socket.emit('private-message', data);
     await this.updateBlockHeight();
+
     let listen = setInterval(() => {
       axios
         .get(`/api/balance${this.state.cryptoType}/${this.state.pos_address}`)
