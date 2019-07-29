@@ -4,6 +4,8 @@ import socketClient from 'socket.io-client';
 import  QRAddress21 from '../QRAddress21';
 import bitcoinbay from '../../images/bitcoinbay.jpeg';
 
+import injectSheet from 'react-jss';
+
 const socket = socketClient('http://192.168.1.8:3000');
 // const socket = socketClient('http://localhost:5000');
 
@@ -13,7 +15,17 @@ styleLink.rel = "stylesheet";
 styleLink.href = "https://cdn.jsdelivr.net/npm/semantic-ui/dist/semantic.min.css";
 document.head.appendChild(styleLink);
 
-export default class Customer extends React.Component {
+const styles = {
+  vertical_wrapper: {
+    height: "100vh"
+  },
+  placeholder_image: {
+    width: "75%",
+    height: "75%"
+  }
+};
+
+class Customer extends React.Component {
   constructor() {
     super();
     this.update = this.update.bind(this);
@@ -65,34 +77,38 @@ export default class Customer extends React.Component {
   }
 
   render() {
+    const { classes } = this.props;
+
     return (
-      <div className="cashier-page wrapper">
-        <div className="main">
-          <br />
-          <article>
-            <Helmet>
-              <title>Customer POS Page</title>
-              <meta name="description" content="CashierPOS Page" />
-            </Helmet>
-            { this.state.isPayment === false
-              ? <div>
-                  <h1>Bitcoin Bay Point of Sales</h1>
-                  <img src={bitcoinbay} alt="logo" width="100%" height="100%"/>
-                </div>
-              : (
-                <div>
-                  <h2>
-                    Please Send Your {this.state.cryptoAmount} {this.state.cryptoType} To The Following Address
-                  </h2>
-                  <QRAddress21 value={this.state.url} />
-                  <h3>$ {this.state.fiatAmount} {this.state.fiatType}</h3>
-                  <h3>@ $ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</h3>
-                </div>
-              )
-            }
-          </article>
+      <div className={"valign-wrapper " + classes.vertical_wrapper}>
+        <Helmet>
+          <title>Customer POS Page</title>
+          <meta name="description" content="CashierPOS Page" />
+        </Helmet>
+        <div className="container">
+          <div className="row">
+            <div className="col s8 offset-s2 m5 offset-m3 center-align">
+              { this.state.isPayment === false
+                ? <div>
+                    <img src={bitcoinbay} className={classes.placeholder_image} alt="logo"/>
+                  </div>
+                : (
+                  <div>
+                    <h2>
+                      Please Send Your {this.state.cryptoAmount} {this.state.cryptoType} To The Following Address
+                    </h2>
+                    <QRAddress21 value={this.state.url} />
+                    <h3>$ {this.state.fiatAmount} {this.state.fiatType}</h3>
+                    <h3>@ $ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</h3>
+                  </div>
+                )
+              }
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 }
+
+export default injectSheet(styles)(Customer);
