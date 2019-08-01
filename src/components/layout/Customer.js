@@ -6,7 +6,7 @@ import bitcoinbay from '../../images/bitcoinbay.jpeg';
 
 import injectSheet from 'react-jss';
 
-const socket = socketClient('http://192.168.1.25:3000');
+const socket = socketClient('http://10.100.10.142:3000');
 // const socket = socketClient('http://localhost:5000');
 
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
@@ -22,6 +22,41 @@ const styles = {
   placeholder_image: {
     width: "75%",
     height: "75%"
+  },
+  message_text: {
+    fontFamily: "Poppins, sans-serif",
+    fontWeight: "400",
+    textAlign: "left",
+    marginTop: "0",
+    marginBottom: "10px",
+    marginLeft: "10px"
+  },
+  amount_to_pay_text: {
+    fontFamily: "Poppins, sans-serif",
+    fontWeight: "bold",
+    textAlign: "left",
+    marginTop: "0",
+    marginLeft: "10px"
+  },
+  fiat_text: {
+    fontFamily: "Roboto, sans-serif",
+    textAlign: "left",
+    marginTop: "30px",
+    marginBottom: "0",
+    marginLeft: "10px"
+  },
+  status_text: {
+    fontWeight: "400",
+    fontSize: "1.7em",
+    marginBottom: "0",
+    marginLeft: "10px",
+    textAlign: "left"
+  },
+  status_message: {
+    fontSize: "1.8em",
+    marginTop: "0",
+    marginLeft: "10px",
+    textAlign: "left"
   }
 };
 
@@ -87,19 +122,30 @@ class Customer extends React.Component {
         </Helmet>
         <div className="container">
           <div className="row">
-            <div className="col s8 offset-s2 m5 offset-m3 center-align">
+            <div className="col s6 offset-s3 m3 offset-m4 center-align">
               { this.state.isPayment === false
                 ? <div>
                     <img src={bitcoinbay} className={classes.placeholder_image} alt="logo"/>
                   </div>
                 : (
                   <div>
-                    <h2>
-                      Please Send Your {this.state.cryptoAmount} {this.state.cryptoType} To The Following Address
+                    <h2 className={classes.message_text}>
+                      Please send your 
                     </h2>
+                    <h2 className={classes.message_text}>
+                      {this.state.cryptoAmount.substring(0, 7)} {this.state.cryptoType}
+                    </h2>
+                    <h2 className={classes.message_text}>
+                      To The Following Address
+                    </h2>
+
                     <QRAddress21 value={this.state.url} />
-                    <h3>$ {this.state.fiatAmount} {this.state.fiatType}</h3>
-                    <h3>@ $ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</h3>
+
+                    <p className={classes.fiat_text}>Equivalent in {this.state.fiatType}</p>
+                    <h1 className={classes.amount_to_pay_text}>$ {this.state.fiatAmount}</h1>
+
+                    <h2 className={classes.status_text}>Status</h2>
+                    <h2 className={classes.status_message}>UNPAID</h2>
                   </div>
                 )
               }
