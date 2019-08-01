@@ -571,9 +571,9 @@ class Cashier extends React.Component {
                     <button disabled={this.state.jsonData === null || !this.state.pos_currencies.includes("ETH")}
                         className={"btn " + classes.crypto_currency_button}
                         value="ETH" onClick={this.toggleCurrency}>ETH</button>
-                    <button disabled={this.state.jsonData === null || !this.state.pos_currencies.includes("TSN")}
+                    {/*<button disabled={this.state.jsonData === null || !this.state.pos_currencies.includes("TSN")}
                         className={"btn " + classes.crypto_currency_button}
-                        value="TSN" onClick={this.toggleCurrency}>TSN</button>
+                        value="TSN" onClick={this.toggleCurrency}>TSN</button>*/}
                   </div>
                 </div>
 
@@ -653,7 +653,7 @@ class Cashier extends React.Component {
                     await this.newOrder();
                   }}
                   className={"btn " + classes.confirm_payment_button}>
-                NEW ORDER
+                NEW
               </button>
             </div>
             <div className="col s12 m4 offset-m4 center-align">
@@ -661,21 +661,21 @@ class Cashier extends React.Component {
                     this.updatePrices();
                   }}
                   className={"btn " + classes.confirm_payment_button}>
-                UPDATE PRICES
+                UPDATE
               </button>
             </div><div className="col s12 m4 offset-m4 center-align">
               <button onClick={() => {
                     this.sendSocketIO();
                   }}
                   className={"btn " + classes.confirm_payment_button}>
-                CONFIRM PAYMENT
+                PAY
               </button>
             </div><div className="col s12 m4 offset-m4 center-align">
               <button onClick={() => {
                     this.cancelOrder();
                   }}
                   className={"btn " + classes.confirm_payment_button}>
-                CANCEL ORDER
+                CANCEL
               </button>
             </div>
           </div>
