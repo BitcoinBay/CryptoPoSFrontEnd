@@ -12,8 +12,7 @@ const BITBOXSDK = require("@chris.troutner/bitbox-js");
 // initialize BITBOX
 const BITBOX = new BITBOXSDK({ restURL: "https://rest.bitcoin.com/v2/" });
 const TESTBOX = new BITBOXSDK({ restURL: "https://trest.bitcoin.com/v2/" });
-const socket = socketClient('http://192.168.1.8:3000');
-// const socket = socketClient('http://localhost:5000');
+const socket = socketClient('http://192.168.1.25:3000');
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 
 const styles = {
@@ -416,7 +415,45 @@ class Cashier extends React.Component {
       //        console.log(res);
     }).catch((err) => {
       //        console.log(err);
-    });
+    }); 
+  }
+
+  addNewTransaction(transaction, intervalID) {
+    if (this.state.cryptoType === 'BCH' || this.state.cryptoType === 'TSN') {
+      this.setState({ utxo: transaction.txid}, () => {
+        const transaction_data = {
+          pos_id: this.state.pos_id,
+          block_number: transaction.blockNumber,
+          hash: transaction.txid,
+          amount: transaction.amount,
+          crypto_currency: this.state.cryptoType,
+          fiat_currency: this.state.fiatType,
+          market_price: this.state.cryptoPrice
+        };
+
+        axios.post("/api/add-transaction", transaction_data).then((res) => {
+          this.props.history.push({pathname: "/transactions", search: '?p=' + this.state.pos_id});
+        });
+      });
+    } else {
+      this.setState({ utxo: transaction.hash}, () => {
+        const transaction_data = {
+          pos_id: this.state.pos_id,
+          block_number: transaction.blockNumber,
+          hash: transaction.hash,
+          amount: transaction.value,
+          crypto_currency: this.state.cryptoType,
+          fiat_currency: this.state.fiatType,
+          market_price: this.state.cryptoPrice
+        };
+
+        axios.post("/api/add-transaction", transaction_data).then((res) => {
+          this.props.history.push({pathname: "/transactions", search: '?p=' + this.state.pos_id});
+        });
+      });
+    }
+
+    clearInterval(intervalID);
   }
 
   async sendSocketIO() {
@@ -434,57 +471,44 @@ class Cashier extends React.Component {
     }
     socket.emit('private-message', data);
     await this.updateBlockHeight();
+
     let listen = setInterval(() => {
       axios
         .get(`/api/balance${this.state.cryptoType}/${this.state.pos_address}`)
         .then((res) => {
-          console.log(res.data.utxo.length);
           if (res.data.utxo.length !== 0) {
             for (let i = 0; i < res.data.utxo.length; i++) {
-              // if (res.data.utxo[i].confirmations === 0) {
-                if (this.state.cryptoType === 'BCH' || this.state.cryptoType === 'TSN') {
-                  this.setState({ utxo: res.data.utxo[0].txid}, () => {
-                    console.log(this.state.utxo);
-
-                    const transaction_data = {
-                      pos_id: this.state.pos_id,
-                      block_number: res.data.utxo[0].blockNumber,
-                      hash: res.data.utxo[0].txid,
-                      amount: res.data.utxo[0].amount,
-                      crypto_currency: this.state.cryptoType,
-                      fiat_currency: this.state.fiatType,
-                      market_price: this.state.cryptoPrice
-                    };
-
-                    console.log(transaction_data);
-
-                    axios.post("/api/add-transaction", transaction_data).then((res) => {
-                      this.props.history.push("/transactions");
-                    })
-                  }) ;
-                } else {
-                  this.setState({ utxo: res.data.utxo[0].hash}, () => {
-                    console.log(this.state.utxo);
-
-                    const transaction_data = {
-                      pos_id: this.state.pos_id,
-                      hash: res.data.utxo[0].hash,
-                      amount: res.data.utxo[0].value,
-                      crypto_currency: this.state.cryptoType,
-                      fiat_currency: this.state.fiatType,
-                      market_price: this.state.cryptoPrice
-                    };
-
-                    axios.post("/api/add-transaction", transaction_data).then((res) => {
-                      this.props.history.push({pathname: "/transactions", search: '?p=' + this.state.pos_id});
-                    })
-                  }) ;
+              if (this.state.cryptoType === "BTC") {
+                if (res.data.utxo[i].block_height === -1) {
+                  this.addNewTransaction(res.data.utxo[i], listen);
+                } else if (i === res.data.utxo.length - 1) {
+                  if (this.state.blockHeight.BTC < res.data.utxo[i].block_height) {
+                    this.addNewTransaction(res.data.utxo[i], listen);
+                  } else if (this.state.blockHeight.BTC < res.data.utxo[0].block_height) {
+                    this.addNewTransaction(res.data.utxo[0], listen);
+                  }
                 }
-
-                clearInterval(listen);
-              // } else {
-              //   console.log(`Transaction Confirmations: ${res.data.utxo[i].confirmations}`)
-              // }
+              } else if (this.state.cryptoType === "BCH") {
+                if (res.data.utxo[i].blockheight === -1) {
+                  this.addNewTransaction(res.data.utxo[i], listen);
+                } else if (i === res.data.utxo.length - 1) {
+                  if (this.state.blockHeight.BCH < res.data.utxo[i].blockheight) {
+                    this.addNewTransaction(res.data.utxo[i], listen);
+                  } else if (this.state.blockHeight.BCH < res.data.utxo[0].blockheight) {
+                    this.addNewTransaction(res.data.utxo[0], listen);
+                  }
+                }
+              } else if (this.state.cryptoType === "ETH") {
+                if (res.data.utxo[i].blockNumber === "") {
+                  this.addNewTransaction(res.data.utxo[i], listen);
+                } else if (i === res.data.utxo.length - 1) {
+                  if (this.state.blockHeight.ETH < res.data.utxo[i].blockNumber) {
+                    this.addNewTransaction(res.data.utxo[i], listen);
+                  } else if (this.state.blockHeight.ETH < res.data.utxo[0].blockNumber) {
+                    this.addNewTransaction(res.data.utxo[0], listen);
+                  }
+                }
+              }
             }
           } else {
             return;

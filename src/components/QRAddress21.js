@@ -18,7 +18,7 @@ export default class QRAddress21 extends React.Component {
     return(
       <div  >
         <QRCode value={ value } size={parseInt(this.state.size)} />
-        <p className="add">{ value }</p>
+        <p>{ value.substring(0, 8) + "..." + value.substring(value.length - 8) }</p>
       </div>
     );
   }
