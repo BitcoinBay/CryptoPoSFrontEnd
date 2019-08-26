@@ -12,12 +12,14 @@ const BITBOXSDK = require("@chris.troutner/bitbox-js");
 // initialize BITBOX
 const BITBOX = new BITBOXSDK({ restURL: "https://rest.bitcoin.com/v2/" });
 const TESTBOX = new BITBOXSDK({ restURL: "https://trest.bitcoin.com/v2/" });
-const socket = socketClient('http://192.168.1.25:3000');
+const socket = socketClient('http://' + process.env.REACT_APP_SOCKET_ADDRESS + ':' + process.env.REACT_APP_SOCKET_PORT);
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 
 const styles = {
     vertical_wrapper: {
-        height: "100vh"
+        height: "100vh",
+        display: "flex",
+        alignItems: "center"
     },
 
     crypto_header: {
@@ -554,7 +556,7 @@ class Cashier extends React.Component {
   render() {
     const { classes } = this.props;
     return(
-      <div className={"valign-wrapper " + classes.vertical_wrapper}>
+      <div className={classes.vertical_wrapper}>
         <div className="container">
           { this.state.paymentListening === 0
             ? (

@@ -6,7 +6,7 @@ import bitcoinbay from '../../images/bitcoinbay.jpeg';
 
 import injectSheet from 'react-jss';
 
-const socket = socketClient('http://10.100.10.142:3000');
+const socket = socketClient('http://' + process.env.REACT_APP_SOCKET_ADDRESS + ':' + process.env.REACT_APP_SOCKET_PORT);
 // const socket = socketClient('http://localhost:5000');
 
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
@@ -17,7 +17,9 @@ document.head.appendChild(styleLink);
 
 const styles = {
   vertical_wrapper: {
-    height: "100vh"
+    height: "100vh",
+    display: "flex",
+    alignItems: "center"
   },
   placeholder_image: {
     width: "75%",
@@ -115,7 +117,7 @@ class Customer extends React.Component {
     const { classes } = this.props;
 
     return (
-      <div className={"valign-wrapper " + classes.vertical_wrapper}>
+      <div className={classes.vertical_wrapper}>
         <Helmet>
           <title>Customer POS Page</title>
           <meta name="description" content="CashierPOS Page" />
