@@ -2,10 +2,11 @@ import React from 'react';
 //import { Helmet } from 'react-helmet';
 import axios from 'axios';
 import socketClient from 'socket.io-client';
+import NumberFormat from 'react-number-format'
+import injectSheet from 'react-jss';
+
 import QRAddress21 from '../QRAddress21';
 import bitcoinbay from '../../images/bitcoinbay.jpeg';
-
-import injectSheet from 'react-jss';
 
 const HDKey = require('ethereumjs-wallet/hdkey');
 const BITBOXSDK = require("@chris.troutner/bitbox-js");
@@ -100,10 +101,10 @@ class Cashier extends React.Component {
     this.state = {
       bip21: "false",
       jsonData: null,
-      cryptoType: 'BCH',
-      fiatType: 'CAD',
+      cryptoType: '',
+      fiatType: '',
       blockHeight: null,
-      fiatAmount: 0,
+      fiatAmount: "",
       cryptoAmount: 0,
       cryptoPrice: 0,
       url: defaultWebURL,
@@ -243,6 +244,7 @@ class Cashier extends React.Component {
   handleClick(e) {
     try {
       let payAmount = parseFloat(e.target.value);
+      console.log(payAmount)
       if (typeof payAmount !== "number" || payAmount === 0 || isNaN(payAmount)) {
         this.setState({ fiatAmount: 0 }, async() => {
           await this.calculateCryptoAmount();
@@ -534,6 +536,7 @@ class Cashier extends React.Component {
     await axios
       .get('/api/datafeed')
       .then(res => {
+          console.log(res.data.status);
         this.setState({ jsonData: res.data.status }, () => {
 //        console.log(this.state.jsonData);
           if (this.state.cryptoType === "TSN") {
@@ -596,6 +599,7 @@ class Cashier extends React.Component {
                   <div className="col s8 offset-s2 m4 offset-m4 xl2 offset-xl5 center-align">
                     <p className={classes.input_header}>Amount {this.state.fiatType !== '' ? "(" + this.state.fiatType + ")" : ""} </p>
                     <input disabled={this.state.jsonData === null} value={ this.state.fiatAmount } type="number" id="amount_input" min="0" step="0.01" onChange={(e) => { this.handleClick(e) }} />
+                    {/*<NumberFormat value={this.state.fiatAmount} disabled={this.state.jsonData === null} onValueChange={(e)=>{ this.handleClick(e) }} id="amount_input" thousandSeparator={true} prefix={"$"}/>*/}
                   </div>
                 </div>
 
@@ -629,9 +633,13 @@ class Cashier extends React.Component {
                 Bip21
               </button>
               <p>{this.state.bip21}</p>
-              <p>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</p>
+
+              <p><NumberFormat displayType={"text"} thousandSeparator={true} value={this.state.cryptoPrice} prefix={"$"} decimalScale={"2"} fixedDecimalScale={true}/> {this.state.fiatType} / {this.state.cryptoType}</p>
+              {/*<p>$ {this.state.cryptoPrice} {this.state.fiatType} / {this.state.cryptoType}</p>*/}
+              {/*<p><NumberFormat displayType={"text"} thousandSeparator={true} value={this.state.cryptoAmount} decimalScale={"2"}/> {this.state.cryptoType}</p>*/}
               <p>{this.state.cryptoAmount} {this.state.cryptoType}</p>
-              <p>$ {this.state.fiatAmount} {this.state.fiatType}</p>
+              <p><NumberFormat displayType={"text"} thousandSeparator={true} value={this.state.fiatAmount} prefix={"$"} decimalScale={"2"} fixedDecimalScale={true}/> {this.state.fiatType}</p>
+              {/*<p>$ {this.state.fiatAmount} {this.state.fiatType}</p>*/}
               { this.state.pos_address
                 ? <strong style={{ textAlign:"center" }}>{this.state.cryptoType} Address (index: {this.state.index_counter[this.state.cryptoType]}): {this.state.pos_address}</strong>
                 : <strong style={{ textAlign:"center" }}>{this.state.cryptoType} Address (index: {this.state.index_counter[this.state.cryptoType]}):</strong>
