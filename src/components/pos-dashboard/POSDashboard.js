@@ -57,13 +57,21 @@ class POSDashboard extends Component {
     const xpub_data = {
       pos_id: this.state.pos_id,
       type: this.state.xpub_type,
-      address: this.state.xpub_address
+      address: this.state.xpub_address,
     };
 
     axios.post('/api/add-xpub', xpub_data).then((res) => {
-      let updated_currencies = this.state.pos_currencies.slice();
-      updated_currencies.push(xpub_data.type);
-      this.setState({ pos_currencies: updated_currencies });
+      let db_currencies = [];
+      if (typeof(res.data) === "array") {
+        for (let i = 0; i < res.data.xpubs.length; i++) {
+          db_currencies.push(res.data.xpubs[i].type);
+        }
+      } else {
+        db_currencies.push(res.data.type);
+      }
+      
+      this.setState({ pos_currencies: db_currencies });
+      window.location.reload();
     });
   }
 

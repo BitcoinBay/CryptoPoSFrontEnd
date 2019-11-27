@@ -13,7 +13,8 @@ const BITBOXSDK = require("@chris.troutner/bitbox-js");
 // initialize BITBOX
 const BITBOX = new BITBOXSDK({ restURL: "https://rest.bitcoin.com/v2/" });
 const TESTBOX = new BITBOXSDK({ restURL: "https://trest.bitcoin.com/v2/" });
-const socket = socketClient('http://192.168.1.25:3000');
+// const socket = socketClient('http://192.168.1.25:3000');
+const socket = socketClient('http://localhost:8000');
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 
 const styles = {
@@ -178,7 +179,8 @@ class Cashier extends React.Component {
         });
       }else {
         this.setState({ cryptoAmount: cryptoAmount.toFixed(8) }, () => {
-          this.generateBitcoinAddress();
+          this.generateTestnetAddress();
+          // this.generateBitcoinAddress();
         });
       }
     } else {
@@ -231,11 +233,12 @@ class Cashier extends React.Component {
 
   generateTestnetAddress() {
     let options = {
-      amount: 0.0001,
+      amount: this.state.cryptoAmount,
       label: '#BitcoinBay',
     };
 
     let XPubAddress = TESTBOX.Address.fromXPub(this.state.pos_xpub_address, `0/${this.state.pos_xpub_index + this.state.index_counter[this.state.cryptoType]}`);
+    XPubAddress = BITBOX.Address.toLegacyAddress(XPubAddress);
 
     let Bip21URL = TESTBOX.BitcoinCash.encodeBIP21(XPubAddress, options);
     this.setState({ url: Bip21URL, pos_address: XPubAddress });
@@ -417,10 +420,12 @@ class Cashier extends React.Component {
       //        console.log(res);
     }).catch((err) => {
       //        console.log(err);
-    }); 
+    });
   }
 
   addNewTransaction(transaction, intervalID) {
+    console.log("CHOSEN TRANSACTION:\n" + transaction);
+
     if (this.state.cryptoType === 'BCH' || this.state.cryptoType === 'TSN') {
       this.setState({ utxo: transaction.txid}, () => {
         const transaction_data = {
@@ -433,21 +438,35 @@ class Cashier extends React.Component {
           market_price: this.state.cryptoPrice
         };
 
+        const update_data = {
+            pos_id: this.state.pos_id,
+            confirmations: transaction.confirmations
+        }
+        // TODO: Set state variable to say payment_confirmed for jsx dynamic
+        socket.emit("update_status", update_data);
+
         axios.post("/api/add-transaction", transaction_data).then((res) => {
           this.props.history.push({pathname: "/transactions", search: '?p=' + this.state.pos_id});
         });
       });
     } else {
-      this.setState({ utxo: transaction.hash}, () => {
+      this.setState({ utxo: transaction.tx_hash}, () => {
         const transaction_data = {
           pos_id: this.state.pos_id,
-          block_number: transaction.blockNumber,
-          hash: transaction.hash,
+          block_number: transaction.block_height,
+          hash: transaction.tx_hash,
           amount: transaction.value,
           crypto_currency: this.state.cryptoType,
           fiat_currency: this.state.fiatType,
           market_price: this.state.cryptoPrice
         };
+
+        const update_data = {
+            pos_id: this.state.pos_id,
+            confirmations: transaction.confirmations
+        }
+        // TODO: Set state variable to say payment_confirmed for jsx dynamic
+        socket.emit("update_status", update_data);
 
         axios.post("/api/add-transaction", transaction_data).then((res) => {
           this.props.history.push({pathname: "/transactions", search: '?p=' + this.state.pos_id});
@@ -481,14 +500,23 @@ class Cashier extends React.Component {
           if (res.data.utxo.length !== 0) {
             for (let i = 0; i < res.data.utxo.length; i++) {
               if (this.state.cryptoType === "BTC") {
-                if (res.data.utxo[i].block_height === -1) {
-                  this.addNewTransaction(res.data.utxo[i], listen);
-                } else if (i === res.data.utxo.length - 1) {
-                  if (this.state.blockHeight.BTC < res.data.utxo[i].block_height) {
-                    this.addNewTransaction(res.data.utxo[i], listen);
-                  } else if (this.state.blockHeight.BTC < res.data.utxo[0].block_height) {
-                    this.addNewTransaction(res.data.utxo[0], listen);
-                  }
+                if (res.data.utxo[i].block_height) {
+                    if (res.data.utxo[i].block_height === -1) {
+                      this.addNewTransaction(res.data.utxo[i], listen);
+                    } else if (i === res.data.utxo.length - 1) {
+                      if (this.state.blockHeight.BTC < res.data.utxo[i].block_height) {
+                        this.addNewTransaction(res.data.utxo[i], listen);
+                      } else if (this.state.blockHeight.BTC < res.data.utxo[0].block_height) {
+                        this.addNewTransaction(res.data.utxo[0], listen);
+                      }
+                    }
+                } else {
+                    const update_data = {
+                        pos_id: this.state.pos_id,
+                        confirmations: res.data.utxo[res.data.utxo.length - 1].confirmations
+                    }
+
+                    socket.emit("update_status", update_data);
                 }
               } else if (this.state.cryptoType === "BCH") {
                 if (res.data.utxo[i].blockheight === -1) {
@@ -656,36 +684,38 @@ class Cashier extends React.Component {
             </div>
           </div>
           <div className="row">
-            <div className="col s12 m4 offset-m4 center-align">
+            {/* <div className="col s12 m4 offset-m4 center-align">
               <button onClick={async () => {
                     await this.newOrder();
                   }}
                   className={"btn " + classes.confirm_payment_button}>
                 NEW
               </button>
-            </div>
-            <div className="col s12 m4 offset-m4 center-align">
+            </div> */}
+            {/* <div className="col s12 m4 offset-m4 center-align">
               <button onClick={() => {
                     this.updatePrices();
                   }}
                   className={"btn " + classes.confirm_payment_button}>
                 UPDATE
               </button>
-            </div><div className="col s12 m4 offset-m4 center-align">
-              <button onClick={() => {
-                    this.sendSocketIO();
-                  }}
-                  className={"btn " + classes.confirm_payment_button}>
-                PAY
-              </button>
-            </div><div className="col s12 m4 offset-m4 center-align">
+            </div>*/}<div className="col s12 m4 offset-m4 center-align">
+
+            <button onClick={() => {
+                  this.sendSocketIO();
+                }}
+                className={"btn " + classes.confirm_payment_button}>
+              CONFIRM AMOUNT
+            </button>
+
+            </div>{/*<div className="col s12 m4 offset-m4 center-align">
               <button onClick={() => {
                     this.cancelOrder();
                   }}
                   className={"btn " + classes.confirm_payment_button}>
                 CANCEL
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

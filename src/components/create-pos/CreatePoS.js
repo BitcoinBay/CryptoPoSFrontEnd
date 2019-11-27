@@ -48,21 +48,18 @@ class CreatePoS extends Component {
 
     onSubmit = (event) => {
         event.preventDefault();
-        const xpub_data = {
-            address: this.state.pos_xpub,
-            type: this.state.pos_xpub_type
+
+        const pos_data = {
+            user_id: this.state.user_data.id,
+            name: this.state.pos_name,
+            xpub_data: {
+                address: this.state.pos_xpub,
+                type: this.state.pos_xpub_type
+            }
         };
 
-        axios.post("/api/add-xpub", xpub_data).then((res) => {
-            const pos_data = {
-                user_id: this.state.user_data.id,
-                name: this.state.pos_name,
-                xpub: res.data._id
-            };
-
-            axios.post("/api/add-pos", pos_data).then((res) => {
-                this.props.history.push('/dashboard');
-            });
+        axios.post("/api/add-pos", pos_data).then((res) => {
+            this.props.history.push('/dashboard');
         });
     }
 

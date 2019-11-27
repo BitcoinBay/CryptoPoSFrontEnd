@@ -6,8 +6,8 @@ import bitcoinbay from '../../images/bitcoinbay.jpeg';
 
 import injectSheet from 'react-jss';
 
-const socket = socketClient('http://10.100.10.142:3000');
-// const socket = socketClient('http://localhost:5000');
+// const socket = socketClient('http://10.100.10.142:3000');
+const socket = socketClient('http://localhost:8000');
 
 const defaultWebURL = 'https://www.meetup.com/The-Bitcoin-Bay';
 const styleLink = document.createElement("link");
@@ -52,11 +52,26 @@ const styles = {
     marginLeft: "10px",
     textAlign: "left"
   },
-  status_message: {
+  status_message_unpaid: {
     fontSize: "1.8em",
     marginTop: "0",
     marginLeft: "10px",
-    textAlign: "left"
+    textAlign: "left",
+    color: "grey"
+  },
+  status_message_unconfirmed: {
+    fontSize: "1.8em",
+    marginTop: "0",
+    marginLeft: "10px",
+    textAlign: "left",
+    color: "yellow"
+  },
+  status_message_confirmed: {
+    fontSize: "1.8em",
+    marginTop: "0",
+    marginLeft: "10px",
+    textAlign: "left",
+    color: "green"
   }
 };
 
@@ -73,43 +88,56 @@ class Customer extends React.Component {
       url: defaultWebURL,
       isToggleuPaid: true,
       isPayment: false,
-      pos_id: null
+      pos_id: null,
+      transaction_status_state: 0
     }
   }
 
   componentDidMount() {
-    this.setState({ pos_id: this.props.location.search.substring(3) }, async () => {
-      const pos_data = {
-        pos_id: this.state.pos_id
-      };
+    this.setState({ pos_id: this.props.location.search.substring(3) },
+            async () => {
+        const pos_data = {
+            pos_id: this.state.pos_id
+        };
 
-      socket.on('connect', () => {
-        console.log(socket.id);
-        socket.emit('add-user', pos_data);
-        socket.on('paymentRequest', msg => this.update(msg));
-      })
+        socket.on('connect', () => {
+            console.log(socket.id);
+            socket.emit('add-user', pos_data);
+            socket.on('paymentRequest', msg => this.update(msg));
+            socket.on('update_status', data => this.update_status(data));
+        })
     });
   }
 
-  update(data) {
-    console.log(data);
-    if (data.paymentData) {
-      this.setState({
-        cryptoType: data.paymentData[0],
-        fiatType: data.paymentData[1],
-        cryptoAmount: data.paymentData[2],
-        fiatAmount: data.paymentData[3],
-        cryptoPrice: data.paymentData[4],
-        url: data.paymentData[5],
-        isPayment: true
-      }, () => console.log(this.state));
-    } else {
-      this.setState({
-        url: defaultWebURL,
-        isPayment: false
-      })
+    update(data) {
+        console.log(data);
+        if (data.paymentData) {
+            this.setState({
+                cryptoType: data.paymentData[0],
+                fiatType: data.paymentData[1],
+                cryptoAmount: data.paymentData[2],
+                fiatAmount: data.paymentData[3],
+                cryptoPrice: data.paymentData[4],
+                url: data.paymentData[5],
+                isPayment: true
+            }, () => console.log(this.state));
+        } else {
+            this.setState({
+              url: defaultWebURL,
+              isPayment: false
+            });
+        }
     }
-  }
+
+    update_status(data) {
+        console.log(data);
+
+        if (data.confirmations >= 0 && data.confirmations <= 2) {
+            this.setState({ transaction_status_state: 1});
+        } else if (data.confirmations >= 3) {
+            this.setState({ transaction_status_state: 2});
+        }
+    }
 
   render() {
     const { classes } = this.props;
@@ -130,7 +158,7 @@ class Customer extends React.Component {
                 : (
                   <div>
                     <h2 className={classes.message_text}>
-                      Please send your 
+                      Please send your
                     </h2>
                     <h2 className={classes.message_text}>
                       {this.state.cryptoAmount.substring(0, 7)} {this.state.cryptoType}
@@ -145,7 +173,18 @@ class Customer extends React.Component {
                     <h1 className={classes.amount_to_pay_text}>$ {this.state.fiatAmount}</h1>
 
                     <h2 className={classes.status_text}>Status</h2>
-                    <h2 className={classes.status_message}>UNPAID</h2>
+
+                    { this.state.transaction_status_state === 0
+                        && <h2 className={classes.status_message_unpaid}>UNPAID</h2>
+                    }
+
+                    { this.state.transaction_status_state === 1
+                        && <h2 className={classes.status_message_unconfirmed}>UNCONFIRMED</h2>
+                    }
+
+                    { this.state.transaction_status_state === 2
+                        && <h2 className={classes.status_message_confirmed}>CONFIRMED</h2>
+                    }
                   </div>
                 )
               }

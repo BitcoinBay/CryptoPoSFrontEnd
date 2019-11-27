@@ -179,6 +179,7 @@ class Dashboard extends Component {
 
   deletePos = (_posID) => {
     const pos_data = {
+      user_id: this.state.user_data.id,
       pos_id: _posID
     };
 
