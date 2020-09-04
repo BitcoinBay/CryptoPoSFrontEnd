@@ -15,7 +15,7 @@
     "jwt-decode": "^2.2.0",
     "link-react": "^3.0.0",
     "materialize-css": "^1.0.0-rc.2",
-    "node-sass": "^4.12.0",
+    "node-sass": "^4.13.1",
     "qrcode.react": "^0.9.3",
     "rc-if-else": "^1.1.0",
     "react": "^16.8.6",
